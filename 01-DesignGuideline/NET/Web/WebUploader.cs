@@ -11,222 +11,179 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace codest.Net.Web
+namespace Codest.Net.Web
 {
-    /// <summary>   
-    /// 该类实现了文件上传功能，需要指定HtmlInputFile 控件   
-    /// 功能1：可以对文件类型进行限制   
-    /// 功能2：可以对文件大小上限进行限制   
-    ///    
-    /// example:   
-    ///  WebUploader up;   
-    ///  up = new WebUploader(HtmlInputFile1);   
-    ///  up.SvaePath = "c:\\inetpub\\wwwroot\\upload\\"; //必须指定，保存文件的路径   
-    ///  up.AllowExtFile = ".jpg;.gif;"; //允许的类型   
-    ///  up.MaxSize = 500 * 1024; //大小限制500k   
-    ///  up.NewFileName = "newfile1"; //指定新的文件名，不指定则不修改   
-    ///  int errcode = up.Start(); //开始上传   
-    ///  string errmsg = up.GetErr(errcode); //获得错误描述信息   
-    ///  Response.write(errmsg);　//显示错误信息   
-    /// </summary>   
+    /// <summary>
+    /// 该类实现了文件上传功能，需要指定HtmlInputFile 控件
+    /// 功能1：可以对文件类型进行限制
+    /// 功能2：可以对文件大小上限进行限制
+    /// example:
+    ///  WebUploader up;
+    ///  up = new WebUploader(HtmlInputFile1);
+    ///  up.SvaePath = "c:\\inetpub\\wwwroot\\upload\\"; //必须指定，保存文件的路径
+    ///  up.AllowExtFile = ".jpg;.gif;"; //允许的类型
+    ///  up.MaxSize = 500 * 1024; //大小限制500k
+    ///  up.NewFileName = "newfile1"; //指定新的文件名，不指定则不修改
+    ///  int errcode = up.Start(); //开始上传
+    ///  string errmsg = up.GetErr(errcode); //获得错误描述信息
+    ///  Response.write(errmsg);　//显示错误信息
+    /// </summary>
     public class WebUploader : BaseClass
     {
-        #region 成员变量
-        private System.Web.UI.HtmlControls.HtmlInputFile _scrfile;//HtmlInputFile 控件   
-        private string _savepath = "";//保存文件的路径   
-        private string _newfilename = "";//文件重命名为   
-        private string _newextfile = "";//文件后缀   
-        private int _maxsize = 0;//文件大小限制   
-        private string _extfile = "";//允许的后缀名，用“；”分割，包含“.”，为空时允许全部文件类型   
-        #endregion
+        private System.Web.UI.HtmlControls.HtmlInputFile scrfile; // HtmlInputFile 控件
+        private string savepath = string.Empty; // 保存文件的路径
+        private string newfilename = string.Empty; // 文件重命名为
+        private string newextfile = string.Empty; // 文件后缀
+        private int maxsize = 0; // 文件大小限制
+        private string extfile = string.Empty; // 允许的后缀名，用“；”分割，包含“.”，为空时允许全部文件类型
 
-        #region 接口封装
-
-        #region public string SavePath
         /// <summary>
-        /// 获取或指定文件保存路径   
-        /// </summary>
-        public string SavePath
-        {
-            get { return _savepath; }
-            set
-            {
-                _savepath = value;
-                if (_savepath.Substring(_savepath.Length) != "\\")
-                {
-                    _savepath += "\\";
-                }
-            }
-        }
-        #endregion public string SavePath
-
-        #region public int MaxSize
-        /// <summary>
-        /// 获取或指定文件大小上限
-        /// </summary>
-        public int MaxSize
-        {
-            get { return _maxsize; }
-            set { _maxsize = value; }
-        }
-        #endregion
-
-        #region public string AllowExtFile
-        /// <summary>
-        /// 获取或指定允许的文件后缀列表，用“；”分割，包含“.”   
-        /// </summary>
-        public string AllowExtFile
-        {
-            get { return _extfile; }
-            set { _extfile = value; }
-        }
-        #endregion
-
-        #region public string NewFileName
-        /// <summary>
-        /// 获取或指定新的文件名，不包含后缀   
-        /// </summary>
-        public string NewFileName
-        {
-            get { return _newfilename; }
-            set { _newfilename = value; }
-        }
-        #endregion
-
-        #region public System.Web.UI.HtmlControls.HtmlInputFile FileSource
-        /// <summary>
-        /// 获取或指定HtmlInputFile控件   
-        /// </summary>
-        public System.Web.UI.HtmlControls.HtmlInputFile FileSource
-        {
-            get { return _scrfile; }
-            set
-            {
-                string s;
-                _scrfile = value;
-                s = _scrfile.PostedFile.FileName;
-                s = s.Substring(s.LastIndexOf('.'));
-                _newextfile = s;
-            }
-        }
-        #endregion
-        
-        #endregion
-
-        #region 构造/析构函数
-
-        #region public WebUploader()
-        /// <summary>
-        /// 构造函数，不指定任何数据   
+        /// 构造函数，不指定任何数据.
         /// </summary>
         public WebUploader()
         {
-
         }
-        #endregion
 
-        #region public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile)
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="scrFile">HtmlInputFile 控件</param>
+        /// <param name="scrFile">HtmlInputFile 控件.</param>
         public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile)
         {
             this.FileSource = scrFile;
         }
-        #endregion
 
-        #region public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string SavePath)
         /// <summary>
-        /// 构造函数，上传后文件名不作修改   
+        /// 构造函数，上传后文件名不作修改.
         /// </summary>
-        /// <param name="scrFile">HtmlInputFile 控件</param>
-        /// <param name="SavePath">保存路径</param>
-        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string SavePath)
+        /// <param name="scrFile">HtmlInputFile 控件.</param>
+        /// <param name="savePath">保存路径.</param>
+        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string savePath)
         {
             this.FileSource = scrFile;
-            _savepath = SavePath;
-            _newfilename = scrFile.PostedFile.FileName;
+            this.savepath = savePath;
+            this.newfilename = scrFile?.PostedFile.FileName;
         }
-        #endregion
 
-        #region public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string SavePath, string NewFileName)
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="scrFile">HtmlInputFile 控件</param>
-        /// <param name="SavePath">保存路径</param>
-        /// <param name="NewFileName">新的文件名（不包含后缀）</param>
-        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string SavePath, string NewFileName)
+        /// <param name="scrFile">HtmlInputFile 控件.</param>
+        /// <param name="savePath">保存路径.</param>
+        /// <param name="newFileName">新的文件名（不包含后缀）.</param>
+        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string savePath, string newFileName)
         {
             this.FileSource = scrFile;
-            _savepath = SavePath;
-            _newfilename = NewFileName;
+            this.savepath = savePath;
+            this.newfilename = newFileName;
         }
-        #endregion
-        
-        #endregion
 
-        #region private bool CheckExt()
         /// <summary>
-        /// 检测后缀是否符合要求
+        /// 获取或指定文件保存路径.
         /// </summary>
-        /// <returns></returns>
-        private bool CheckExt()
+        public string SavePath
         {
-            if (_extfile == "") return true;
-            string[] exts = null;
-            exts = _extfile.Split(new char[] { ';' });
-            int i = 0;
-            for (i = 0; i <= exts.GetUpperBound(0); i++)
+            get
             {
-                if (exts[i] == _newextfile) return true;
+                return this.savepath;
             }
-            return false;
-        }
-        #endregion 
 
-        #region public int Start()
+            set
+            {
+                this.savepath = value;
+                if (this.savepath.Substring(this.savepath.Length) != "\\")
+                {
+                    this.savepath += "\\";
+                }
+            }
+        }
+
         /// <summary>
-        /// 准备就绪后，开始上传
+        /// 获取或指定文件大小上限.
         /// </summary>
-        /// <returns></returns>
+        public int MaxSize
+        {
+            get { return this.maxsize; }
+            set { this.maxsize = value; }
+        }
+
+        /// <summary>
+        /// 获取或指定允许的文件后缀列表，用“；”分割，包含“.”.
+        /// </summary>
+        public string AllowExtFile
+        {
+            get { return this.extfile; }
+            set { this.extfile = value; }
+        }
+
+        /// <summary>
+        /// 获取或指定新的文件名，不包含后缀.
+        /// </summary>
+        public string NewFileName
+        {
+            get { return this.newfilename; }
+            set { this.newfilename = value; }
+        }
+
+        /// <summary>
+        /// 获取或指定HtmlInputFile控件.
+        /// </summary>
+        public System.Web.UI.HtmlControls.HtmlInputFile FileSource
+        {
+            get
+            {
+                return this.scrfile;
+            }
+
+            set
+            {
+                string s;
+                this.scrfile = value;
+                s = this.scrfile.PostedFile.FileName;
+                s = s.Substring(s.LastIndexOf('.'));
+                this.newextfile = s;
+            }
+        }
+
+        /// <summary>
+        /// 准备就绪后，开始上传.
+        /// </summary>
+        /// <returns>some return.</returns>
         public int Start()
         {
-            if (_scrfile.PostedFile.ContentLength == 0)
+            if (this.scrfile.PostedFile.ContentLength == 0)
             {
-                return 504; //no source   
+                return 504; // no source
             }
-            else if ((_scrfile.PostedFile.ContentLength >= _maxsize) && (_maxsize != 0))
+            else if ((this.scrfile.PostedFile.ContentLength >= this.maxsize) && (this.maxsize != 0))
             {
-                return 501; //out of the range   
+                return 501; // out of the range
             }
-            else if ((_savepath == "") || (_newfilename == ""))
+            else if (string.IsNullOrEmpty(this.savepath) || string.IsNullOrEmpty(this.newfilename))
             {
-                return 505; //no filename or path    
+                return 505; // no filename or path
             }
-            else if (!CheckExt())
+            else if (!this.CheckExt())
             {
-                return 502; //ext is not allow   
+                return 502; // ext is not allow.
             }
+
             try
             {
-                _scrfile.PostedFile.SaveAs(_savepath + _newfilename + _newextfile);
+                this.scrfile.PostedFile.SaveAs(this.savepath + this.newfilename + this.newextfile);
                 return 0;
             }
             catch
             {
-                return 500; //unknow error   
+                return 500; // unknow error
             }
         }
-        #endregion
 
-        #region public string GetErr(int errCode)
         /// <summary>
-        /// 调用start()后，若返回值不为0，调用可获取错误信息   
+        /// 调用start()后，若返回值不为0，调用可获取错误信息.
         /// </summary>
-        /// <param name="errCode"></param>
-        /// <returns></returns>
+        /// <param name="errCode">some param.</param>
+        /// <returns>some return.</returns>
         public string GetErr(int errCode)
         {
             switch (errCode)
@@ -236,14 +193,38 @@ namespace codest.Net.Web
                 case 501:
                     return "文件大小超出限制";
                 case 502:
-                    return "文件类型不符合规定，只允许：" + _extfile + "类型的文件";
+                    return "文件类型不符合规定，只允许：" + this.extfile + "类型的文件";
                 case 504:
                     return "没有指定需要上传的文件";
                 default:
                     return "未知内部或外部的错误";
             }
         }
-        #endregion
-    }  
 
+        /// <summary>
+        /// 检测后缀是否符合要求.
+        /// </summary>
+        /// <returns>some return.</returns>
+        private bool CheckExt()
+        {
+            if (string.IsNullOrWhiteSpace(this.extfile))
+            {
+                return true;
+            }
+
+            string[] exts = null;
+            exts = this.extfile.Split(new char[] { ';' });
+            int i = 0;
+            for (i = 0; i <= exts.GetUpperBound(0); i++)
+            {
+                if (exts[i] == this.newextfile)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+    }
 }
