@@ -8,12 +8,10 @@
  * *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
 
-namespace codest.Net.Sockets
+namespace Codest.Net.Sockets
 {
     #region public delegate void DataArriveEvent(TCPThread tcpThread, byte[] buffer);
     /// <summary>
@@ -114,17 +112,17 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 当有连接请求接入时，触发异步回调函数
         /// </summary>
-        /// <param name="ar"></param>
-        protected void OnAccept(IAsyncResult ar)
+        /// <param name="asyncResult"></param>
+        protected void OnAccept(IAsyncResult asyncResult)
         {
-            TCPThread tcpthread;
-            Socket sock;
+            TCPThread tcpThread;
+            Socket socket;
             try
             {
-                sock = socket.EndAccept(ar);
-                tcpthread = new TCPThread(sock);
-                tcpthread.OnDataArrive += new DataArriveEvent(OnClientDataArriveEvent);
-                tcpthread.BeginReceive();
+                socket = this.socket.EndAccept(asyncResult);
+                tcpThread = new TCPThread(socket);
+                tcpThread.OnDataArrive += new DataArriveEvent(OnClientDataArriveEvent);
+                tcpThread.BeginReceive();
             }
             catch
             {
@@ -141,15 +139,15 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 创建Socket
         /// </summary>
-        /// <param name="LocalPort">本地TCP端口</param>
+        /// <param name="localPort">本地TCP端口</param>
         /// <returns>创建是否成功</returns>
-        public bool Create(int LocalPort)
+        public bool Create(int localPort)
         {
-            IPEndPoint _EP;
+            IPEndPoint endpoint;
             try
             {
-                _EP = new IPEndPoint(IPAddress.Any, LocalPort);
-                socket.Bind(_EP);
+                endpoint = new IPEndPoint(IPAddress.Any, localPort);
+                socket.Bind(endpoint);
                 socket.Listen(0);
                 return true;
             }

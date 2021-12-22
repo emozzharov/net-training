@@ -8,12 +8,10 @@
  * *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
 
-namespace codest.Net.Sockets
+namespace Codest.Net.Sockets
 {
     /// <summary>
     /// TCP客户端
@@ -36,7 +34,7 @@ namespace codest.Net.Sockets
         {
             get
             {
-                if (base.Connected)
+                if (base.IsConnected)
                     return ((IPEndPoint)base.socket.RemoteEndPoint).Port;
                 else
                     return -1;
@@ -50,7 +48,7 @@ namespace codest.Net.Sockets
         {
             get
             {
-                if (base.Connected)
+                if (base.IsConnected)
                     return ((IPEndPoint)base.socket.RemoteEndPoint).Address.ToString();
                 else
                     return string.Empty;
@@ -120,18 +118,18 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 异步Connect结束
         /// </summary>
-        /// <param name="ar"></param>
-        protected void EndConnect(IAsyncResult ar)
+        /// <param name="asyncResult"></param>
+        protected void EndConnect(IAsyncResult asyncResult)
         {
             try
             {
-                socket.EndConnect(ar);
+                socket.EndConnect(asyncResult);
                 OnConnectEvent(true);
             }
-            catch (SocketException ex)
+            catch (SocketException exception)
             {
                 OnConnectEvent(false);
-                base.OnErrorEvent(ex.ErrorCode);
+                base.OnErrorEvent(exception.ErrorCode);
             }
         }
         #endregion
@@ -144,8 +142,8 @@ namespace codest.Net.Sockets
         /// <param name="remotePort">服务器端口</param>
         public void Connect(string remoteAddress, int remotePort)
         {
-            IPEndPoint remoteEP = new IPEndPoint(GetIPByHostName(remoteAddress), remotePort);
-            socket.BeginConnect(remoteEP, new AsyncCallback(EndConnect), socket);
+            IPEndPoint remoteEndpoint = new IPEndPoint(GetIPByHostName(remoteAddress), remotePort);
+            socket.BeginConnect(remoteEndpoint, new AsyncCallback(EndConnect), socket);
         }
         #endregion
 
@@ -157,11 +155,11 @@ namespace codest.Net.Sockets
         /// <returns>是否成功</returns>
         public bool Create(int LocalPort)
         {
-            IPEndPoint _EP;
+            IPEndPoint endpoint;
             try
             {
-                _EP = new IPEndPoint(IPAddress.Any, LocalPort);
-                socket.Bind(_EP);
+                endpoint = new IPEndPoint(IPAddress.Any, LocalPort);
+                socket.Bind(endpoint);
                 return true;
             }
             catch
@@ -193,8 +191,8 @@ namespace codest.Net.Sockets
         /// <returns></returns>
         public static IPAddress GetIPByHostName(string hostName)
         {
-            IPAddress[] addrList = Dns.GetHostAddresses(hostName);
-            return addrList[0];
+            IPAddress[] addressList = Dns.GetHostAddresses(hostName);
+            return addressList[0];
         }
         #endregion
 

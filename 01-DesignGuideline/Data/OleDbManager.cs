@@ -8,12 +8,11 @@
  * *******************************************************************************/
 
 
-using System;
 using System.Data;
 using System.Data.OleDb;
-using System.Collections;
 
-namespace codest.Data
+
+namespace Codest.Data
 {
     /// <summary>
     /// OleDb(默认Access)数据库数据库管理器
@@ -21,7 +20,7 @@ namespace codest.Data
     public class OleDbManager : DataManager
     {
         #region 成员变量
-        internal System.Data.OleDb.OleDbConnection _conn; //access数据库连接
+        internal OleDbConnection connection; //access数据库连接
         private int lastUpdaterId;
         #endregion
 
@@ -76,10 +75,10 @@ namespace codest.Data
         /// <summary>
         /// 打开指定Access数据库文件
         /// </summary>
-        /// <param name="DataSource"></param>
-        public void Open(string DataSource)
+        /// <param name="dataSource"></param>
+        public void Open(string dataSource)
         {
-            base.DataSource = DataSource;
+            base.DataSource = dataSource;
             Open();
         }
 
@@ -91,8 +90,8 @@ namespace codest.Data
         /// </summary>
         public override void Open()
         {
-            base.ConnString = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source = " + base.DataSource;
-            this.OpenByConnString();
+            base.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source = " + base.DataSource;
+            this.OpenByConnectionString();
         }
 
         #endregion
@@ -101,11 +100,11 @@ namespace codest.Data
         /// <summary>
         /// 使用数据库连接字符串打开数据库
         /// </summary>
-        public override void OpenByConnString()
+        public override void OpenByConnectionString()
         {
-            _conn = new OleDbConnection();
-            _conn.ConnectionString = base.ConnString;
-            _conn.Open();
+            connection = new OleDbConnection();
+            connection.ConnectionString = base.ConnectionString;
+            connection.Open();
         }
 
         #endregion
@@ -118,9 +117,9 @@ namespace codest.Data
         {
             try
             {
-                _conn.Close();
-                _conn.Dispose();
-                _conn = null;
+                connection.Close();
+                connection.Dispose();
+                connection = null;
             }
             catch
             {
@@ -137,12 +136,12 @@ namespace codest.Data
         /// <summary>
         /// 执行SQL语句
         /// </summary>
-        /// <param name="SQLCmd">SQL语句</param>
+        /// <param name="sqlCommand">SQL语句</param>
         /// <returns>受影响的行数</returns>
-        public override int Exec(string SQLCmd)
+        public override int Execute(string sqlCommand)
         {
-            OleDbCommand cmd = new OleDbCommand(SQLCmd, _conn);
-            return cmd.ExecuteNonQuery();
+            OleDbCommand command = new OleDbCommand(sqlCommand, connection);
+            return command.ExecuteNonQuery();
         }
 
         #endregion
@@ -151,18 +150,18 @@ namespace codest.Data
         /// <summary>
         /// 执行SQL语句，将响应的数据填充到DataTable中，不能进行更新操作
         /// </summary>
-        /// <param name="SQLCmd"></param>
+        /// <param name="sqlCommand"></param>
         /// <returns></returns>
-        public override DataTable Select(string SQLCmd)
+        public override DataTable Select(string sqlCommand)
         {
-            execNum++;
-            OleDbDataAdapter da;
-            DataTable dt = new DataTable();
-            da = new OleDbDataAdapter(SQLCmd, _conn);
-            da.Fill(dt);
-            da.Dispose();
+            executionNumber++;
+            OleDbDataAdapter dataAdapter;
+            DataTable dataTable = new DataTable();
+            dataAdapter = new OleDbDataAdapter(sqlCommand, connection);
+            dataAdapter.Fill(dataTable);
+            dataAdapter.Dispose();
             //DecideRelease();
-            return dt;
+            return dataTable;
         }
 
         #endregion
@@ -171,23 +170,23 @@ namespace codest.Data
         /// <summary>
         /// 选择一定范围记录的Select语句
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <param name="srcTalbe"></param>
+        /// <param name="sqlCommand"></param>
+        /// <param name="sourceTable"></param>
         /// <param name="startRecord"></param>
-        /// <param name="maxRecord"></param>
+        /// <param name="maxRecords"></param>
         /// <returns></returns>
-        public override DataTable Select(string SQLCmd, string srcTalbe, int startRecord, int maxRecord)
+        public override DataTable Select(string sqlCommand, string sourceTable, int startRecord, int maxRecords)
         {
-            execNum++;
-            OleDbDataAdapter da;
-            DataTable dt = new DataTable();
-            DataSet ds = new DataSet();
-            da = new OleDbDataAdapter(SQLCmd, _conn);
-            da.Fill(ds, startRecord, maxRecord, srcTalbe);
-            dt = ds.Tables[0];
-            da.Dispose();
+            executionNumber++;
+            OleDbDataAdapter dataAdapter;
+            DataTable dataTable = new DataTable();
+            DataSet dataSet = new DataSet();
+            dataAdapter = new OleDbDataAdapter(sqlCommand, connection);
+            dataAdapter.Fill(dataSet, startRecord, maxRecords, sourceTable);
+            dataTable = dataSet.Tables[0];
+            dataAdapter.Dispose();
             //DecideRelease();
-            return dt;
+            return dataTable;
         }
 
         #endregion
@@ -196,15 +195,15 @@ namespace codest.Data
         /// <summary>
         /// 实现分页的Select
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <param name="srcTalbe"></param>
+        /// <param name="sqlCommand"></param>
+        /// <param name="sourceTable"></param>
         /// <param name="pageSize"></param>
-        /// <param name="pageID"></param>
+        /// <param name="pageId"></param>
         /// <returns></returns>
-        public override DataTable SelectPage(string SQLCmd, string srcTalbe, int pageSize, int pageID)
+        public override DataTable SelectPage(string sqlCommand, string sourceTable, int pageSize, int pageId)
         {
-            if (pageID == 0) pageID = 1;
-            return Select(SQLCmd, srcTalbe, pageSize * (pageID - 1), pageSize);
+            if (pageId == 0) pageId = 1;
+            return Select(sqlCommand, sourceTable, pageSize * (pageId - 1), pageSize);
         }
 
         #endregion
@@ -213,15 +212,15 @@ namespace codest.Data
         /// <summary>
         /// 执行删除操作的SQL语句
         /// </summary>
-        /// <param name="SQLCmd"></param>
+        /// <param name="sqlCommand"></param>
         /// <returns></returns>
-        public override bool Delete(string SQLCmd)
+        public override bool Delete(string sqlCommand)
         {
-            if (SQLCmd.Substring(0, 6).ToLower() != "delete") return false;
-            execNum++;
-            OleDbCommand cmd;
-            cmd = new OleDbCommand(SQLCmd, _conn);
-            cmd.ExecuteNonQuery();
+            if (sqlCommand.Substring(0, 6).ToLower() != "delete") return false;
+            executionNumber++;
+            OleDbCommand command;
+            command = new OleDbCommand(sqlCommand, connection);
+            command.ExecuteNonQuery();
             //DecideRelease();
             return true;
         }
@@ -240,7 +239,7 @@ namespace codest.Data
         {
             int id = lastUpdaterId++;
             OleDbUpdater updater = new OleDbUpdater(id, this);
-            base.dataUpdaterColl.Add(id, updater);
+            base.dataUpdaterCollection.Add(id, updater);
             return updater;
         }
         #endregion

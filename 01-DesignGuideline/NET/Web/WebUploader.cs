@@ -6,12 +6,9 @@
  * * 文件标识：FC0090B0-D61A-4503-9952-5A1C215E3815
  * * 内容摘要：
  * *******************************************************************************/
+using System.Web.UI.HtmlControls;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace codest.Net.Web
+namespace Codest.Net.Web
 {
     /// <summary>   
     /// 该类实现了文件上传功能，需要指定HtmlInputFile 控件   
@@ -32,12 +29,12 @@ namespace codest.Net.Web
     public class WebUploader : BaseClass
     {
         #region 成员变量
-        private System.Web.UI.HtmlControls.HtmlInputFile _scrfile;//HtmlInputFile 控件   
-        private string _savepath = "";//保存文件的路径   
-        private string _newfilename = "";//文件重命名为   
-        private string _newextfile = "";//文件后缀   
-        private int _maxsize = 0;//文件大小限制   
-        private string _extfile = "";//允许的后缀名，用“；”分割，包含“.”，为空时允许全部文件类型   
+        private HtmlInputFile sourceFile;//HtmlInputFile 控件   
+        private string savePath = "";//保存文件的路径   
+        private string newFilename = "";//文件重命名为   
+        private string newFileExtension = "";//文件后缀   
+        private int maxSize = 0;//文件大小限制   
+        private string fileExtension = "";//允许的后缀名，用“；”分割，包含“.”，为空时允许全部文件类型   
         #endregion
 
         #region 接口封装
@@ -48,13 +45,13 @@ namespace codest.Net.Web
         /// </summary>
         public string SavePath
         {
-            get { return _savepath; }
+            get { return savePath; }
             set
             {
-                _savepath = value;
-                if (_savepath.Substring(_savepath.Length) != "\\")
+                savePath = value;
+                if (savePath.Substring(savePath.Length) != "\\")
                 {
-                    _savepath += "\\";
+                    savePath += "\\";
                 }
             }
         }
@@ -66,8 +63,8 @@ namespace codest.Net.Web
         /// </summary>
         public int MaxSize
         {
-            get { return _maxsize; }
-            set { _maxsize = value; }
+            get { return maxSize; }
+            set { maxSize = value; }
         }
         #endregion
 
@@ -75,10 +72,10 @@ namespace codest.Net.Web
         /// <summary>
         /// 获取或指定允许的文件后缀列表，用“；”分割，包含“.”   
         /// </summary>
-        public string AllowExtFile
+        public string AllowFileExtension
         {
-            get { return _extfile; }
-            set { _extfile = value; }
+            get { return fileExtension; }
+            set { fileExtension = value; }
         }
         #endregion
 
@@ -86,10 +83,10 @@ namespace codest.Net.Web
         /// <summary>
         /// 获取或指定新的文件名，不包含后缀   
         /// </summary>
-        public string NewFileName
+        public string NewFilename
         {
-            get { return _newfilename; }
-            set { _newfilename = value; }
+            get { return newFilename; }
+            set { newFilename = value; }
         }
         #endregion
 
@@ -97,16 +94,16 @@ namespace codest.Net.Web
         /// <summary>
         /// 获取或指定HtmlInputFile控件   
         /// </summary>
-        public System.Web.UI.HtmlControls.HtmlInputFile FileSource
+        public HtmlInputFile FileSource
         {
-            get { return _scrfile; }
+            get { return sourceFile; }
             set
             {
-                string s;
-                _scrfile = value;
-                s = _scrfile.PostedFile.FileName;
-                s = s.Substring(s.LastIndexOf('.'));
-                _newextfile = s;
+                string fileExtension;
+                sourceFile = value;
+                fileExtension = sourceFile.PostedFile.FileName;
+                fileExtension = fileExtension.Substring(fileExtension.LastIndexOf('.'));
+                newFileExtension = fileExtension;
             }
         }
         #endregion
@@ -129,10 +126,10 @@ namespace codest.Net.Web
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="scrFile">HtmlInputFile 控件</param>
-        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile)
+        /// <param name="sourceFile">HtmlInputFile 控件</param>
+        public WebUploader(HtmlInputFile sourceFile)
         {
-            this.FileSource = scrFile;
+            this.FileSource = sourceFile;
         }
         #endregion
 
@@ -140,13 +137,13 @@ namespace codest.Net.Web
         /// <summary>
         /// 构造函数，上传后文件名不作修改   
         /// </summary>
-        /// <param name="scrFile">HtmlInputFile 控件</param>
-        /// <param name="SavePath">保存路径</param>
-        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string SavePath)
+        /// <param name="sourceFile">HtmlInputFile 控件</param>
+        /// <param name="savePath">保存路径</param>
+        public WebUploader(HtmlInputFile sourceFile, string savePath)
         {
-            this.FileSource = scrFile;
-            _savepath = SavePath;
-            _newfilename = scrFile.PostedFile.FileName;
+            this.FileSource = sourceFile;
+            this.savePath = savePath;
+            newFilename = sourceFile.PostedFile.FileName;
         }
         #endregion
 
@@ -154,14 +151,14 @@ namespace codest.Net.Web
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="scrFile">HtmlInputFile 控件</param>
-        /// <param name="SavePath">保存路径</param>
-        /// <param name="NewFileName">新的文件名（不包含后缀）</param>
-        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile scrFile, string SavePath, string NewFileName)
+        /// <param name="sourceFile">HtmlInputFile 控件</param>
+        /// <param name="savePath">保存路径</param>
+        /// <param name="newFileName">新的文件名（不包含后缀）</param>
+        public WebUploader(System.Web.UI.HtmlControls.HtmlInputFile sourceFile, string savePath, string newFileName)
         {
-            this.FileSource = scrFile;
-            _savepath = SavePath;
-            _newfilename = NewFileName;
+            this.FileSource = sourceFile;
+            this.savePath = savePath;
+            newFilename = newFileName;
         }
         #endregion
         
@@ -172,15 +169,15 @@ namespace codest.Net.Web
         /// 检测后缀是否符合要求
         /// </summary>
         /// <returns></returns>
-        private bool CheckExt()
+        private bool CheckExtension()
         {
-            if (_extfile == "") return true;
-            string[] exts = null;
-            exts = _extfile.Split(new char[] { ';' });
+            if (fileExtension == "") return true;
+            string[] extensions = null;
+            extensions = fileExtension.Split(new char[] { ';' });
             int i = 0;
-            for (i = 0; i <= exts.GetUpperBound(0); i++)
+            for (i = 0; i <= extensions.GetUpperBound(0); i++)
             {
-                if (exts[i] == _newextfile) return true;
+                if (extensions[i] == newFileExtension) return true;
             }
             return false;
         }
@@ -193,25 +190,25 @@ namespace codest.Net.Web
         /// <returns></returns>
         public int Start()
         {
-            if (_scrfile.PostedFile.ContentLength == 0)
+            if (sourceFile.PostedFile.ContentLength == 0)
             {
                 return 504; //no source   
             }
-            else if ((_scrfile.PostedFile.ContentLength >= _maxsize) && (_maxsize != 0))
+            else if ((sourceFile.PostedFile.ContentLength >= maxSize) && (maxSize != 0))
             {
                 return 501; //out of the range   
             }
-            else if ((_savepath == "") || (_newfilename == ""))
+            else if ((savePath == "") || (newFilename == ""))
             {
                 return 505; //no filename or path    
             }
-            else if (!CheckExt())
+            else if (!CheckExtension())
             {
                 return 502; //ext is not allow   
             }
             try
             {
-                _scrfile.PostedFile.SaveAs(_savepath + _newfilename + _newextfile);
+                sourceFile.PostedFile.SaveAs(savePath + newFilename + newFileExtension);
                 return 0;
             }
             catch
@@ -225,18 +222,18 @@ namespace codest.Net.Web
         /// <summary>
         /// 调用start()后，若返回值不为0，调用可获取错误信息   
         /// </summary>
-        /// <param name="errCode"></param>
+        /// <param name="errorCode"></param>
         /// <returns></returns>
-        public string GetErr(int errCode)
+        public string GetError(int errorCode)
         {
-            switch (errCode)
+            switch (errorCode)
             {
                 case 500:
                     return "未知内部或外部的错误";
                 case 501:
                     return "文件大小超出限制";
                 case 502:
-                    return "文件类型不符合规定，只允许：" + _extfile + "类型的文件";
+                    return "文件类型不符合规定，只允许：" + fileExtension + "类型的文件";
                 case 504:
                     return "没有指定需要上传的文件";
                 default:

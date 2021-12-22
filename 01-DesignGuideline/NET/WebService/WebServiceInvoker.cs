@@ -8,17 +8,16 @@
  * *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
-using System.Web;
 using System.Web.Services.Description;
 using System.IO;
 using System.CodeDom;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
+using System.Text;
+using System.Reflection;
 
-namespace codest.Net.WebService
+namespace Codest.Net.WebService
 {
     /// <summary>
     /// 实现动态调用Web Service
@@ -30,12 +29,12 @@ namespace codest.Net.WebService
         /// 动态调用Web Service
         /// </summary>
         /// <param name="url">Web Service的URL地址</param>
-        /// <param name="methodname">要调用Web Service的方法名称</param>
+        /// <param name="methodName">要调用Web Service的方法名称</param>
         /// <param name="args">要调用Web Service的参数列表</param>
         /// <returns>方法处理结果</returns>
-        public object InvokeWebService(string url, string methodname, object[] args)
+        public object InvokeWebService(string url, string methodName, object[] args)
         {
-            return this.InvokeWebService(url, null, methodname, args);
+            return this.InvokeWebService(url, null, methodName, args);
         }
         #endregion
 
@@ -44,12 +43,12 @@ namespace codest.Net.WebService
         /// 动态调用Web Service，传入单个参数
         /// </summary>
         /// <param name="url">Web Service的URL地址</param>
-        /// <param name="methodname">调用Web Service的方法名称</param>
+        /// <param name="methodName">调用Web Service的方法名称</param>
         /// <param name="arg">要调用Web Service的参数</param>
         /// <returns>方法处理结果</returns>
-        public object InvokeWebService(string url, string methodname, object arg)
+        public object InvokeWebService(string url, string methodName, object arg)
         {
-            return this.InvokeWebService(url, null, methodname, new object[] { arg });
+            return this.InvokeWebService(url, null, methodName, new object[] { arg });
         }
         #endregion
 
@@ -58,68 +57,68 @@ namespace codest.Net.WebService
         /// 动态调用Web Service
         /// </summary>
         /// <param name="url">Web Service的URL地址</param>
-        /// <param name="classname">要调用Web Service的类的名称</param>
-        /// <param name="methodname">要调用Web Service的方法名称</param>
+        /// <param name="className">要调用Web Service的类的名称</param>
+        /// <param name="methodName">要调用Web Service的方法名称</param>
         /// <param name="args">要调用Web Service的参数列表</param>
         /// <returns>方法处理结果</returns>
-        public object InvokeWebService(string url, string classname, string methodname, object[] args)
+        public object InvokeWebService(string url, string className, string methodName, object[] args)
         {
             string @namespace = "EnterpriseServerBase.WebService.DynamicWebCalling";
-            if ((classname == null) || (classname == ""))
+            if ((className == null) || (className == ""))
             {
-                classname = this.GetWsClassName(url);
+                className = this.GetWsClassName(url);
             }
 
             try
             {
                 //获取WSDL
-                WebClient wc = new WebClient();
-                Stream stream = wc.OpenRead(url + "?WSDL");
-                ServiceDescription sd = ServiceDescription.Read(stream);
-                ServiceDescriptionImporter sdi = new ServiceDescriptionImporter();
-                sdi.AddServiceDescription(sd, "", "");
-                CodeNamespace cn = new CodeNamespace(@namespace);
+                WebClient webClient = new WebClient();
+                Stream stream = webClient.OpenRead(url + "?WSDL");
+                ServiceDescription serviceDescription = ServiceDescription.Read(stream);
+                ServiceDescriptionImporter serviceDescriptionImporter = new ServiceDescriptionImporter();
+                serviceDescriptionImporter.AddServiceDescription(serviceDescription, "", "");
+                CodeNamespace codeNamespace = new CodeNamespace(@namespace);
 
                 //生成客户端代理类代码
-                CodeCompileUnit ccu = new CodeCompileUnit();
-                ccu.Namespaces.Add(cn);
-                sdi.Import(cn, ccu);
-                CSharpCodeProvider csc = new CSharpCodeProvider();
-                ICodeCompiler icc = csc.CreateCompiler();
+                CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+                codeCompileUnit.Namespaces.Add(codeNamespace);
+                serviceDescriptionImporter.Import(codeNamespace, codeCompileUnit);
+                CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+                ICodeCompiler codeCompiler = codeProvider.CreateCompiler();
 
                 //设定编译参数
-                CompilerParameters cplist = new CompilerParameters();
-                cplist.GenerateExecutable = false;
-                cplist.GenerateInMemory = true;
-                cplist.ReferencedAssemblies.Add("System.dll");
-                cplist.ReferencedAssemblies.Add("System.XML.dll");
-                cplist.ReferencedAssemblies.Add("System.Web.Services.dll");
-                cplist.ReferencedAssemblies.Add("System.Data.dll");
+                CompilerParameters compilerParameters = new CompilerParameters();
+                compilerParameters.GenerateExecutable = false;
+                compilerParameters.GenerateInMemory = true;
+                compilerParameters.ReferencedAssemblies.Add("System.dll");
+                compilerParameters.ReferencedAssemblies.Add("System.XML.dll");
+                compilerParameters.ReferencedAssemblies.Add("System.Web.Services.dll");
+                compilerParameters.ReferencedAssemblies.Add("System.Data.dll");
 
                 //编译代理类
-                CompilerResults cr = icc.CompileAssemblyFromDom(cplist, ccu);
-                if (true == cr.Errors.HasErrors)
+                CompilerResults compilerResults = codeCompiler.CompileAssemblyFromDom(compilerParameters, codeCompileUnit);
+                if (true == compilerResults.Errors.HasErrors)
                 {
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    foreach (System.CodeDom.Compiler.CompilerError ce in cr.Errors)
+                    StringBuilder stringBuilder = new StringBuilder();
+                    foreach (CompilerError compilerError in compilerResults.Errors)
                     {
-                        sb.Append(ce.ToString());
-                        sb.Append(System.Environment.NewLine);
+                        stringBuilder.Append(compilerError.ToString());
+                        stringBuilder.Append(System.Environment.NewLine);
                     }
-                    throw new Exception(sb.ToString());
+                    throw new Exception(stringBuilder.ToString());
                 }
 
                 //生成代理实例，并调用方法
-                System.Reflection.Assembly assembly = cr.CompiledAssembly;
-                Type t = assembly.GetType(@namespace + "." + classname, true, true);
-                object obj = Activator.CreateInstance(t);
-                System.Reflection.MethodInfo mi = t.GetMethod(methodname);
+                Assembly assembly = compilerResults.CompiledAssembly;
+                Type type = assembly.GetType(@namespace + "." + className, true, true);
+                object obj = Activator.CreateInstance(type);
+                MethodInfo methodInfo = type.GetMethod(methodName);
 
-                return mi.Invoke(obj, args);
+                return methodInfo.Invoke(obj, args);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                throw new Exception(ex.InnerException.Message, new Exception(ex.InnerException.StackTrace));
+                throw new Exception(exception.InnerException.Message, new Exception(exception.InnerException.StackTrace));
             }
         }
         #endregion
@@ -128,11 +127,11 @@ namespace codest.Net.WebService
         /// <summary>
         /// 通过Web Service的URL获取类名
         /// </summary>
-        /// <param name="wsUrl">Web Service的URL地址</param>
+        /// <param name="webServiceURL">Web Service的URL地址</param>
         /// <returns>Web Service的类名</returns>
-        private string GetWsClassName(string wsUrl)
+        private string GetWsClassName(string webServiceURL)
         {
-            string[] parts = wsUrl.Split('/');
+            string[] parts = webServiceURL.Split('/');
             string[] pps = parts[parts.Length - 1].Split('.');
 
             return pps[0];

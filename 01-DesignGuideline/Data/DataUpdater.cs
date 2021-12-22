@@ -8,12 +8,9 @@
  * *******************************************************************************/
 
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
 
-namespace codest.Data
+namespace Codest.Data
 {
     /// <summary>
     /// 所有数据库更新器的基类
@@ -22,7 +19,7 @@ namespace codest.Data
     {
         #region 成员变量
         private bool autoRelease;
-        internal int updaterID;
+        internal int updaterId;
         #endregion
 
         #region 接口封装
@@ -45,7 +42,7 @@ namespace codest.Data
         public DataUpdater(int id)
         {
             autoRelease = true;
-            updaterID = id;
+            updaterId = id;
         }
         /// <summary>
         /// 析构函数
@@ -76,7 +73,7 @@ namespace codest.Data
         /// <summary>
         /// 决定是否自动释放更新器
         /// </summary>
-        protected virtual void DecideRelease()
+        protected virtual void ReleaseDecide()
         {
             if (autoRelease)
                 Release();
@@ -91,7 +88,7 @@ namespace codest.Data
         /// 再调用Update(DataTable)进行更新操作
         /// 此后，对象将退出修改模式状态
         /// </summary>
-        public abstract DataTable SelectWithUpdate(string SQLCmd);
+        public abstract DataTable SelectWithUpdate(string sqlCommand);
         #endregion
 
         #region public abstract DataTable InsertMode(string TableName)
@@ -102,7 +99,7 @@ namespace codest.Data
         /// 再调用Update(DataTable)进行更新操作
         /// 此后，对象将退出修改模式状态
         /// </summary>
-        public abstract DataTable InsertMode(string TableName);
+        public abstract DataTable InsertMode(string tableName);
         #endregion
 
         #region public abstract void Update(System.Data.DataTable DataTableSource)
@@ -110,7 +107,7 @@ namespace codest.Data
         /// <summary>
         /// 关闭修改模式,并根据DataTable进行更新操作
         /// </summary>
-        public abstract void Update(System.Data.DataTable DataTableSource);
+        public abstract void Update(DataTable dataTableSource);
         #endregion
 
         #region  public abstract void Release()

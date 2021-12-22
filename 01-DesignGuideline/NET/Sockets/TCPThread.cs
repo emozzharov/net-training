@@ -8,12 +8,10 @@
  * *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Net;
 using System.Net.Sockets;
 
-namespace codest.Net.Sockets
+namespace Codest.Net.Sockets
 {
     /// <summary>
     /// TCP连接控制类
@@ -28,24 +26,24 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 接收数据的缓冲区大小，为100K
         /// </summary>
-        protected int BUFFER_SIZE = 1024 * 0xFF;
+        protected const int BUFFER_SIZE = 1024 * 0xFF;
         /// <summary>
         /// 接收数据的缓冲区
         /// </summary>
-        protected byte[] _buffer;
+        protected byte[] buffer;
         /// <summary>
         /// 指示Socket是否连接
         /// </summary>
-        private bool connected;
+        private bool isConnected;
         #endregion
 
         #region 接口封装
         /// <summary>
         /// 指示Socket是否连接
         /// </summary>
-        public bool Connected
+        public bool IsConnected
         {
-            get { return connected; }
+            get { return isConnected; }
         }
         /// <summary>
         /// Socket
@@ -68,27 +66,27 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 当连接被关闭
         /// </summary>
-        public event NullParamEvent OnClose;
+        public event NullParamEventHandler OnClose;
         #endregion
 
         #region 构造/析构函数
         /// <summary>
         /// TCPThread构造函数，传入默认socket连接
         /// </summary>
-        /// <param name="sock">socket连接</param>
-        public TCPThread(Socket sock)
+        /// <param name="socket">socket连接</param>
+        public TCPThread(Socket socket)
             :base()
         {
-            socket = sock;
-            connected = true;
+            this.socket = socket;
+            isConnected = true;
         }
         /// <summary>
         /// TCPThread构造函数
         /// </summary>
         public TCPThread()
         {
-            connected = false;
-            _buffer = new byte[BUFFER_SIZE]; 
+            isConnected = false;
+            buffer = new byte[BUFFER_SIZE]; 
         }
         /// <summary>
         /// TCPThread析构函数
@@ -110,10 +108,10 @@ namespace codest.Net.Sockets
             if (disposing)
             {
                 //释放托管资源
-                _buffer = null;
+                buffer = null;
             }
             //释放非托管资源
-            if (connected) OnCloseEvent();
+            if (isConnected) OnCloseEvent();
             socket = null;
             base.Dispose(disposing);
         }
@@ -125,12 +123,12 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 当socket出错
         /// </summary>
-        /// <param name="errNum">错误编号</param>
-        protected void OnErrorEvent(int errNum)
+        /// <param name="errorNumber">错误编号</param>
+        protected void OnErrorEvent(int errorNumber)
         {
-            connected = false;
+            isConnected = false;
             socket.Close();
-            if (OnError != null) OnError(errNum);
+            if (OnError != null) OnError(errorNumber);
         }
         #endregion
 
@@ -140,7 +138,7 @@ namespace codest.Net.Sockets
         /// </summary>
         protected void OnCloseEvent()
         {
-            connected = false;
+            isConnected = false;
             socket.Close();
             if (OnClose != null) OnClose();
         }
@@ -166,25 +164,25 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 数据到达的异步处理函数
         /// </summary>
-        /// <param name="ar"></param>
-        protected void OnReceive(IAsyncResult ar)
+        /// <param name="asyncResult"></param>
+        protected void OnReceive(IAsyncResult asyncResult)
         {
-            int len;
+            int length;
             try
             {
-                len = socket.EndReceive(ar);
+                length = socket.EndReceive(asyncResult);
             }
-            catch (SocketException ex)
+            catch (SocketException exception)
             {
-                OnErrorEvent(ex.ErrorCode);
+                OnErrorEvent(exception.ErrorCode);
                 return;
             }
-            if (len == 0)
+            if (length == 0)
             {
                 OnCloseEvent();
             }
-            byte[] data = new byte[len];
-            Array.Copy(_buffer, 0, data, 0, len);
+            byte[] data = new byte[length];
+            Array.Copy(buffer, 0, data, 0, length);
             OnDataArriveEvent(this, data);
             BeginReceive();
         }
@@ -194,16 +192,16 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 异步发送数据完成
         /// </summary>
-        /// <param name="ar"></param>
-        protected void OnEndSend(IAsyncResult ar)
+        /// <param name="asyncResult"></param>
+        protected void OnEndSend(IAsyncResult asyncResult)
         {
             try
             {
-                socket.EndSend(ar);
+                socket.EndSend(asyncResult);
             }
-            catch (SocketException ex)
+            catch (SocketException exception)
             {
-                OnErrorEvent(ex.ErrorCode);
+                OnErrorEvent(exception.ErrorCode);
             }
         }
         #endregion
@@ -216,7 +214,7 @@ namespace codest.Net.Sockets
         /// </summary>
         public void BeginReceive()
         {
-            socket.BeginReceive(_buffer, 0, BUFFER_SIZE, SocketFlags.None, new AsyncCallback(OnReceive), socket);
+            socket.BeginReceive(buffer, 0, BUFFER_SIZE, SocketFlags.None, new AsyncCallback(OnReceive), socket);
         }
         #endregion
 
@@ -235,10 +233,10 @@ namespace codest.Net.Sockets
         /// <summary>
         /// 发送字符串数据
         /// </summary>
-        /// <param name="StringData">需要发送的数据</param>
-        public virtual void Send(string StringData)
+        /// <param name="stringData">需要发送的数据</param>
+        public virtual void Send(string stringData)
         {
-            byte[] data = ASCIIEncoding.ASCII.GetBytes(StringData);
+            byte[] data = ASCIIEncoding.ASCII.GetBytes(stringData);
             Send(data);
         }
         #endregion

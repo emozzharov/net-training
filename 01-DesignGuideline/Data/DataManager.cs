@@ -7,13 +7,10 @@
  * * 内容摘要：
  * *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Collections;
 
-namespace codest.Data
+namespace Codest.Data
 {
     /// <summary>
     /// 所有数据库管理器的基类
@@ -21,30 +18,30 @@ namespace codest.Data
     public abstract class DataManager : BaseClass
     {
         #region 成员变量
-        internal int execNum = 0;
+        internal int executionNumber = 0;
         /// <summary>
         /// 保存当前管理器中所有已分配的更新器
         /// </summary>
-        protected Hashtable dataUpdaterColl;
-        private string connString = string.Empty;
-        private string _dbscr = string.Empty;
+        protected Hashtable dataUpdaterCollection;
+        private string connectionString = string.Empty;
+        private string dbSource = string.Empty;
         #endregion
 
         #region 接口封装
         /// <summary>
         /// 获取或设置数据库连接字符串
         /// </summary>
-        public string ConnString
+        public string ConnectionString
         {
-          get { return connString; }
-          set { connString = value; }
+          get { return connectionString; }
+          set { connectionString = value; }
         }
         /// <summary>
         /// 获取当前数据库连接查询的次数
         /// </summary>
-        public int ExecNum
+        public int ExecutionNumber
         {
-            get { return execNum; }
+            get { return executionNumber; }
         }
 
         /// <summary>
@@ -52,8 +49,8 @@ namespace codest.Data
         /// </summary>
         public string DataSource
         {
-            get { return _dbscr; }
-            set { _dbscr = value; }
+            get { return dbSource; }
+            set { dbSource = value; }
         }
         #endregion
          
@@ -63,7 +60,7 @@ namespace codest.Data
         /// </summary>
         public DataManager()
         {
-            dataUpdaterColl = new Hashtable();
+            dataUpdaterCollection = new Hashtable();
         }
         /// <summary>
         /// 析构函数
@@ -104,7 +101,7 @@ namespace codest.Data
         /// <summary>
         /// 使用数据库连接字符串打开数据库
         /// </summary>
-        public abstract void OpenByConnString();
+        public abstract void OpenByConnectionString();
         #endregion
 
         #region public abstract void Close()
@@ -122,9 +119,9 @@ namespace codest.Data
         /// <summary>
         /// 执行SQL语句
         /// </summary>
-        /// <param name="SQLCmd">SQL语句</param>
+        /// <param name="sqlCommand">SQL语句</param>
         /// <returns>受响应的行数</returns>
-        public abstract int Exec(string SQLCmd);
+        public abstract int Execute(string sqlCommand);
         #endregion
 
         #region public abstract DataTable Select(string SQLCmd)
@@ -132,7 +129,7 @@ namespace codest.Data
         /// <summary>
         /// 执行SQL语句，将响应的数据填充到DataTable中，不能进行更新操作
         /// </summary>
-        public abstract DataTable Select(string SQLCmd);
+        public abstract DataTable Select(string sqlCommand);
         #endregion
 
         #region public abstract DataTable Select(string SQLCmd, string srcTalbe, int startRecord, int maxRecord)
@@ -140,21 +137,21 @@ namespace codest.Data
         /// <summary>
         /// 选择一定范围记录的Select语句
         /// </summary>
-        public abstract DataTable Select(string SQLCmd, string srcTalbe, int startRecord, int maxRecord);
+        public abstract DataTable Select(string sqlCommand, string sourceTable, int startRecord, int maxRecords);
         #endregion
 
         #region public abstract DataTable SelectPage(string SQLCmd, string srcTalbe, int pageSize, int pageID)
         /// <summary>
         /// 实现分页的Select
         /// </summary>
-        public abstract DataTable SelectPage(string SQLCmd, string srcTalbe, int pageSize, int pageID);
+        public abstract DataTable SelectPage(string sqlCommand, string sourceTable, int pageSize, int pageId);
         #endregion
 
         #region public abstract bool Delete(string SQLCmd)
         /// <summary>
         /// 执行删除操作的SQL语句
         /// </summary>
-        public abstract bool Delete(string SQLCmd);
+        public abstract bool Delete(string sqlCommand);
         #endregion
 
         //--end----访问数据库操作--
@@ -173,14 +170,14 @@ namespace codest.Data
         /// <summary>
         /// 释放当前实例中所有的更新器
         /// </summary>
-        public virtual void ReleaseAllDataUpdater()
+        public virtual void ReleaseAllDataUpdaters()
         {
-            foreach (DictionaryEntry de in dataUpdaterColl)
+            foreach (DictionaryEntry entry in dataUpdaterCollection)
             {
-                DataUpdater updater = (DataUpdater)de.Value;
-                updater.Dispose();
+                DataUpdater dataUpdater = (DataUpdater)entry.Value;
+                dataUpdater.Dispose();
             }
-            dataUpdaterColl.Clear();
+            dataUpdaterCollection.Clear();
         }
         #endregion
 
@@ -191,7 +188,7 @@ namespace codest.Data
         /// <param name="updater">更新器</param>
         public virtual void ReleaseDataUpdater(DataUpdater updater)
         {
-            this.dataUpdaterColl.Remove(updater.updaterID);
+            this.dataUpdaterCollection.Remove(updater.updaterId);
             updater.Dispose();
         }
         #endregion
