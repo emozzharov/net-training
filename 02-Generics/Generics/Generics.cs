@@ -27,26 +27,12 @@ namespace Task.Generics {
 		///   { new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 30) } => "01:00:00,00:00:30",
 		/// </example>
 		public static string ConvertToString<T>(this IEnumerable<T> list) {
-			StringBuilder stringBuilder = new StringBuilder();
-
 			if (list is null)
             {
 				return null;
             }
 			
-			foreach(var item in list)
-            {
-				if (item != null)
-                {
-					stringBuilder.Append(item.ToString());
-                }
-
-				stringBuilder.Append(ListSeparator);
-            }
-
-			stringBuilder.Remove(stringBuilder.Length - 1, 1);
-
-			return stringBuilder.ToString();
+			return string.Join(ListSeparator.ToString(), list);
 		}
 
 		/// <summary>
