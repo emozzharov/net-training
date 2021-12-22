@@ -7,288 +7,260 @@
  * * 内容摘要：
  * *******************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
-namespace codest.Data
+namespace Codest.Data
 {
     /// <summary>
-    /// SQL Server数据库管理器
+    /// SQL Server数据库管理器.
     /// </summary>
     public class SQLManager : DataManager
     {
-        #region 成员变量
         private string database;
         private string username;
         private string password;
-        internal SqlConnection _conn; //数据库连接
+        private SqlConnection conn; // 数据库连接
         private int lastUpdaterId = 0;
-        #endregion
 
-        #region 接口封装
-        /// <summary>
-        /// 库名称
-        /// </summary>
-        public string Database
-        {
-            get { return database; }
-            set { database = value; }
-        }
-        /// <summary>
-        /// 连接SQL Server数据库的用户名
-        /// </summary>
-        public string Username
-        {
-            get { return username; }
-            set { username = value; }
-        }
-        /// <summary>
-        /// 连接SQL Server数据库的密码
-        /// </summary>
-        public string Password
-        {
-            get { return password; }
-            set { password = value; }
-        }
-
-        #endregion
-
-        #region 构造/析构函数
         /// <summary>
         /// 构造函数
         /// </summary>
         public SQLManager()
         {
-
         }
+
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="dataSource">SQL Server数据源（IP地址）</param>
-        /// <param name="database">库名称</param>
-        /// <param name="usr">用户名</param>
-        /// <param name="pwd">密码</param>
+        /// <param name="dataSource">SQL Server数据源（IP地址）.</param>
+        /// <param name="database">库名称.</param>
+        /// <param name="usr">用户名.</param>
+        /// <param name="pwd">密码.</param>
         public SQLManager(string dataSource, string database, string usr, string pwd)
         {
-            base.DataSource = dataSource;
+            this.DataSource = dataSource;
             this.database = database;
             this.username = usr;
             this.password = pwd;
         }
-        /// <summary>
-        /// 析构函数
-        /// </summary>
-        ~SQLManager()
-        {
-            Dispose(false);
-        }
-        #endregion
 
-        #region protected override void Dispose(bool disposing)
         /// <summary>
-        /// 释放由当前对象控制的所有资源
+        /// 库名称.
         /// </summary>
-        /// <param name="disposing">显式调用</param>
+        public string Database
+        {
+            get { return this.database; }
+            set { this.database = value; }
+        }
+
+        /// <summary>
+        /// 连接SQL Server数据库的用户名.
+        /// </summary>
+        public string Username
+        {
+            get { return this.username; }
+            set { this.username = value; }
+        }
+
+        /// <summary>
+        /// 连接SQL Server数据库的密码.
+        /// </summary>
+        public string Password
+        {
+            get { return this.password; }
+            set { this.password = value; }
+        }
+
+        /// <summary>
+        /// Gets conn.
+        /// </summary>
+        internal SqlConnection Conn
+        {
+            get { return this.conn; }
+        }
+
+        /// <summary>
+        /// 释放由当前对象控制的所有资源.
+        /// </summary>
+        /// <param name="disposing">显式调用.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposed) return;
+            if (this.disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
-                //释放托管资源
+                // 释放托管资源
             }
-            //释放非托管资源
+
+            // 释放非托管资源
             this.Close();
             base.Dispose(disposing);
         }
 
-        #endregion
-        
-        //--begin--连接数据库操作--
-
-        #region  public void Open(string dataSource, string database, string usr, string pwd)
         /// <summary>
         /// 打开数据库连接
         /// </summary>
-        /// <param name="dataSource">SQL Server数据源（IP地址）</param>
-        /// <param name="database">库名称</param>
-        /// <param name="usr">用户名</param>
-        /// <param name="pwd">密码</param>
+        /// <param name="dataSource">SQL Server数据源（IP地址）.</param>
+        /// <param name="database">库名称.</param>
+        /// <param name="usr">用户名.</param>
+        /// <param name="pwd">密码.</param>
         public void Open(string dataSource, string database, string usr, string pwd)
         {
-            base.DataSource = dataSource;
+            this.DataSource = dataSource;
             this.database = database;
             this.username = usr;
             this.password = pwd;
             this.Open();
         }
-        #endregion
 
-        #region public override void Open()
         /// <summary>
-        /// 打开数据库连接
+        /// 打开数据库连接.
         /// </summary>
         public override void Open()
         {
             string connstr = string.Empty;
-            connstr += "server=" + base.DataSource + ";";
+            connstr += "server=" + this.DataSource + ";";
             connstr += "database=" + this.database + ";";
-            connstr += "uid="+this.username+";";
+            connstr += "uid=" + this.username + ";";
             connstr += "pwd=" + this.password;
-            base.ConnString = connstr;
+            this.ConnString = connstr;
             this.OpenByConnString();
         }
-        #endregion
 
-        #region public override void OpenByConnString()
         /// <summary>
-        /// 使用数据库连接字符串打开数据库
+        /// 使用数据库连接字符串打开数据库.
         /// </summary>
         public override void OpenByConnString()
         {
-            _conn = new SqlConnection();
-            _conn.ConnectionString = base.ConnString;
-            _conn.Open();
+            this.conn = new SqlConnection();
+            this.conn.ConnectionString = this.ConnString;
+            this.conn.Open();
         }
-        #endregion
 
-        #region public override void Close()
         /// <summary>
-        /// 关闭SQL连接
+        /// 关闭SQL连接.
         /// </summary>
         public override void Close()
         {
             try
             {
-                _conn.Close();
-                _conn.Dispose();
-                _conn = null;
+                this.conn.Close();
+                this.conn.Dispose();
+                this.conn = null;
             }
-            catch
+            catch (Exception)
             {
-
+                throw;
             }
         }
-        #endregion
 
-        //--end----连接数据库操作--
-
-        //--begin--访问数据库操作--
-
-        #region  public override int Exec(string SQLCmd)
         /// <summary>
-        /// 执行SQL语句
+        /// 执行SQL语句.
         /// </summary>
-        /// <param name="SQLCmd">SQL语句</param>
-        /// <returns>受影响的行数</returns>
-        public override int Exec(string SQLCmd)
+        /// <param name="sQLCmd">SQL语句.</param>
+        /// <returns>受影响的行数.</returns>
+        public override int Exec(string sQLCmd)
         {
-            SqlCommand cmd = new SqlCommand(SQLCmd, _conn);
+            SqlCommand cmd = new SqlCommand(sQLCmd, conn);
             return cmd.ExecuteNonQuery();
         }
 
-        #endregion
-
-        #region public override DataTable Select(string SQLCmd)
         /// <summary>
-        /// 执行SQL语句，将响应的数据填充到DataTable中，不能进行更新操作
+        /// 执行SQL语句，将响应的数据填充到DataTable中，不能进行更新操作.
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <returns></returns>
-        public override DataTable Select(string SQLCmd)
+        /// <param name="sQLCmd">some param.</param>
+        /// <returns>some return.</returns>
+        public override DataTable SelectDataTable(string sQLCmd)
         {
-            execNum++;
+            this.ExecNum++;
             SqlDataAdapter da;
             DataTable dt = new DataTable();
-            da = new SqlDataAdapter(SQLCmd, _conn);
+            da = new SqlDataAdapter(sQLCmd, conn);
             da.Fill(dt);
             da.Dispose();
-            //DecideRelease();
+
+            // DecideRelease();
             return dt;
         }
-        #endregion
 
-        #region public override DataTable Select(string SQLCmd, string srcTalbe, int startRecord, int maxRecord)
         /// <summary>
-        /// 选择一定范围记录的Select语句
+        /// 选择一定范围记录的Select语句.
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <param name="srcTalbe"></param>
-        /// <param name="startRecord"></param>
-        /// <param name="maxRecord"></param>
-        /// <returns></returns>
-        public override DataTable Select(string SQLCmd, string srcTalbe, int startRecord, int maxRecord)
+        /// <param name="sQLCmd">some param.</param>
+        /// <param name="srcTalbe">srcTable param.</param>
+        /// <param name="startRecord">startRecord param.</param>
+        /// <param name="maxRecord">max record param.</param>
+        /// <returns>some return.</returns>
+        public override DataTable SelectDataTable(string sQLCmd, string srcTalbe, int startRecord, int maxRecord)
         {
-            execNum++;
+            this.ExecNum++;
             SqlDataAdapter da;
-            DataTable dt = new DataTable();
             DataSet ds = new DataSet();
-            da = new SqlDataAdapter(SQLCmd, _conn);
+            da = new SqlDataAdapter(sQLCmd, conn);
             da.Fill(ds, startRecord, maxRecord, srcTalbe);
-            dt = ds.Tables[0];
+            DataTable dt = ds.Tables[0];
             da.Dispose();
-            //DecideRelease();
+
+            // DecideRelease();
             return dt;
         }
-        #endregion
 
-        #region public override DataTable SelectPage(string SQLCmd, string srcTalbe, int pageSize, int pageID)
         /// <summary>
-        /// 实现分页的Select
+        /// 实现分页的Select.
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <param name="srcTalbe"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="pageID"></param>
-        /// <returns></returns>
-        public override DataTable SelectPage(string SQLCmd, string srcTalbe, int pageSize, int pageID)
+        /// <param name="sQLCmd">some param.</param>
+        /// <param name="srcTalbe">srcTable param.</param>
+        /// <param name="pageSize">startRecord param.</param>
+        /// <param name="pageID">max record param.</param>
+        /// <returns>some return.</returns>
+        public override DataTable SelectPage(string sQLCmd, string srcTalbe, int pageSize, int pageID)
         {
-            if (pageID == 0) pageID = 1;
-            return Select(SQLCmd, srcTalbe, pageSize * (pageID - 1), pageSize);
+            if (pageID == 0)
+            {
+                pageID = 1;
+            }
+
+            return this.SelectDataTable(sQLCmd, srcTalbe, pageSize * (pageID - 1), pageSize);
         }
-        #endregion
 
-        #region public override bool Delete(string SQLCmd)
         /// <summary>
-        /// 执行删除操作的SQL语句
+        /// 执行删除操作的SQL语句.
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <returns></returns>
-        public override bool Delete(string SQLCmd)
+        /// <param name="sQLCmd">some param.</param>
+        /// <returns>some return.</returns>
+        public override bool Delete(string sQLCmd)
         {
-            if (SQLCmd.Substring(0, 6).ToLower() != "delete") return false;
-            execNum++;
+            if (sQLCmd?.Substring(0, 6).ToLower() != "delete")
+            {
+                return false;
+            }
+
+            this.ExecNum++;
             SqlCommand cmd;
-            cmd = new SqlCommand(SQLCmd, _conn);
+            cmd = new SqlCommand(sQLCmd, conn);
             cmd.ExecuteNonQuery();
-            //DecideRelease();
+
+            // DecideRelease();
             return true;
         }
-        #endregion
 
-        //--end----访问数据库操作--
-
-        //--begin--更新器操作--
-
-        #region  public override DataManager.DataUpdater AllocateDataUpdater()
         /// <summary>
-        /// 分配一个新的SQL更新器
+        /// 分配一个新的SQL更新器.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>some return.</returns>
         public override DataUpdater AllocateDataUpdater()
         {
-            int id = lastUpdaterId++;
+            int id = this.lastUpdaterId++;
             SQLUpdater updater = new SQLUpdater(id, this);
-            base.dataUpdaterColl.Add(id, updater);
+            this.DataUpdaterColl.Add(id, updater);
             return updater;
         }
-        #endregion
-
-        //--end----更新器操作--
-
-
     }
 }
