@@ -7,13 +7,12 @@
  * * 内容摘要：
  * *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
+
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace codest.Encode
+namespace Codest.Encode
 {
     /// <summary>
     /// 实现数据的DES加密解密
@@ -78,11 +77,11 @@ namespace codest.Encode
         /// <summary>
         /// 加密数据
         /// </summary>
-        /// <param name="srcData">要加密的字符串</param>
+        /// <param name="sourceData">要加密的字符串</param>
         /// <returns>加密过的数据</returns>
-        public string Encrypt(string srcData)
+        public string Encrypt(string sourceData)
         {
-            byte[] inputByteArray = Encoding.ASCII.GetBytes(srcData);
+            byte[] inputByteArray = Encoding.ASCII.GetBytes(sourceData);
             byte[] outputByteArray = Encrypt(inputByteArray);
             return outputByteArray == null ? string.Empty : ASCIIEncoding.ASCII.GetString(outputByteArray);
         }
@@ -92,21 +91,21 @@ namespace codest.Encode
         /// <summary>
         /// 加密数据
         /// </summary>
-        /// <param name="srcData">要加密的数据流</param>
+        /// <param name="sourceData">要加密的数据流</param>
         /// <returns>加密过的数据</returns>
-        public byte[] Encrypt(byte[] srcData)
+        public byte[] Encrypt(byte[] sourceData)
         {
             try
             {
                 byte[] rgbKey = Encoding.ASCII.GetBytes(encryptKey.Substring(0, 8));
                 byte[] rgbIV = keys;
-                byte[] inputByteArray = srcData;
-                DESCryptoServiceProvider dCSP = new DESCryptoServiceProvider();
-                MemoryStream mStream = new MemoryStream();
-                CryptoStream cStream = new CryptoStream(mStream, dCSP.CreateEncryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
-                cStream.Write(inputByteArray, 0, inputByteArray.Length);
-                cStream.FlushFinalBlock();
-                return mStream.ToArray();
+                byte[] inputByteArray = sourceData;
+                DESCryptoServiceProvider desCryptoServiceProvider = new DESCryptoServiceProvider();
+                MemoryStream memoryStream = new MemoryStream();
+                CryptoStream cryptoStream = new CryptoStream(memoryStream, desCryptoServiceProvider.CreateEncryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
+                cryptoStream.Write(inputByteArray, 0, inputByteArray.Length);
+                cryptoStream.FlushFinalBlock();
+                return memoryStream.ToArray();
             }
             catch
             {
@@ -119,11 +118,11 @@ namespace codest.Encode
         /// <summary>
         /// 解密数据
         /// </summary>
-        /// <param name="srcData">需要解密的数据</param>
+        /// <param name="sourceData">需要解密的数据</param>
         /// <returns>解密后的数据</returns>
-        public string Decrypt(string srcData)
+        public string Decrypt(string sourceData)
         {
-            byte[] inputByteArray = Encoding.ASCII.GetBytes(srcData);
+            byte[] inputByteArray = Encoding.ASCII.GetBytes(sourceData);
             byte[] outputByteArray = Decrypt(inputByteArray);
             return outputByteArray == null ? string.Empty : ASCIIEncoding.ASCII.GetString(outputByteArray);
         }
@@ -133,21 +132,21 @@ namespace codest.Encode
         /// <summary>
         /// 解密数据
         /// </summary>
-        /// <param name="srcData">需要解密的数据</param>
+        /// <param name="sourceData">需要解密的数据</param>
         /// <returns>解密后的数据</returns>
-        public byte[] Decrypt(byte[] srcData)
+        public byte[] Decrypt(byte[] sourceData)
         {
             try
             {
                 byte[] rgbKey = Encoding.ASCII.GetBytes(encryptKey);
                 byte[] rgbIV = keys;
-                byte[] inputByteArray = srcData;
-                DESCryptoServiceProvider DCSP = new DESCryptoServiceProvider();
-                MemoryStream mStream = new MemoryStream();
-                CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
-                cStream.Write(inputByteArray, 0, inputByteArray.Length);
-                cStream.FlushFinalBlock();
-                return mStream.ToArray();
+                byte[] inputByteArray = sourceData;
+                DESCryptoServiceProvider desCryptoServiceProvider = new DESCryptoServiceProvider();
+                MemoryStream memoryStream = new MemoryStream();
+                CryptoStream cryptoStream = new CryptoStream(memoryStream, desCryptoServiceProvider.CreateDecryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
+                cryptoStream.Write(inputByteArray, 0, inputByteArray.Length);
+                cryptoStream.FlushFinalBlock();
+                return memoryStream.ToArray();
             }
             catch
             {

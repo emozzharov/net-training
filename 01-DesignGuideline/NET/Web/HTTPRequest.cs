@@ -7,13 +7,11 @@
  * * 内容摘要：
  * *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.IO;
 
-namespace codest.Net.Web
+namespace Codest.Net.Web
 {
     /// <summary>
     /// 发起HTTP请求并获得响应结果的类
@@ -122,10 +120,10 @@ namespace codest.Net.Web
 
             WebResponse webResponse = httpRequest.GetResponse();
             Stream stream = webResponse.GetResponseStream();
-            Encoding encode = System.Text.Encoding.GetEncoding("gb2312");
-            StreamReader readStream = new StreamReader(stream, encode);
-            result = readStream.ReadToEnd();
-            readStream.Close();
+            Encoding encode = Encoding.GetEncoding("gb2312");
+            StreamReader streamReader = new StreamReader(stream, encode);
+            result = streamReader.ReadToEnd();
+            streamReader.Close();
             stream.Close();
 
             return result;
@@ -156,10 +154,10 @@ namespace codest.Net.Web
             streamWriter.Close();
             WebResponse webResponse = httpRequest.GetResponse();
             Stream stream = webResponse.GetResponseStream();
-            Encoding encode = System.Text.Encoding.GetEncoding("gb2312");
-            StreamReader readStream = new StreamReader(stream, encode);
-            result = readStream.ReadToEnd();
-            readStream.Close();
+            Encoding encode = Encoding.GetEncoding("gb2312");
+            StreamReader streamReader = new StreamReader(stream, encode);
+            result = streamReader.ReadToEnd();
+            streamReader.Close();
             stream.Close();
 
             return result;

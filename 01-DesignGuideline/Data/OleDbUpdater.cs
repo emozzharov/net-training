@@ -8,13 +8,11 @@
  * *******************************************************************************/
 
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using System.Data;
 using System.Data.OleDb;
 
-namespace codest.Data
+namespace Codest.Data
 {
     /// <summary>
     /// OleDb数据库更新器
@@ -29,11 +27,11 @@ namespace codest.Data
         /// <summary>
         /// 当有更新操作时，用来保存数据信息
         /// </summary>
-        protected System.Data.OleDb.OleDbDataAdapter _dap;
+        protected OleDbDataAdapter dataAdapter;
         /// <summary>
         /// 当有更新操作时，配合OleDbDataAdapter使用
         /// </summary>
-        protected System.Data.OleDb.OleDbCommandBuilder _cmdb;
+        protected OleDbCommandBuilder commandBuilder;
         #endregion
 
         #region 接口封装
@@ -74,8 +72,8 @@ namespace codest.Data
             }
             //释放非托管资源
             dataManager = null;
-            _cmdb = null;
-            _dap = null;
+            commandBuilder = null;
+            dataAdapter = null;
             base.Dispose(disposing);
         }
         #endregion
@@ -87,16 +85,16 @@ namespace codest.Data
         /// 再调用Update(DataTable)进行更新操作
         /// 此后，对象将退出修改模式状态
         /// </summary>
-        /// <param name="SQLCmd">SQL语句</param>
+        /// <param name="sqlCommand">SQL语句</param>
         /// <returns>查询响应结果</returns>
-        public override DataTable SelectWithUpdate(string SQLCmd)
+        public override DataTable SelectWithUpdate(string sqlCommand)
         {
-            dataManager.execNum++;
-            System.Data.DataTable dt = new DataTable();
-            _dap = new OleDbDataAdapter(SQLCmd, dataManager._conn);
-            _cmdb = new OleDbCommandBuilder(_dap);
-            _dap.Fill(dt);
-            return dt;
+            dataManager.executionNumber++;
+            System.Data.DataTable dataTable = new DataTable();
+            dataAdapter = new OleDbDataAdapter(sqlCommand, dataManager.connection);
+            commandBuilder = new OleDbCommandBuilder(dataAdapter);
+            dataAdapter.Fill(dataTable);
+            return dataTable;
         }
 
         #endregion
@@ -108,16 +106,16 @@ namespace codest.Data
         /// 再调用Update(DataTable)进行更新操作
         /// 此后，对象将退出修改模式状态
         /// </summary>
-        /// <param name="TableName">需要插入的表名称</param>
+        /// <param name="tableName">需要插入的表名称</param>
         /// <returns>要插入目标表的结构</returns>
-        public override DataTable InsertMode(string TableName)
+        public override DataTable InsertMode(string tableName)
         {
-            dataManager.execNum++;
-            System.Data.DataTable dt = new DataTable();
-            _dap = new OleDbDataAdapter("select * from [" + TableName + "] where false", dataManager._conn);
-            _cmdb = new OleDbCommandBuilder(_dap);
-            _dap.Fill(dt);
-            return dt;
+            dataManager.executionNumber++;
+            DataTable dataTable = new DataTable();
+            dataAdapter = new OleDbDataAdapter("select * from [" + tableName + "] where false", dataManager.connection);
+            commandBuilder = new OleDbCommandBuilder(dataAdapter);
+            dataAdapter.Fill(dataTable);
+            return dataTable;
         }
 
         #endregion
@@ -126,12 +124,12 @@ namespace codest.Data
         /// <summary>
         /// 关闭修改模式,并根据DataTable进行更新操作
         /// </summary>
-        /// <param name="DataTableSource">要提交的数据表</param>
-        public override void Update(System.Data.DataTable DataTableSource)
+        /// <param name="dataTableSource">要提交的数据表</param>
+        public override void Update(DataTable dataTableSource)
         {
-            dataManager.execNum++;
-            _dap.Update(DataTableSource);
-            DecideRelease();
+            dataManager.executionNumber++;
+            dataAdapter.Update(dataTableSource);
+            ReleaseDecide();
         }
 
         #endregion

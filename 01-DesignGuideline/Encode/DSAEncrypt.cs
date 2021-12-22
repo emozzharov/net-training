@@ -12,10 +12,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
-using codest.Encode;
-using codest.Net;
+using Codest.Encode;
+using Codest.Net;
 
-namespace codest.Encode
+namespace Codest.Encode
 {
     /// <summary>
     /// 实现对数据进行DSA签名和验证
@@ -26,7 +26,7 @@ namespace codest.Encode
         /// <summary>
         /// 提供DSA算法
         /// </summary>
-        protected DSACryptoServiceProvider dsac;
+        protected DSACryptoServiceProvider dsaCryptoServiceProvider;
         #endregion
 
         #region 接口封装
@@ -39,14 +39,14 @@ namespace codest.Encode
         /// </summary>
         public DSAEncrypt()
         {
-            dsac = new DSACryptoServiceProvider();
+            dsaCryptoServiceProvider = new DSACryptoServiceProvider();
         }
         /// <summary>
         /// 析构函数
         /// </summary>
         ~DSAEncrypt()
         {
-            dsac.Clear();
+            dsaCryptoServiceProvider.Clear();
         }
         #endregion
 
@@ -54,12 +54,12 @@ namespace codest.Encode
         /// <summary>
         /// 对字符串数据进行签名
         /// </summary>
-        /// <param name="srcData">字符串数据</param>
+        /// <param name="sourceData">字符串数据</param>
         /// <returns>DSA签名</returns>
-        public byte[] GetSignature(string srcData)
+        public byte[] GetSignature(string sourceData)
         {
             byte[] binaryData;
-            binaryData = ASCIIEncoding.ASCII.GetBytes(srcData);
+            binaryData = ASCIIEncoding.ASCII.GetBytes(sourceData);
             return GetSignature(binaryData);
         }
         #endregion
@@ -68,11 +68,11 @@ namespace codest.Encode
         /// <summary>
         /// 对二进制数据进行签名
         /// </summary>
-        /// <param name="srcData">二进制数据</param>
+        /// <param name="sourceData">二进制数据</param>
         /// <returns>DSA签名</returns>
-        public byte[] GetSignature(byte[] srcData)
+        public byte[] GetSignature(byte[] sourceData)
         {
-            byte[] sign = dsac.SignData(srcData);
+            byte[] sign = dsaCryptoServiceProvider.SignData(sourceData);
             return sign;
         }
         #endregion
@@ -81,12 +81,12 @@ namespace codest.Encode
         /// <summary>
         /// 验证签名
         /// </summary>
-        /// <param name="srcData">需要验证的数据</param>
+        /// <param name="sourceData">需要验证的数据</param>
         /// <param name="signature">DSA签名</param>
         /// <returns>签名是否正确</returns>
-        public bool VerifySignature(byte[] srcData, byte[] signature)
+        public bool VerifySignature(byte[] sourceData, byte[] signature)
         {
-            bool ver = dsac.VerifyData(srcData, signature);
+            bool ver = dsaCryptoServiceProvider.VerifyData(sourceData, signature);
             return ver;
         }
         #endregion
@@ -95,15 +95,15 @@ namespace codest.Encode
         /// <summary>
         /// 验证签名
         /// </summary>
-        /// <param name="srcData">需要验证的数据</param>
+        /// <param name="sourceData">需要验证的数据</param>
         /// <param name="signature">DSA签名</param>
         /// <returns>签名是否正确</returns>
-        public bool VerifySignature(string srcData, byte[] signature)
+        public bool VerifySignature(string sourceData, byte[] signature)
         {
             byte[] binaryData;
-            binaryData = ASCIIEncoding.ASCII.GetBytes(srcData);
-            bool ver = dsac.VerifyData(binaryData, signature);
-            return ver;
+            binaryData = ASCIIEncoding.ASCII.GetBytes(sourceData);
+            bool isVerified = dsaCryptoServiceProvider.VerifyData(binaryData, signature);
+            return isVerified;
         }
         #endregion
     }

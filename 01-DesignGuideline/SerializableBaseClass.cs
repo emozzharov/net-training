@@ -8,14 +8,12 @@
  * *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Xml.Serialization;
-using System.ComponentModel;
 
-namespace codest
+namespace Codest
 {
     /// <summary>
     /// 为对象提供XML序列化、二进制序列化及反序列化功能
@@ -32,12 +30,12 @@ namespace codest
         /// <returns>序列化代码</returns>
         public virtual byte[] BinarySerialize()
         {
-            BinaryFormatter ser = new BinaryFormatter();
-            MemoryStream mStream = new MemoryStream();
-            ser.Serialize(mStream, this);
-            byte[] buf = mStream.ToArray();
-            mStream.Close();
-            return buf;
+            BinaryFormatter formatter = new BinaryFormatter();
+            MemoryStream memoryStream = new MemoryStream();
+            formatter.Serialize(memoryStream, this);
+            byte[] buffer = memoryStream.ToArray();
+            memoryStream.Close();
+            return buffer;
         }
         #endregion
 
@@ -49,11 +47,11 @@ namespace codest
         public virtual string XMLSerialize()
         {
             XmlSerializer xmlSerializer = new XmlSerializer(GetType());
-            MemoryStream stream = new MemoryStream();
-            xmlSerializer.Serialize(stream, this);
-            byte[] buf = stream.ToArray();
-            string xml = Encoding.ASCII.GetString(buf);
-            stream.Close();
+            MemoryStream memoryStream = new MemoryStream();
+            xmlSerializer.Serialize(memoryStream, this);
+            byte[] buffer = memoryStream.ToArray();
+            string xml = Encoding.ASCII.GetString(buffer);
+            memoryStream.Close();
             return xml;
         }
         #endregion
@@ -64,13 +62,13 @@ namespace codest
         /// </summary>
         /// <param name="binary">二进制序列化代码</param>
         /// <returns>反序列化后的对象，若失败则返回null</returns>
-        public static T DeSerialize(byte[] binary)
+        public static T Deserialize(byte[] binary)
         {
-            BinaryFormatter ser = new BinaryFormatter();
-            MemoryStream mStream = new MemoryStream(binary);
-            T o = (T)ser.Deserialize(mStream);
-            mStream.Close();
-            return o;
+            BinaryFormatter formatter = new BinaryFormatter();
+            MemoryStream memoryStream = new MemoryStream(binary);
+            T obj = (T)formatter.Deserialize(memoryStream);
+            memoryStream.Close();
+            return obj;
         }
         #endregion 
 
@@ -80,13 +78,13 @@ namespace codest
         /// </summary>
         /// <param name="xmlString">XML序列化代码</param>
         /// <returns>反序列化后的对象，若失败则返回null</returns>
-        public static T DeSerialize(string xmlString)
+        public static T Deserialize(string xmlString)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-            byte[] buf = Encoding.ASCII.GetBytes(xmlString);
-            MemoryStream stream = new MemoryStream(buf);
-            T o = (T)xmlSerializer.Deserialize(stream);
-            return o;
+            byte[] buffer = Encoding.ASCII.GetBytes(xmlString);
+            MemoryStream memoryStream = new MemoryStream(buffer);
+            T obj = (T)xmlSerializer.Deserialize(memoryStream);
+            return obj;
         }
         #endregion
 
@@ -97,11 +95,11 @@ namespace codest
         /// <param name="binary">序列化二进制数据</param>
         /// <param name="obj">返回对象引用</param>
         /// <returns>反序列化是否成功</returns>
-        public static bool TryDeSerialize(byte[] binary, ref T obj)
+        public static bool TryDeserialize(byte[] binary, ref T obj)
         {
             try
             {
-                obj = DeSerialize(binary);
+                obj = Deserialize(binary);
                 return true;
             }
             catch
@@ -118,11 +116,11 @@ namespace codest
         /// <param name="xmlString">序列化XML数据</param>
         /// <param name="obj">返回对象引用</param>
         /// <returns>反序列化是否成功</returns>
-        public static bool TryDeSerialize(string  xmlString, ref T obj)
+        public static bool TryDeserialize(string  xmlString, ref T obj)
         {
             try
             {
-                obj = DeSerialize(xmlString);
+                obj = Deserialize(xmlString);
                 return true;
             }
             catch

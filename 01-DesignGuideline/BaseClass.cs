@@ -8,16 +8,15 @@
  * *******************************************************************************/
 
 using System;
-using System.Text;
-using System.IO;
 using System.ComponentModel;
-namespace codest
+
+namespace Codest
 {
     #region public delegate void NullParamEvent();
     /// <summary>
     /// 无参数且无返回值的托管类型
     /// </summary>
-    public delegate void NullParamEvent();
+    public delegate void NullParamEventHandler();
     #endregion
 
     /// <summary>
@@ -36,22 +35,7 @@ namespace codest
         /// </summary>
         protected bool disposed = false;
         #endregion
-
-        #region 构造/析构函数
-        /// <summary>
-        /// BaseClass构造函数
-        /// </summary>
-        public BaseClass()
-        { 
-        }
-        /// <summary>
-        /// BaseClass析构函数
-        /// </summary>
-        ~BaseClass()
-        {
-            Dispose(false);
-        }
-        #endregion
+              
 
         #region protected virtual void Dispose(bool disposing)
         /// <summary>

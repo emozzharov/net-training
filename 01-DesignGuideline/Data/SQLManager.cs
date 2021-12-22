@@ -8,13 +8,10 @@
  * *******************************************************************************/
 
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace codest.Data
+namespace Codest.Data
 {
     /// <summary>
     /// SQL Server数据库管理器
@@ -25,7 +22,7 @@ namespace codest.Data
         private string database;
         private string username;
         private string password;
-        internal SqlConnection _conn; //数据库连接
+        internal SqlConnection connection; //数据库连接
         private int lastUpdaterId = 0;
         #endregion
 
@@ -70,14 +67,14 @@ namespace codest.Data
         /// </summary>
         /// <param name="dataSource">SQL Server数据源（IP地址）</param>
         /// <param name="database">库名称</param>
-        /// <param name="usr">用户名</param>
-        /// <param name="pwd">密码</param>
-        public SQLManager(string dataSource, string database, string usr, string pwd)
+        /// <param name="user">用户名</param>
+        /// <param name="password">密码</param>
+        public SQLManager(string dataSource, string database, string user, string password)
         {
             base.DataSource = dataSource;
             this.database = database;
-            this.username = usr;
-            this.password = pwd;
+            this.username = user;
+            this.password = password;
         }
         /// <summary>
         /// 析构函数
@@ -115,14 +112,14 @@ namespace codest.Data
         /// </summary>
         /// <param name="dataSource">SQL Server数据源（IP地址）</param>
         /// <param name="database">库名称</param>
-        /// <param name="usr">用户名</param>
-        /// <param name="pwd">密码</param>
-        public void Open(string dataSource, string database, string usr, string pwd)
+        /// <param name="user">用户名</param>
+        /// <param name="password">密码</param>
+        public void Open(string dataSource, string database, string user, string password)
         {
             base.DataSource = dataSource;
             this.database = database;
-            this.username = usr;
-            this.password = pwd;
+            this.username = user;
+            this.password = password;
             this.Open();
         }
         #endregion
@@ -133,13 +130,13 @@ namespace codest.Data
         /// </summary>
         public override void Open()
         {
-            string connstr = string.Empty;
-            connstr += "server=" + base.DataSource + ";";
-            connstr += "database=" + this.database + ";";
-            connstr += "uid="+this.username+";";
-            connstr += "pwd=" + this.password;
-            base.ConnString = connstr;
-            this.OpenByConnString();
+            string connectionString = string.Empty;
+            connectionString += "server=" + base.DataSource + ";";
+            connectionString += "database=" + this.database + ";";
+            connectionString += "uid="+this.username+";";
+            connectionString += "pwd=" + this.password;
+            base.ConnectionString = connectionString;
+            this.OpenByConnectionString();
         }
         #endregion
 
@@ -147,11 +144,11 @@ namespace codest.Data
         /// <summary>
         /// 使用数据库连接字符串打开数据库
         /// </summary>
-        public override void OpenByConnString()
+        public override void OpenByConnectionString()
         {
-            _conn = new SqlConnection();
-            _conn.ConnectionString = base.ConnString;
-            _conn.Open();
+            connection = new SqlConnection();
+            connection.ConnectionString = base.ConnectionString;
+            connection.Open();
         }
         #endregion
 
@@ -163,9 +160,9 @@ namespace codest.Data
         {
             try
             {
-                _conn.Close();
-                _conn.Dispose();
-                _conn = null;
+                connection.Close();
+                connection.Dispose();
+                connection = null;
             }
             catch
             {
@@ -182,11 +179,11 @@ namespace codest.Data
         /// <summary>
         /// 执行SQL语句
         /// </summary>
-        /// <param name="SQLCmd">SQL语句</param>
+        /// <param name="sqlCommand">SQL语句</param>
         /// <returns>受影响的行数</returns>
-        public override int Exec(string SQLCmd)
+        public override int Execute(string sqlCommand)
         {
-            SqlCommand cmd = new SqlCommand(SQLCmd, _conn);
+            SqlCommand cmd = new SqlCommand(sqlCommand, connection);
             return cmd.ExecuteNonQuery();
         }
 
@@ -196,16 +193,16 @@ namespace codest.Data
         /// <summary>
         /// 执行SQL语句，将响应的数据填充到DataTable中，不能进行更新操作
         /// </summary>
-        /// <param name="SQLCmd"></param>
+        /// <param name="sqlCommand"></param>
         /// <returns></returns>
-        public override DataTable Select(string SQLCmd)
+        public override DataTable Select(string sqlCommand)
         {
-            execNum++;
-            SqlDataAdapter da;
+            executionNumber++;
+            SqlDataAdapter dataAdapter;
             DataTable dt = new DataTable();
-            da = new SqlDataAdapter(SQLCmd, _conn);
-            da.Fill(dt);
-            da.Dispose();
+            dataAdapter = new SqlDataAdapter(sqlCommand, connection);
+            dataAdapter.Fill(dt);
+            dataAdapter.Dispose();
             //DecideRelease();
             return dt;
         }
@@ -215,23 +212,23 @@ namespace codest.Data
         /// <summary>
         /// 选择一定范围记录的Select语句
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <param name="srcTalbe"></param>
+        /// <param name="sqlCommand"></param>
+        /// <param name="sourceTable"></param>
         /// <param name="startRecord"></param>
-        /// <param name="maxRecord"></param>
+        /// <param name="maxRecords"></param>
         /// <returns></returns>
-        public override DataTable Select(string SQLCmd, string srcTalbe, int startRecord, int maxRecord)
+        public override DataTable Select(string sqlCommand, string sourceTable, int startRecord, int maxRecords)
         {
-            execNum++;
-            SqlDataAdapter da;
-            DataTable dt = new DataTable();
-            DataSet ds = new DataSet();
-            da = new SqlDataAdapter(SQLCmd, _conn);
-            da.Fill(ds, startRecord, maxRecord, srcTalbe);
-            dt = ds.Tables[0];
-            da.Dispose();
+            executionNumber++;
+            SqlDataAdapter dataAdapter;
+            DataTable dataTable = new DataTable();
+            DataSet dataSet = new DataSet();
+            dataAdapter = new SqlDataAdapter(sqlCommand, connection);
+            dataAdapter.Fill(dataSet, startRecord, maxRecords, sourceTable);
+            dataTable = dataSet.Tables[0];
+            dataAdapter.Dispose();
             //DecideRelease();
-            return dt;
+            return dataTable;
         }
         #endregion
 
@@ -239,15 +236,15 @@ namespace codest.Data
         /// <summary>
         /// 实现分页的Select
         /// </summary>
-        /// <param name="SQLCmd"></param>
-        /// <param name="srcTalbe"></param>
+        /// <param name="sqlCommand"></param>
+        /// <param name="sourceTable"></param>
         /// <param name="pageSize"></param>
-        /// <param name="pageID"></param>
+        /// <param name="pageId"></param>
         /// <returns></returns>
-        public override DataTable SelectPage(string SQLCmd, string srcTalbe, int pageSize, int pageID)
+        public override DataTable SelectPage(string sqlCommand, string sourceTable, int pageSize, int pageId)
         {
-            if (pageID == 0) pageID = 1;
-            return Select(SQLCmd, srcTalbe, pageSize * (pageID - 1), pageSize);
+            if (pageId == 0) pageId = 1;
+            return Select(sqlCommand, sourceTable, pageSize * (pageId - 1), pageSize);
         }
         #endregion
 
@@ -255,15 +252,15 @@ namespace codest.Data
         /// <summary>
         /// 执行删除操作的SQL语句
         /// </summary>
-        /// <param name="SQLCmd"></param>
+        /// <param name="sqlCommand"></param>
         /// <returns></returns>
-        public override bool Delete(string SQLCmd)
+        public override bool Delete(string sqlCommand)
         {
-            if (SQLCmd.Substring(0, 6).ToLower() != "delete") return false;
-            execNum++;
-            SqlCommand cmd;
-            cmd = new SqlCommand(SQLCmd, _conn);
-            cmd.ExecuteNonQuery();
+            if (sqlCommand.Substring(0, 6).ToLower() != "delete") return false;
+            executionNumber++;
+            SqlCommand command;
+            command = new SqlCommand(sqlCommand, connection);
+            command.ExecuteNonQuery();
             //DecideRelease();
             return true;
         }
@@ -282,7 +279,7 @@ namespace codest.Data
         {
             int id = lastUpdaterId++;
             SQLUpdater updater = new SQLUpdater(id, this);
-            base.dataUpdaterColl.Add(id, updater);
+            base.dataUpdaterCollection.Add(id, updater);
             return updater;
         }
         #endregion
