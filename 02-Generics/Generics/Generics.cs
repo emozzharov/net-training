@@ -31,7 +31,6 @@ namespace Task.Generics {
             {
 				return null;
             }
-			
 			return string.Join(ListSeparator.ToString(), list);
 		}
 
