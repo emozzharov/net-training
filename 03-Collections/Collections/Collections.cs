@@ -29,8 +29,31 @@ namespace Collections.Tasks {
         ///   12 => { 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144 }
         /// </example>
         public static IEnumerable<int> GetFibonacciSequence(int count) {
-            // TODO : Implement Fibonacci sequence generator
-            throw new NotImplementedException();
+            List<int> res = new List<int>();
+
+            if (count < 0)
+            {
+                throw new ArgumentException();
+            }
+            
+            if (count == 0)
+            {
+                return res;
+            }
+
+            int initial = 0;
+            int next = 1;
+            int temp;
+            res.Add(next);
+            for (int i = 1; i < count; i++)
+            {
+                temp = initial;
+                initial = next;
+                next += temp;
+                res.Add(next);
+            }
+
+            return res;
         }
 
         /// <summary>
