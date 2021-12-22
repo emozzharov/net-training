@@ -7,141 +7,121 @@
  * * 内容摘要：
  * *******************************************************************************/
 
-
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-namespace codest.Data
+
+namespace Codest.Data
 {
     /// <summary>
-    /// SQL Server操作数据库更新器
+    /// SQL Server操作数据库更新器.
     /// </summary>
     public class SQLUpdater : DataUpdater
     {
-        #region 成员变量
         /// <summary>
-        /// 当前更新器所使用的数据库管理器
+        /// 当前更新器所使用的数据库管理器.
         /// </summary>
-        protected SQLManager dataManager;
-        /// <summary>
-        /// 当有更新操作时，用来保存数据信息
-        /// </summary>
-        protected SqlDataAdapter _dap; 
-        /// <summary>
-        /// 当有更新操作时，配合DataAdapter使用
-        /// </summary>
-        protected SqlCommandBuilder _cmdb;
-        #endregion
+        private SQLManager dataManager;
 
-        #region 接口封装
-
-        #endregion
-
-        #region 构造/析构函数
         /// <summary>
-        /// 构造函数
+        /// 当有更新操作时，用来保存数据信息.
         /// </summary>
-        /// <param name="id">容器中唯一的ID</param>
-        /// <param name="manager">数据库管理器</param>
+        private SqlDataAdapter dap;
+
+        /// <summary>
+        /// 当有更新操作时，配合DataAdapter使用.
+        /// </summary>
+        private SqlCommandBuilder cmdb;
+
+        /// <summary>
+        /// 构造函数.
+        /// </summary>
+        /// <param name="id">容器中唯一的ID.</param>
+        /// <param name="manager">数据库管理器.</param>
         public SQLUpdater(int id, SQLManager manager)
             : base(id)
         {
-            dataManager = manager;
+            this.dataManager = manager;
         }
-        /// <summary>
-        /// 析构函数
-        /// </summary>
-        ~SQLUpdater()
-        {
-            this.Release();
-        }
-        #endregion
 
-        #region  protected override void Dispose(bool disposing)
         /// <summary>
-        /// 释放由当前对象控制的所有资源
+        /// 释放由当前对象控制的所有资源.
         /// </summary>
-        /// <param name="disposing">显式调用</param>
+        /// <param name="disposing">显式调用.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposed) return;
+            if (this.disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
-                //释放托管资源
+                this.dap.Dispose();
+                this.cmdb.Dispose();
+                // 释放托管资源
             }
-            //释放非托管资源
-            dataManager = null;
-            _cmdb = null;
-            _dap = null;
+
+            // 释放非托管资源
+            this.dataManager = null;
+            this.cmdb = null;
+            this.dap = null;
             base.Dispose(disposing);
         }
-        #endregion
 
-        #region public override DataTable SelectWithUpdate(string SQLCmd)
         /// <summary>
         /// 使对象将进入修改模式状态
         /// 用户可以修改返回结果，包括删除、修改和增加行
         /// 再调用Update(DataTable)进行更新操作
-        /// 此后，对象将退出修改模式状态
+        /// 此后，对象将退出修改模式状态.
         /// </summary>
-        /// <param name="SQLCmd">SQL语句</param>
-        /// <returns>查询响应结果</returns>
-        public override DataTable SelectWithUpdate(string SQLCmd)
+        /// <param name="sQLCmd">SQL语句.</param>
+        /// <returns>查询响应结果.</returns>
+        public override DataTable SelectWithUpdate(string sQLCmd)
         {
-            dataManager.execNum++;
+            this.dataManager.ExecNum++;
             System.Data.DataTable dt = new DataTable();
-            _dap = new SqlDataAdapter(SQLCmd, dataManager._conn);
-            _cmdb = new SqlCommandBuilder(_dap);
-            _dap.Fill(dt);
+            this.dap = new SqlDataAdapter(sQLCmd, this.dataManager.Conn);
+            this.cmdb = new SqlCommandBuilder(this.dap);
+            this.dap.Fill(dt);
             return dt;
         }
-        #endregion
 
-        #region public override DataTable InsertMode(string TableName)
         /// <summary>
         /// 使对象进入修改模式
         /// 用户可以在返回表结构的DataTable中添加数据
         /// 再调用Update(DataTable)进行更新操作
-        /// 此后，对象将退出修改模式状态
+        /// 此后，对象将退出修改模式状态.
         /// </summary>
-        /// <param name="TableName">需要插入的表名称</param>
-        /// <returns>要插入目标表的结构</returns>
-        public override DataTable InsertMode(string TableName)
+        /// <param name="tableName">需要插入的表名称.</param>
+        /// <returns>要插入目标表的结构.</returns>
+        public override DataTable InsertMode(string tableName)
         {
-            dataManager.execNum++;
+            this.dataManager.ExecNum++;
             System.Data.DataTable dt = new DataTable();
-            _dap = new SqlDataAdapter("select * from [" + TableName + "] where 1=0", dataManager._conn);
-            _cmdb = new SqlCommandBuilder(_dap);
-            _dap.Fill(dt);
+            this.dap = new SqlDataAdapter("select * from [" + tableName + "] where 1=0", this.dataManager.Conn);
+            this.cmdb = new SqlCommandBuilder(this.dap);
+            this.dap.Fill(dt);
             return dt;
         }
-        #endregion
-
-        #region public override void Update(System.Data.DataTable DataTableSource)
 
         /// <summary>
-        /// 关闭修改模式,并根据DataTable进行更新操作
+        /// 关闭修改模式,并根据DataTable进行更新操作.
         /// </summary>
-        /// <param name="DataTableSource">要提交的数据表</param>
-        public override void Update(System.Data.DataTable DataTableSource)
+        /// <param name="dataTableSource">要提交的数据表.</param>
+        public override void Update(System.Data.DataTable dataTableSource)
         {
-            dataManager.execNum++;
-            _dap.Update(DataTableSource);
-            DecideRelease();
+            this.dataManager.ExecNum++;
+            this.dap.Update(dataTableSource);
+            this.DecideRelease();
         }
-        #endregion
 
-        #region  public override void Release()
         /// <summary>
         /// 释放当前更新器。
-        /// 如果AutoRelease=true，则调用Update()后会自动调用该方法。
+        /// 如果AutoRelease=true，则调用Update()后会自动调用该方法。.
         /// </summary>
         public override void Release()
         {
-            dataManager.ReleaseDataUpdater(this);
+            this.dataManager.ReleaseDataUpdater(this);
         }
-        #endregion
     }
 }
