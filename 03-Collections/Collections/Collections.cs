@@ -161,64 +161,37 @@ namespace Collections.Tasks {
 
             if (root.Children == null)
             {
-                T[] rr = new T[] { root.Data };
-                return rr;
+                return new T[] { root.Data };
             }
 
-            Queue<ITreeNode<T>> queue = new Queue<ITreeNode<T>>();
-            Stack<ITreeNode<T>> tempStack = new Stack<ITreeNode<T>>();
-            queue.Enqueue(root);
+            LinkedList<ITreeNode<T>> queue = new LinkedList<ITreeNode<T>>();
+            queue.AddLast(root);
 
-            while (queue.Count > 0 || tempStack.Count > 0)
+            while (queue.Count > 0)
             {
-                bool addFromStack = tempStack.Count != 0;
-                
-                ITreeNode<T> popped = tempStack.Count == 0 ? queue.Dequeue() : tempStack.Pop();
+                ITreeNode<T> picked = queue.First.Value;
+                queue.RemoveFirst();
 
-                
                 Array.Resize(ref res, res.Length + 1);
-                res[res.Length - 1] = popped.Data;
+                res[res.Length - 1] = picked.Data;
 
-                if (popped.Children != null)
+                if (picked.Children != null)
                 {
-                    foreach (var item in popped.Children)
+                    Stack<ITreeNode<T>> tempStack = new Stack<ITreeNode<T>>();
+                    
+                    foreach (var item in picked.Children)
                     {
                         tempStack.Push(item);
-                    } 
+                    }
+
+                    while (tempStack.Count > 0)
+                    {
+                        queue.AddFirst(tempStack.Pop());
+                    }
                 }
             }
 
-            //Array.Resize(ref res, res.Length + 1);
-            //res[res.Length - 1] = root.Data;
-
-            //GetTreeNodes(root);
-
             return res;
-
-            //ITreeNode<T> GetTreeNodes(ITreeNode<T> node)
-            //{
-            //    Array.Resize(ref res, res.Length + 1);
-            //    res[res.Length - 1] = node.Data;
-
-            //    if (node.Children != null)
-            //    {
-            //        foreach (var children in node.Children)
-            //        {
-            //            Array.Resize(ref res, res.Length + 1);
-            //            res[res.Length - 1] = children.Data;
-
-            //            if (children.Children != null)
-            //            {
-            //                foreach (var nestedChildren in children.Children)
-            //                {
-            //                    GetTreeNodes(nestedChildren);
-            //                }
-            //            }
-            //        }
-            //    }
-
-            //    return node;
-            //}
         }
 
         /// <summary>
