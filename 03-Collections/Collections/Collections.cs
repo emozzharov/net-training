@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace Collections.Tasks {
 
@@ -69,9 +70,62 @@ namespace Collections.Tasks {
         ///   {"TextReader","is","the","abstract","base","class","of","StreamReader","and","StringReader","which",...}
         /// </example>
         public static IEnumerable<string> Tokenize(TextReader reader) {
+            if (reader == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             char[] delimeters = new[] { ',', ' ', '.', '\t', '\n' };
-            // TODO : Implement the tokenizer
-            throw new NotImplementedException();
+
+            List<string> res = new List<string>();
+
+            StringBuilder temp = new StringBuilder();
+
+            while (true)
+            {
+                int charIndex = reader.Read();
+                if (charIndex == -1)
+                {
+                    if (temp.Length != 0)
+                    {
+                        res.Add(temp.ToString());
+                    }
+
+                    break;
+                }
+
+                char intermediate = (char)charIndex;
+                bool isDelimeter = IsDelimeter(intermediate);
+                if (isDelimeter && temp.Length != 0)
+                {
+                    res.Add(temp.ToString());
+                }
+
+                if (isDelimeter)
+                {
+                    temp.Clear();
+                }
+                else
+                {
+                    temp.Append(intermediate);
+                }
+            }
+            
+            
+            return res;
+
+            bool IsDelimeter(char charToCompare)
+            {
+                foreach (var delim in delimeters)
+                {
+                    if (charToCompare == delim)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
 
