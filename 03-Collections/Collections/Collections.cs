@@ -177,7 +177,15 @@ namespace Collections.Tasks
         public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count)
         {
             // TODO : Implement GenerateAllPermutations method
-            throw new NotImplementedException();
+            if (count > source.Length)
+            {
+                throw new ArgumentException($"{count} more then source length!");
+            }
+
+            var result = new IEnumerable<T>[count][];
+
+
+            return result;
         }
 
     }
