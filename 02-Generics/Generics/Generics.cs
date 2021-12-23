@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Task.Generics
 {
@@ -131,34 +132,44 @@ namespace Task.Generics
         {
             // TODO :SortTupleArray<T1, T2, T3>
             // HINT : Add required constraints to generic types
-            //var firstTuple = array[0];
-            //var secondTuple = array[1];
-            //var thirdTuple = array[2];
+            switch (sortedColumn)
+            {
+                case 0:
+                    if (ascending)
+                    {
+                        array = array.OrderBy(x => x.Item1).ToArray();
+                    }
+                    else
+                    {
+                        array = array.OrderByDescending(x => x.Item1).ToArray();
+                    }
+                    break;
 
-            //var oneVariableFirstTuple = firstTuple.Item1;
-            //var twoVariableFirstTuple = firstTuple.Item2;
-            //var threeVariableFirstTuple = firstTuple.Item3;
+                case 1:
+                    if (ascending)
+                    {
+                        array = array.OrderBy(x => x.Item2).ToArray();
+                    }
+                    else
+                    {
+                        array = array.OrderByDescending(x => x.Item2).ToArray();
+                    }
+                    break;
 
-            //var variableSecondTuple = secondTuple.Item1;
-            //var variableThirdTuple = thirdTuple.Item1;
+                case 2:
+                    if (ascending)
+                    {
+                        array = array.OrderBy(x => x.Item3).ToArray();
+                    }
+                    else
+                    {
+                        array = array.OrderByDescending(x => x.Item3).ToArray();
+                    }
+                    break;
 
-            //switch (sortedColumn)
-            //{
-            //    case 0:
-            //        firstTuple = (variableFirstTuple, twoVariableFirstTuple, threeVariableFirstTuple);
-            //        break;
-            //    case 1:
-            //        return secondTuple;
-            //    case 2:
-            //        return thirdTuple;
-
-            //    default: return 0;
-            //}
-
-
-
+                default: break;
+            }
         }
-
     }
 
     /// <summary>
@@ -174,13 +185,9 @@ namespace Task.Generics
 
         public static T Instance
         {
-            get
-            {
-                return Instance;
-            }
+            get { return Singleton<T>.Instance; }
         }
     }
-
 
 
     public static class FunctionExtentions
@@ -236,7 +243,9 @@ namespace Task.Generics
         public static Predicate<T> CombinePredicates<T>(Predicate<T>[] predicates)
         {
             // TODO : Implement CombinePredicates<T>
-            throw new NotImplementedException();
+            var result = predicates[0];
+
+            return result;
         }
 
     }
