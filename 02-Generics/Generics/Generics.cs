@@ -176,7 +176,6 @@ namespace Task.Generics
         {
             get
             {
-
                 return Instance;
             }
         }
