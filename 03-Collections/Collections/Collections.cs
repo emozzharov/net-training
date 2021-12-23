@@ -152,8 +152,73 @@ namespace Collections.Tasks {
         ///    result = { 1, 2, 3, 4, 5, 6, 7, 8 } 
         /// </example>
         public static IEnumerable<T> DepthTraversalTree<T>(ITreeNode<T> root) {
-            // TODO : Implement the tree depth traversal algorithm
-            throw new NotImplementedException(); 
+            T[] res = Array.Empty<T>();
+
+            if (root == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (root.Children == null)
+            {
+                T[] rr = new T[] { root.Data };
+                return rr;
+            }
+
+            Queue<ITreeNode<T>> queue = new Queue<ITreeNode<T>>();
+            Stack<ITreeNode<T>> tempStack = new Stack<ITreeNode<T>>();
+            queue.Enqueue(root);
+
+            while (queue.Count > 0 || tempStack.Count > 0)
+            {
+                bool addFromStack = tempStack.Count != 0;
+                
+                ITreeNode<T> popped = tempStack.Count == 0 ? queue.Dequeue() : tempStack.Pop();
+
+                
+                Array.Resize(ref res, res.Length + 1);
+                res[res.Length - 1] = popped.Data;
+
+                if (popped.Children != null)
+                {
+                    foreach (var item in popped.Children)
+                    {
+                        tempStack.Push(item);
+                    } 
+                }
+            }
+
+            //Array.Resize(ref res, res.Length + 1);
+            //res[res.Length - 1] = root.Data;
+
+            //GetTreeNodes(root);
+
+            return res;
+
+            //ITreeNode<T> GetTreeNodes(ITreeNode<T> node)
+            //{
+            //    Array.Resize(ref res, res.Length + 1);
+            //    res[res.Length - 1] = node.Data;
+
+            //    if (node.Children != null)
+            //    {
+            //        foreach (var children in node.Children)
+            //        {
+            //            Array.Resize(ref res, res.Length + 1);
+            //            res[res.Length - 1] = children.Data;
+
+            //            if (children.Children != null)
+            //            {
+            //                foreach (var nestedChildren in children.Children)
+            //                {
+            //                    GetTreeNodes(nestedChildren);
+            //                }
+            //            }
+            //        }
+            //    }
+
+            //    return node;
+            //}
         }
 
         /// <summary>
