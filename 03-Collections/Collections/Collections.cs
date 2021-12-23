@@ -87,9 +87,16 @@ namespace Collections.Tasks
         /// </example>
         public static IEnumerable<string> Tokenize(TextReader reader)
         {
+            if (reader is null)
+            {
+                throw new ArgumentNullException($"reader is null");
+            }
+
             char[] delimeters = new[] { ',', ' ', '.', '\t', '\n' };
             // TODO : Implement the tokenizer
-            throw new NotImplementedException();
+            var text = reader.ReadLine();
+            string[] tokenizer = text.Split(delimeters);
+            return tokenizer;
         }
 
 
