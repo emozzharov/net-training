@@ -200,7 +200,11 @@ namespace EnumerableTask
         public IEnumerable<T> PropagateItemsByPositionIndex<T>(IEnumerable<T> data)
         {
             // TODO : Implement PropagateItemsByPositionIndex
-            throw new NotImplementedException();
+            var list = data.ToList();
+
+            IEnumerable<T> result = list.Select(x => x);
+
+            return result;
         }
 
         /// <summary>Finds all used char in string sequence</summary>
@@ -729,7 +733,23 @@ namespace EnumerableTask
         public double GetAverageOfDoubleValues(IEnumerable<object> data)
         {
             // TODO : Implement GetAverageOfDoubleValues
-            throw new NotImplementedException();
+            if (data.Count() == 0)
+            {
+                return 0.0;
+            }
+
+            var list = data.ToList();
+
+            var temp = list.OfType<double>();
+
+            if (temp.Count() == 0)
+            {
+                return 0.0;
+            }
+
+            double average = list.OfType<double>().Average();
+
+            return average;
         }
 
     }
