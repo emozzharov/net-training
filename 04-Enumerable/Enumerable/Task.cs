@@ -147,7 +147,22 @@ namespace EnumerableTask
         public IEnumerable<string> GetPrefixItems(IEnumerable<string> data, string prefix)
         {
             // TODO : Implement GetPrefixItems
-            throw new NotImplementedException();
+            if (prefix is null)
+            {
+                throw new ArgumentNullException("prefix is null");
+            }
+
+            if (prefix.Length == 0)
+            {
+                IEnumerable<string> result1 = new string[] { };
+                return result1;
+            }
+
+            var list = data.ToList();
+
+            var result = list.Where(x => x.StartsWith(prefix.ToLower()));
+
+            return result;
         }
 
         /// <summary> Returns every second item from source sequence</summary>
