@@ -713,7 +713,21 @@ namespace EnumerableTask
         public IEnumerable<string> GetAllPairs(IEnumerable<string> boys, IEnumerable<string> girls)
         {
             // TODO : Implement GetAllPairs
-            throw new NotImplementedException();
+
+
+            var listBoys = boys.ToList();
+            var listGirls = girls.ToList();
+
+            if (listGirls.Count() == 0 || listBoys.Count() == 0)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            var pairs = from first in listBoys
+                        from second in listGirls
+                        select new[] { first + "+" + second };
+
+            return pairs.SelectMany(o => o);
         }
 
 
