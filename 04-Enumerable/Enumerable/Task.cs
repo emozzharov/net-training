@@ -56,7 +56,14 @@ namespace EnumerableTask
 
             var list = data.ToList();
 
-            IEnumerable<int> result = list.Select(x => x.Length);
+            IEnumerable<int> result = list.Select(x =>
+                                                 {
+                                                     if (x == null)
+                                                         return 0;
+                                                     else
+                                                         return
+                                                         x.Length;
+                                                 });
 
             return result;
         }
