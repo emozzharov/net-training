@@ -154,7 +154,7 @@ namespace EnumerableTask
 
             if (prefix.Length == 0)
             {
-                IEnumerable<string> result1 = new string[] { };
+                var result1 = data.ToList();
                 return result1;
             }
 
@@ -177,7 +177,11 @@ namespace EnumerableTask
         public IEnumerable<T> GetEvenItems<T>(IEnumerable<T> data)
         {
             // TODO : Implement GetEvenItems
-            throw new NotImplementedException();
+            var list = data.ToList();
+
+            var result = list.Where((x, y) => y % 2 != 0);
+
+            return result;
         }
 
         /// <summary> Propagate every item in sequence its position times</summary>
