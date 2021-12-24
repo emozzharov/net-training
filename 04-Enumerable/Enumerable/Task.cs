@@ -83,7 +83,7 @@ namespace EnumerableTask
             // TODO : Implement GetSquareSequence
             var list = data.ToList();
 
-            IEnumerable<long> result = list.Select(x => (long)(x * x));
+            IEnumerable<long> result = list.Select(x => x * (long)x);
 
             return result;
         }
