@@ -106,7 +106,26 @@ namespace EnumerableTask
         public IEnumerable<long> GetMovingSumSequence(IEnumerable<int> data)
         {
             // TODO : Implement GetMovingSumSequence
-            throw new NotImplementedException();
+            var list = data.ToList();
+
+            long sum = 0;
+
+            IEnumerable<long> result = list.Select((x, y) =>
+            {
+                if (y == 0)
+                {
+                    sum = x;
+                    return sum;
+                }
+                else
+                {
+                    sum += x;
+                    return sum;
+                }
+
+            });
+
+            return result;
         }
 
 
