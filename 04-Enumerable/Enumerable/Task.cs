@@ -25,12 +25,15 @@ namespace EnumerableTask
         public IEnumerable<string> GetUppercaseStrings(IEnumerable<string> data)
         {
             // TODO : Implement GetUppercaseStrings
-            if (data == null || data.GetEnumerator().MoveNext())
-            {
-                return data;
-            }
-
             var result = data.ToList();
+
+            foreach (var item in result)
+            {
+                if (string.IsNullOrEmpty(item))
+                {
+                    return data;
+                }
+            }
 
             result = result.ConvertAll(x => x.ToUpper());
 
@@ -71,7 +74,11 @@ namespace EnumerableTask
         public IEnumerable<long> GetSquareSequence(IEnumerable<int> data)
         {
             // TODO : Implement GetSquareSequence
-            return null;
+            var list = data.ToList();
+
+            IEnumerable<long> result = list.Select(x => (long)(x * x));
+
+            return result;
         }
 
         /// <summary>Transforms int sequence to its moving sum sequence, 
