@@ -300,7 +300,19 @@ namespace EnumerableTask
         public IEnumerable<int> Get3TopItems(IEnumerable<int> data)
         {
             // TODO : Implement Get3TopItems
-            throw new NotImplementedException();
+            if (data.Count() == 0)
+            {
+                return Enumerable.Empty<int>();
+            }
+
+            if (data.Count() < 3)
+            {
+                return data.Reverse();
+            }
+
+            var max1 = data.OrderByDescending(x => x).Take(3);
+
+            return max1;
         }
 
         /// <summary> Calculates the count of numbers that are greater then 10</summary>
