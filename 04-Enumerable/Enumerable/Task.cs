@@ -521,7 +521,14 @@ namespace EnumerableTask
         public int GetSumOfAllInts(object[] data)
         {
             // TODO : Implement GetSumOfAllInts
-            throw new NotImplementedException();
+            if (data.Length == 0)
+            {
+                return 0;
+            }
+
+            var result = data.OfType<int>();
+
+            return result.Count() == 0 ? 0 : result.Sum();
         }
 
 
