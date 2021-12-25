@@ -558,7 +558,18 @@ namespace EnumerableTask
         public int GetTotalStringsLength(IEnumerable<string> data)
         {
             // TODO : Implement GetTotalStringsLength
-            throw new NotImplementedException();
+            var listData = data.ToList();
+
+            var result = listData.Where(x => !string.IsNullOrEmpty(x));
+
+            string result1 = string.Empty;
+
+            foreach (var item in result)
+            {
+                result1 += item;
+            }
+
+            return result1.Length;
         }
 
         /// <summary> Determines whether sequence has null elements</summary>
