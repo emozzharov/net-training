@@ -633,7 +633,14 @@ namespace EnumerableTask
         public bool AreNumericListsEqual(IEnumerable<int> integers, IEnumerable<double> doubles)
         {
             // TODO : Implement AreNumericListsEqual
-            throw new NotImplementedException();
+            var listIntegers = integers.ToList();
+            var listDouble = doubles.ToList();
+
+            var list = listIntegers.Select(x => (double)x);
+
+            bool result = list.SequenceEqual(listDouble);
+
+            return result;
         }
 
         /// <summary>
