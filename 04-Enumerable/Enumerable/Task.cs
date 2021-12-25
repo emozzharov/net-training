@@ -261,7 +261,28 @@ namespace EnumerableTask
         public string GetStringOfSequence<T>(IEnumerable<T> data)
         {
             // TODO : Implement GetStringOfSequence
-            throw new NotImplementedException();
+            if (data.Count() == 0)
+            {
+                return string.Empty;
+            }
+
+            string result = string.Empty;
+
+            foreach (var item in data)
+            {
+                if (item == null)
+                {
+                    result += "null" + ",";
+                }
+                else
+                {
+                    result += item + ",";
+                }
+            }
+
+            var result1 = result.Remove(result.Length - 1, 1);
+
+            return result1;
         }
 
         /// <summary> Finds the 3 largest numbers from a sequence</summary>
