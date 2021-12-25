@@ -539,7 +539,14 @@ namespace EnumerableTask
         public IEnumerable<string> GetStringsOnly(object[] data)
         {
             // TODO : Implement GetStringsOnly
-            throw new NotImplementedException();
+            if (data.Length == 0)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            var result = data.OfType<string>();
+
+            return result;
         }
 
         /// <summary> Calculates the total length of strings</summary>
