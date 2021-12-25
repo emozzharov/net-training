@@ -672,7 +672,12 @@ namespace EnumerableTask
         public IEnumerable<int> GetSumOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
         {
             // TODO : Implement GetSumOfVectors
-            throw new NotImplementedException();
+            var listVector1 = vector1.ToList();
+            var listVector2 = vector2.ToList();
+
+            var sumVector = listVector1.Zip(listVector2, (first, second) => first + second);
+
+            return sumVector;
         }
 
         /// <summary>
