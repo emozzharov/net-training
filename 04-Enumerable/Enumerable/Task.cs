@@ -692,7 +692,12 @@ namespace EnumerableTask
         public int GetProductOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
         {
             // TODO : Implement GetProductOfVectors
-            throw new NotImplementedException();
+            var listVector1 = vector1.ToList();
+            var listVector2 = vector2.ToList();
+
+            var multipleVector = listVector1.Zip(listVector2, (first, second) => first * second);
+
+            return multipleVector.Sum();
         }
 
 
