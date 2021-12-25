@@ -467,8 +467,100 @@ namespace EnumerableTask
         public IEnumerable<string> SortDigitNamesByNumericOrder(IEnumerable<string> data)
         {
             // TODO : Implement SortDigitNamesByNumericOrder
+            if (data.Count() == 0)
+            {
+                return Enumerable.Empty<string>();
+            }
 
-            return null;
+            var listData = data.ToList();
+
+            List<string> listSort = TransformToNumber(listData);
+
+            return listSort;
+        }
+
+        private static List<string> TransformToNumber(List<string> listData)
+        {
+            List<string> listDataToNumber = new List<string>();
+            List<string> listSort = new List<string>();
+
+            foreach (var item in listData)
+            {
+                switch (item.ToString())
+                {
+                    case "one":
+                        listDataToNumber.Add("1");
+                        break;
+                    case "two":
+                        listDataToNumber.Add("2");
+                        break;
+                    case "three":
+                        listDataToNumber.Add("3");
+                        break;
+                    case "four":
+                        listDataToNumber.Add("4");
+                        break;
+                    case "five":
+                        listDataToNumber.Add("5");
+                        break;
+                    case "six":
+                        listDataToNumber.Add("6");
+                        break;
+                    case "seven":
+                        listDataToNumber.Add("7");
+                        break;
+                    case "eight":
+                        listDataToNumber.Add("8");
+                        break;
+                    case "nine":
+                        listDataToNumber.Add("9");
+                        break;
+                    default:
+                        listDataToNumber.Add("0");
+                        break;
+                }
+            }
+
+            listDataToNumber.Sort();
+
+            foreach (var item in listDataToNumber)
+            {
+                switch (item.ToString())
+                {
+                    case "1":
+                        listSort.Add("one");
+                        break;
+                    case "2":
+                        listSort.Add("two");
+                        break;
+                    case "3":
+                        listSort.Add("three");
+                        break;
+                    case "4":
+                        listSort.Add("four");
+                        break;
+                    case "5":
+                        listSort.Add("five");
+                        break;
+                    case "6":
+                        listSort.Add("six");
+                        break;
+                    case "7":
+                        listSort.Add("seven");
+                        break;
+                    case "8":
+                        listSort.Add("eight");
+                        break;
+                    case "9":
+                        listSort.Add("nine");
+                        break;
+                    default:
+                        listSort.Add("zero");
+                        break;
+                }
+            }
+
+            return listSort;
         }
 
         /// <summary> Combines numbers and fruits </summary>
