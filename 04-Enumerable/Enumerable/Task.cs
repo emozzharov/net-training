@@ -653,7 +653,25 @@ namespace EnumerableTask
         public string GetNextVersionFromList(IEnumerable<string> versions, string currentVersion)
         {
             // TODO : Implement GetNextVersionFromList
-            throw new NotImplementedException();
+            var listVersions = versions.ToList();
+
+            var result = listVersions.Select((x, y) =>
+            {
+                if (x == currentVersion)
+                {
+                    return listVersions[y + 1];
+                }
+                else
+                {
+                    return null;
+                }
+            })
+                .Where(x => x != null);
+
+            var result1 = result.Select(x => x).Where(x => x != null).ToList();
+
+
+            return result1.Count() > 0 ? result1.ToString() : null;
         }
 
         /// <summary>
