@@ -467,7 +467,8 @@ namespace EnumerableTask
         public IEnumerable<string> SortDigitNamesByNumericOrder(IEnumerable<string> data)
         {
             // TODO : Implement SortDigitNamesByNumericOrder
-            throw new NotImplementedException();
+
+            return null;
         }
 
         /// <summary> Combines numbers and fruits </summary>
@@ -486,7 +487,23 @@ namespace EnumerableTask
         public IEnumerable<string> CombineNumbersAndFruits(IEnumerable<string> numbers, IEnumerable<string> fruits)
         {
             // TODO : Implement CombinesNumbersAndFruits
-            throw new NotImplementedException();
+            if (numbers.Count() == 0 || fruits.Count() == 0)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            var listNumbers = numbers.ToList();
+            var listFruits = fruits.ToList();
+
+            List<string> list = new List<string>();
+
+            for (int i = 0; i < listNumbers.Count() && i < listFruits.Count(); i++)
+            {
+                list.Add(listNumbers[i] + " " + listFruits[i]);
+
+            }
+
+            return list;
         }
 
 
@@ -504,344 +521,345 @@ namespace EnumerableTask
         public IEnumerable<char> GetCommonChars(IEnumerable<string> data)
         {
             // TODO : Implement GetCommonChars
-            throw new NotImplementedException();
+
+            return null;
         }
 
-        /// <summary> Calculates sum of all integers from object array </summary>
-        /// <param name="data">source data</param>
-        /// <returns>
-        ///    Returns the sum of all inetegers from object array
-        /// </returns>
-        /// <example>
-        ///    { 1, true, "a","b", false, 1 } => 2
-        ///    { true, false } => 0
-        ///    { 10, "ten", 10 } => 20 
-        ///    { } => 0
-        /// </example>
-        public int GetSumOfAllInts(object[] data)
+    /// <summary> Calculates sum of all integers from object array </summary>
+    /// <param name="data">source data</param>
+    /// <returns>
+    ///    Returns the sum of all inetegers from object array
+    /// </returns>
+    /// <example>
+    ///    { 1, true, "a","b", false, 1 } => 2
+    ///    { true, false } => 0
+    ///    { 10, "ten", 10 } => 20 
+    ///    { } => 0
+    /// </example>
+    public int GetSumOfAllInts(object[] data)
+    {
+        // TODO : Implement GetSumOfAllInts
+        if (data.Length == 0)
         {
-            // TODO : Implement GetSumOfAllInts
-            if (data.Length == 0)
-            {
-                return 0;
-            }
-
-            var result = data.OfType<int>();
-
-            return result.Count() == 0 ? 0 : result.Sum();
+            return 0;
         }
 
+        var result = data.OfType<int>();
 
-        /// <summary> Finds all strings in array of objects</summary>
-        /// <param name="data">source array</param>
-        /// <returns>
-        ///   Return subsequence of string from source array of objects
-        /// </returns>
-        /// <example>
-        ///   { "a", 1, 2, null, "b", true, 4.5, "c" } => { "a", "b", "c" }
-        ///   { "a", "b", "c" } => { "a", "b", "c" }
-        ///   { 1,2,3, true, false } => { }
-        ///   { } => { }
-        /// </example>
-        public IEnumerable<string> GetStringsOnly(object[] data)
-        {
-            // TODO : Implement GetStringsOnly
-            if (data.Length == 0)
-            {
-                return Enumerable.Empty<string>();
-            }
-
-            var result = data.OfType<string>();
-
-            return result;
-        }
-
-        /// <summary> Calculates the total length of strings</summary>
-        /// <param name="data">source string sequence</param>
-        /// <returns>
-        ///   Return sum of length of all strings
-        /// </returns>
-        /// <example>
-        ///   {"a","b","c","d","e","f"} => 6
-        ///   { "a","aa","aaa" } => 6
-        ///   { "1234567890" } => 10
-        ///   { null, "", "a" } => 1
-        ///   { null } => 0
-        ///   { } => 0
-        /// </example>
-        public int GetTotalStringsLength(IEnumerable<string> data)
-        {
-            // TODO : Implement GetTotalStringsLength
-            var listData = data.ToList();
-
-            var result = listData.Where(x => !string.IsNullOrEmpty(x));
-
-            string result1 = string.Empty;
-
-            foreach (var item in result)
-            {
-                result1 += item;
-            }
-
-            return result1.Length;
-        }
-
-        /// <summary> Determines whether sequence has null elements</summary>
-        /// <param name="data">source string sequence</param>
-        /// <returns>
-        ///  true if the source sequence contains null elements; otherwise, false.
-        /// </returns>
-        /// <example>
-        ///   { "a", "b", "c", "d", "e", "f" } => false
-        ///   { "a", "aa", "aaa", null } => true
-        ///   { "" } => false
-        ///   { null, null, null } => true
-        ///   { } => false
-        /// </example>
-        public bool IsSequenceHasNulls(IEnumerable<string> data)
-        {
-            // TODO : Implement IsSequenceHasNulls
-            var listData = data.ToList();
-
-            var result = listData.Where(x => x is null);
-
-            return result.Count() > 0 ? true : false;
-        }
-
-        /// <summary> Determines whether all strings in sequence are uppercase</summary>
-        /// <param name="data">source string sequence</param>
-        /// <returns>
-        ///  true if all strings from source sequence are uppercase; otherwise, false.
-        /// </returns>
-        /// <example>
-        ///   { "A", "B", "C", "D", "E", "F" } => true
-        ///   { "AA", "AA", "AAA", "AAAa" } => false
-        ///   { "" } => false
-        ///   { } => false
-        /// </example>
-        public bool IsAllStringsAreUppercase(IEnumerable<string> data)
-        {
-            // TODO : Implement IsAllStringsAreUppercase
-            if (data.Count() <= 1)
-            {
-                return false;
-            }
-
-            var listData = data.ToList();
-
-            var result = listData.Where(x => string.Equals(x, x.ToUpper()));
-
-            return listData.SequenceEqual(result);
-        }
-
-        /// <summary> Finds first subsequence of negative integers </summary>
-        /// <param name="data">source integer sequence</param>
-        /// <returns>
-        ///   Returns the first subsequence of negative integers from source
-        /// </returns>
-        /// <example>
-        ///    { -2, -1 , 0, 1, 2 } => { -2, -1 }
-        ///    { 2, 1, 0, -1, -2 } => { -1, -2 }
-        ///    { 1, 1, 1, -1, -1, -1, 0, 0, 0, -2, -2, -2 } => { -1, -1, -1 }
-        ///    { -1 , 0, -2 } => { -1 }
-        ///    { 1, 2, 3 } => { }
-        ///    { } => { }
-        /// </example>
-        public IEnumerable<int> GetFirstNegativeSubsequence(IEnumerable<int> data)
-        {
-            // TODO : Implement GetFirstNegativeSubsequence
-            var listData = data.ToList();
-
-            var result = listData.TakeWhile(x => x < 0);
-
-            return result;
-        }
-
-
-        /// <summary> 
-        /// Compares two numeric sequences
-        /// </summary>
-        /// <param name="integers">sequence of integers</param>
-        /// <param name="doubles">sequence of doubles</param>
-        /// <returns>
-        /// true if integers are equals doubles; otherwise, false.
-        /// </returns>
-        /// <example>
-        /// { 1,2,3 } , { 1.0, 2.0, 3.0 } => true
-        /// { 0,0,0 } , { 1.0, 2.0, 3.0 } => false
-        /// { 3,2,1 } , { 1.0, 2.0, 3.0 } => false
-        /// { -10 } => { -10.0 } => true
-        /// </example>
-        public bool AreNumericListsEqual(IEnumerable<int> integers, IEnumerable<double> doubles)
-        {
-            // TODO : Implement AreNumericListsEqual
-            var listIntegers = integers.ToList();
-            var listDouble = doubles.ToList();
-
-            var list = listIntegers.Select(x => (double)x);
-
-            bool result = list.SequenceEqual(listDouble);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Finds the next after specified version from the list 
-        /// </summary>
-        /// <param name="versions">source list of versions</param>
-        /// <param name="currentVersion">specified version</param>
-        /// <returns>
-        ///   Returns the next after specified version from the list; otherwise, null.
-        /// </returns>
-        /// <example>
-        ///    { "1.1", "1.2", "1.5", "2.0" }, "1.1" => "1.2"
-        ///    { "1.1", "1.2", "1.5", "2.0" }, "1.2" => "1.5"
-        ///    { "1.1", "1.2", "1.5", "2.0" }, "1.4" => null
-        ///    { "1.1", "1.2", "1.5", "2.0" }, "2.0" => null
-        /// </example>
-        public string GetNextVersionFromList(IEnumerable<string> versions, string currentVersion)
-        {
-            // TODO : Implement GetNextVersionFromList
-            var listVersions = versions.ToList();
-
-            var result = listVersions.Select((x, y) =>
-            {
-                if (x == currentVersion)
-                {
-                    return listVersions[y + 1];
-                }
-                else
-                {
-                    return null;
-                }
-            })
-                .Where(x => x != null);
-
-            var result1 = result.Select(x => x).Where(x => x != null).ToList();
-
-
-            return result1.Count() > 0 ? result1.ToString() : null;
-        }
-
-        /// <summary>
-        ///  Calcuates the sum of two vectors:
-        ///  (x1, x2, ..., xn) + (y1, y2, ..., yn) = (x1+y1, x2+y2, ..., xn+yn)
-        /// </summary>
-        /// <param name="vector1">source vector 1</param>
-        /// <param name="vector2">source vector 2</param>
-        /// <returns>
-        ///  Returns the sum of two vectors
-        /// </returns>
-        /// <example>
-        ///   { 1, 2, 3 } + { 10, 20, 30 } => { 11, 22, 33 }
-        ///   { 1, 1, 1 } + { -1, -1, -1 } => { 0, 0, 0 }
-        /// </example>
-        public IEnumerable<int> GetSumOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
-        {
-            // TODO : Implement GetSumOfVectors
-            var listVector1 = vector1.ToList();
-            var listVector2 = vector2.ToList();
-
-            var sumVector = listVector1.Zip(listVector2, (first, second) => first + second);
-
-            return sumVector;
-        }
-
-        /// <summary>
-        ///  Calcuates the product of two vectors:
-        ///  (x1, x2, ..., xn) + (y1, y2, ..., yn) = x1*y1 + x2*y2 + ... + xn*yn
-        /// </summary>
-        /// <param name="vector1">source vector 1</param>
-        /// <param name="vector2">source vector 2</param>
-        /// <returns>
-        ///  Returns the product of two vectors
-        /// </returns>
-        /// <example>
-        ///   { 1, 2, 3 } * { 1, 2, 3 } => 1*1 + 2*2 + 3*3 = 14
-        ///   { 1, 1, 1 } * { -1, -1, -1 } => 1*-1 + 1*-1 + 1*-1 = -3
-        ///   { 1, 1, 1 } * { 0, 0, 0 } => 1*0 + 1*0 +1*0 = 0
-        /// </example>
-        public int GetProductOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
-        {
-            // TODO : Implement GetProductOfVectors
-            var listVector1 = vector1.ToList();
-            var listVector2 = vector2.ToList();
-
-            var multipleVector = listVector1.Zip(listVector2, (first, second) => first * second);
-
-            return multipleVector.Sum();
-        }
-
-
-        /// <summary>
-        ///   Finds all boy+girl pair
-        /// </summary>
-        /// <param name="boys">boys' names</param>
-        /// <param name="girls">girls' names</param>
-        /// <returns>
-        ///   Returns all combination of boys and girls names 
-        /// </returns>
-        /// <example>
-        ///  {"John", "Josh", "Jacob" }, {"Ann", "Alice"} => {"John+Ann","John+Alice", "Josh+Ann","Josh+Alice", "Jacob+Ann", "Jacob+Alice" }
-        ///  {"John"}, {"Alice"} => {"John+Alice"}
-        ///  {"John"}, { } => { }
-        ///  { }, {"Alice"} => { }
-        /// </example>
-        public IEnumerable<string> GetAllPairs(IEnumerable<string> boys, IEnumerable<string> girls)
-        {
-            // TODO : Implement GetAllPairs
-
-
-            var listBoys = boys.ToList();
-            var listGirls = girls.ToList();
-
-            if (listGirls.Count() == 0 || listBoys.Count() == 0)
-            {
-                return Enumerable.Empty<string>();
-            }
-
-            var pairs = from first in listBoys
-                        from second in listGirls
-                        select new[] { first + "+" + second };
-
-            return pairs.SelectMany(o => o);
-        }
-
-
-        /// <summary>
-        ///   Calculates the average of all double values from object collection
-        /// </summary>
-        /// <param name="data">the source sequence</param>
-        /// <returns>
-        ///  Returns the average of all double values
-        /// </returns>
-        /// <example>
-        ///  { 1.0, 2.0, null, "a" } => 1.5
-        ///  { "1.0", "2.0", "3.0" } => 0.0  (no double values, strings only)
-        ///  { null, 1.0, true } => 1.0
-        ///  { } => 0.0
-        /// </example>
-        public double GetAverageOfDoubleValues(IEnumerable<object> data)
-        {
-            // TODO : Implement GetAverageOfDoubleValues
-            if (data.Count() == 0)
-            {
-                return 0.0;
-            }
-
-            var list = data.ToList();
-
-            var temp = list.OfType<double>();
-
-            if (temp.Count() == 0)
-            {
-                return 0.0;
-            }
-
-            double average = list.OfType<double>().Average();
-
-            return average;
-        }
-
+        return result.Count() == 0 ? 0 : result.Sum();
     }
+
+
+    /// <summary> Finds all strings in array of objects</summary>
+    /// <param name="data">source array</param>
+    /// <returns>
+    ///   Return subsequence of string from source array of objects
+    /// </returns>
+    /// <example>
+    ///   { "a", 1, 2, null, "b", true, 4.5, "c" } => { "a", "b", "c" }
+    ///   { "a", "b", "c" } => { "a", "b", "c" }
+    ///   { 1,2,3, true, false } => { }
+    ///   { } => { }
+    /// </example>
+    public IEnumerable<string> GetStringsOnly(object[] data)
+    {
+        // TODO : Implement GetStringsOnly
+        if (data.Length == 0)
+        {
+            return Enumerable.Empty<string>();
+        }
+
+        var result = data.OfType<string>();
+
+        return result;
+    }
+
+    /// <summary> Calculates the total length of strings</summary>
+    /// <param name="data">source string sequence</param>
+    /// <returns>
+    ///   Return sum of length of all strings
+    /// </returns>
+    /// <example>
+    ///   {"a","b","c","d","e","f"} => 6
+    ///   { "a","aa","aaa" } => 6
+    ///   { "1234567890" } => 10
+    ///   { null, "", "a" } => 1
+    ///   { null } => 0
+    ///   { } => 0
+    /// </example>
+    public int GetTotalStringsLength(IEnumerable<string> data)
+    {
+        // TODO : Implement GetTotalStringsLength
+        var listData = data.ToList();
+
+        var result = listData.Where(x => !string.IsNullOrEmpty(x));
+
+        string result1 = string.Empty;
+
+        foreach (var item in result)
+        {
+            result1 += item;
+        }
+
+        return result1.Length;
+    }
+
+    /// <summary> Determines whether sequence has null elements</summary>
+    /// <param name="data">source string sequence</param>
+    /// <returns>
+    ///  true if the source sequence contains null elements; otherwise, false.
+    /// </returns>
+    /// <example>
+    ///   { "a", "b", "c", "d", "e", "f" } => false
+    ///   { "a", "aa", "aaa", null } => true
+    ///   { "" } => false
+    ///   { null, null, null } => true
+    ///   { } => false
+    /// </example>
+    public bool IsSequenceHasNulls(IEnumerable<string> data)
+    {
+        // TODO : Implement IsSequenceHasNulls
+        var listData = data.ToList();
+
+        var result = listData.Where(x => x is null);
+
+        return result.Count() > 0 ? true : false;
+    }
+
+    /// <summary> Determines whether all strings in sequence are uppercase</summary>
+    /// <param name="data">source string sequence</param>
+    /// <returns>
+    ///  true if all strings from source sequence are uppercase; otherwise, false.
+    /// </returns>
+    /// <example>
+    ///   { "A", "B", "C", "D", "E", "F" } => true
+    ///   { "AA", "AA", "AAA", "AAAa" } => false
+    ///   { "" } => false
+    ///   { } => false
+    /// </example>
+    public bool IsAllStringsAreUppercase(IEnumerable<string> data)
+    {
+        // TODO : Implement IsAllStringsAreUppercase
+        if (data.Count() <= 1)
+        {
+            return false;
+        }
+
+        var listData = data.ToList();
+
+        var result = listData.Where(x => string.Equals(x, x.ToUpper()));
+
+        return listData.SequenceEqual(result);
+    }
+
+    /// <summary> Finds first subsequence of negative integers </summary>
+    /// <param name="data">source integer sequence</param>
+    /// <returns>
+    ///   Returns the first subsequence of negative integers from source
+    /// </returns>
+    /// <example>
+    ///    { -2, -1 , 0, 1, 2 } => { -2, -1 }
+    ///    { 2, 1, 0, -1, -2 } => { -1, -2 }
+    ///    { 1, 1, 1, -1, -1, -1, 0, 0, 0, -2, -2, -2 } => { -1, -1, -1 }
+    ///    { -1 , 0, -2 } => { -1 }
+    ///    { 1, 2, 3 } => { }
+    ///    { } => { }
+    /// </example>
+    public IEnumerable<int> GetFirstNegativeSubsequence(IEnumerable<int> data)
+    {
+        // TODO : Implement GetFirstNegativeSubsequence
+        var listData = data.ToList();
+
+        var result = listData.TakeWhile(x => x < 0);
+
+        return result;
+    }
+
+
+    /// <summary> 
+    /// Compares two numeric sequences
+    /// </summary>
+    /// <param name="integers">sequence of integers</param>
+    /// <param name="doubles">sequence of doubles</param>
+    /// <returns>
+    /// true if integers are equals doubles; otherwise, false.
+    /// </returns>
+    /// <example>
+    /// { 1,2,3 } , { 1.0, 2.0, 3.0 } => true
+    /// { 0,0,0 } , { 1.0, 2.0, 3.0 } => false
+    /// { 3,2,1 } , { 1.0, 2.0, 3.0 } => false
+    /// { -10 } => { -10.0 } => true
+    /// </example>
+    public bool AreNumericListsEqual(IEnumerable<int> integers, IEnumerable<double> doubles)
+    {
+        // TODO : Implement AreNumericListsEqual
+        var listIntegers = integers.ToList();
+        var listDouble = doubles.ToList();
+
+        var list = listIntegers.Select(x => (double)x);
+
+        bool result = list.SequenceEqual(listDouble);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Finds the next after specified version from the list 
+    /// </summary>
+    /// <param name="versions">source list of versions</param>
+    /// <param name="currentVersion">specified version</param>
+    /// <returns>
+    ///   Returns the next after specified version from the list; otherwise, null.
+    /// </returns>
+    /// <example>
+    ///    { "1.1", "1.2", "1.5", "2.0" }, "1.1" => "1.2"
+    ///    { "1.1", "1.2", "1.5", "2.0" }, "1.2" => "1.5"
+    ///    { "1.1", "1.2", "1.5", "2.0" }, "1.4" => null
+    ///    { "1.1", "1.2", "1.5", "2.0" }, "2.0" => null
+    /// </example>
+    public string GetNextVersionFromList(IEnumerable<string> versions, string currentVersion)
+    {
+        // TODO : Implement GetNextVersionFromList
+        var listVersions = versions.ToList();
+
+        var result = listVersions.Select((x, y) =>
+        {
+            if (x == currentVersion)
+            {
+                return listVersions[y + 1];
+            }
+            else
+            {
+                return null;
+            }
+        })
+            .Where(x => x != null);
+
+        var result1 = result.Select(x => x).Where(x => x != null).ToList();
+
+
+        return result1.Count() > 0 ? result1.ToString() : null;
+    }
+
+    /// <summary>
+    ///  Calcuates the sum of two vectors:
+    ///  (x1, x2, ..., xn) + (y1, y2, ..., yn) = (x1+y1, x2+y2, ..., xn+yn)
+    /// </summary>
+    /// <param name="vector1">source vector 1</param>
+    /// <param name="vector2">source vector 2</param>
+    /// <returns>
+    ///  Returns the sum of two vectors
+    /// </returns>
+    /// <example>
+    ///   { 1, 2, 3 } + { 10, 20, 30 } => { 11, 22, 33 }
+    ///   { 1, 1, 1 } + { -1, -1, -1 } => { 0, 0, 0 }
+    /// </example>
+    public IEnumerable<int> GetSumOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
+    {
+        // TODO : Implement GetSumOfVectors
+        var listVector1 = vector1.ToList();
+        var listVector2 = vector2.ToList();
+
+        var sumVector = listVector1.Zip(listVector2, (first, second) => first + second);
+
+        return sumVector;
+    }
+
+    /// <summary>
+    ///  Calcuates the product of two vectors:
+    ///  (x1, x2, ..., xn) + (y1, y2, ..., yn) = x1*y1 + x2*y2 + ... + xn*yn
+    /// </summary>
+    /// <param name="vector1">source vector 1</param>
+    /// <param name="vector2">source vector 2</param>
+    /// <returns>
+    ///  Returns the product of two vectors
+    /// </returns>
+    /// <example>
+    ///   { 1, 2, 3 } * { 1, 2, 3 } => 1*1 + 2*2 + 3*3 = 14
+    ///   { 1, 1, 1 } * { -1, -1, -1 } => 1*-1 + 1*-1 + 1*-1 = -3
+    ///   { 1, 1, 1 } * { 0, 0, 0 } => 1*0 + 1*0 +1*0 = 0
+    /// </example>
+    public int GetProductOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
+    {
+        // TODO : Implement GetProductOfVectors
+        var listVector1 = vector1.ToList();
+        var listVector2 = vector2.ToList();
+
+        var multipleVector = listVector1.Zip(listVector2, (first, second) => first * second);
+
+        return multipleVector.Sum();
+    }
+
+
+    /// <summary>
+    ///   Finds all boy+girl pair
+    /// </summary>
+    /// <param name="boys">boys' names</param>
+    /// <param name="girls">girls' names</param>
+    /// <returns>
+    ///   Returns all combination of boys and girls names 
+    /// </returns>
+    /// <example>
+    ///  {"John", "Josh", "Jacob" }, {"Ann", "Alice"} => {"John+Ann","John+Alice", "Josh+Ann","Josh+Alice", "Jacob+Ann", "Jacob+Alice" }
+    ///  {"John"}, {"Alice"} => {"John+Alice"}
+    ///  {"John"}, { } => { }
+    ///  { }, {"Alice"} => { }
+    /// </example>
+    public IEnumerable<string> GetAllPairs(IEnumerable<string> boys, IEnumerable<string> girls)
+    {
+        // TODO : Implement GetAllPairs
+
+
+        var listBoys = boys.ToList();
+        var listGirls = girls.ToList();
+
+        if (listGirls.Count() == 0 || listBoys.Count() == 0)
+        {
+            return Enumerable.Empty<string>();
+        }
+
+        var pairs = from first in listBoys
+                    from second in listGirls
+                    select new[] { first + "+" + second };
+
+        return pairs.SelectMany(o => o);
+    }
+
+
+    /// <summary>
+    ///   Calculates the average of all double values from object collection
+    /// </summary>
+    /// <param name="data">the source sequence</param>
+    /// <returns>
+    ///  Returns the average of all double values
+    /// </returns>
+    /// <example>
+    ///  { 1.0, 2.0, null, "a" } => 1.5
+    ///  { "1.0", "2.0", "3.0" } => 0.0  (no double values, strings only)
+    ///  { null, 1.0, true } => 1.0
+    ///  { } => 0.0
+    /// </example>
+    public double GetAverageOfDoubleValues(IEnumerable<object> data)
+    {
+        // TODO : Implement GetAverageOfDoubleValues
+        if (data.Count() == 0)
+        {
+            return 0.0;
+        }
+
+        var list = data.ToList();
+
+        var temp = list.OfType<double>();
+
+        if (temp.Count() == 0)
+        {
+            return 0.0;
+        }
+
+        double average = list.OfType<double>().Average();
+
+        return average;
+    }
+
+}
 }
