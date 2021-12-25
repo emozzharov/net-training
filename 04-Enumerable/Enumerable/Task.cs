@@ -612,7 +612,11 @@ namespace EnumerableTask
         public IEnumerable<int> GetFirstNegativeSubsequence(IEnumerable<int> data)
         {
             // TODO : Implement GetFirstNegativeSubsequence
-            throw new NotImplementedException();
+            var listData = data.ToList();
+
+            var result = listData.TakeWhile(x => x < 0);
+
+            return result;
         }
 
 
