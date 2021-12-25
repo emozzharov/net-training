@@ -185,7 +185,7 @@ namespace Collections.Tasks
             var result = new IEnumerable<T>[count][];
 
 
-            return result;
+            return null;
         }
 
     }
