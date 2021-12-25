@@ -576,7 +576,11 @@ namespace EnumerableTask
         public bool IsSequenceHasNulls(IEnumerable<string> data)
         {
             // TODO : Implement IsSequenceHasNulls
-            throw new NotImplementedException();
+            var listData = data.ToList();
+
+            var result = listData.Where(x => x is null);
+
+            return result.Count() > 0 ? true : false;
         }
 
         /// <summary> Determines whether all strings in sequence are uppercase</summary>
