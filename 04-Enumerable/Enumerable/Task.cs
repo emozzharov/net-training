@@ -329,7 +329,14 @@ namespace EnumerableTask
         public int GetCountOfGreaterThen10(IEnumerable<int> data)
         {
             // TODO : Implement GetCountOfGreaterThen10
-            throw new NotImplementedException();
+            if (data.Count() == 0)
+            {
+                return 0;
+            }
+
+            var result = data.Where(x => x > 10);
+
+            return result.Count();
         }
 
 
