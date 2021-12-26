@@ -396,7 +396,9 @@ namespace EnumerableTask
         public IEnumerable<Tuple<string, int>> GetCountOfStrings(IEnumerable<string> data)
         {
             // TODO : Implement GetCountOfStrings
-            throw new NotImplementedException();
+            var result = data.GroupBy(x => x).Select(x => new { Key = x, Count = x.Count() });
+
+            return (IEnumerable<Tuple<string, int>>)result;
         }
 
         /// <summary> Counts the number of strings with max length in sequence </summary>
@@ -414,7 +416,26 @@ namespace EnumerableTask
         public int GetCountOfStringsWithMaxLength(IEnumerable<string> data)
         {
             // TODO : Implement GetCountOfStringsWithMaxLength
-            throw new NotImplementedException();
+            if (data.Count() == 0)
+            {
+                return 0;
+            }
+
+            if (data.Count() == 0)
+            {
+                return 0;
+            }
+
+            var resuit = data.OfType<string>()
+                .Where(x => !string.IsNullOrEmpty(x))
+                .OrderByDescending(x => x.Length)
+                .Select(x => x.Count())
+                .GroupBy(x => x)
+                .Take(1);
+
+            var result1 = resuit.ToList();
+
+            return result1.Count() == 0 ? 0 : result1[0].ToList().Count();
         }
 
 
@@ -435,7 +456,24 @@ namespace EnumerableTask
         public int GetDigitCharsCount(string data)
         {
             // TODO : Implement GetDigitCharsCount
-            throw new NotImplementedException();
+            if (data is null)
+            {
+                throw new ArgumentNullException("exception");
+            }
+
+            var arr = data.ToCharArray();
+
+            int result = 0;
+
+            foreach (var item in arr)
+            {
+                if (char.IsDigit(item))
+                {
+                    result++;
+                }
+            }
+
+            return result;
         }
 
 
