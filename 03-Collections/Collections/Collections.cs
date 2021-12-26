@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Collections.Tasks {
@@ -270,10 +271,41 @@ namespace Collections.Tasks {
         ///   source = { 1,2,3,4 }, count=5 => ArgumentOutOfRangeException
         /// </example>
         public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count) {
-            // TODO : Implement GenerateAllPermutations method
-            throw new NotImplementedException();
-        }
+            if (count < 0 || count > source.Length)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
 
+            if (count == 0)
+            {
+                return Enumerable.Empty<T[]>();
+            }
+
+            if (source.Length == 1)
+            {
+                return source.Select(s => new T[] { s });
+            }
+
+            if (source.Length == count)
+            {
+                return new List<T[]>() { source};
+            }
+
+            var res = GetPermutations(source, count);
+
+            return res.Select(a => a.ToArray());
+
+            IEnumerable<IEnumerable<U>> GetPermutations<U>(IEnumerable<U> list, int length)
+            {
+                if (length == 1) return list.Select(t => new U[] { t });
+                return GetPermutations(list, length - 1)
+                    .SelectMany(t => list.Where(o => 
+                    {
+                        var el = o as IComparable;
+                        return el.CompareTo(t.Last()) > 0;
+                    }), (e1, e2) => e1.Concat(new U[] { e2 }));
+            }
+        }
     }
 
     public static class DictionaryExtentions {
@@ -297,8 +329,12 @@ namespace Collections.Tasks {
         ///   Person cached = cache.GetOrBuildValue(10, ()=>LoadPersonById(10) );  // should get a Person from the cache
         /// </example>
         public static TValue GetOrBuildValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> builder) {
-            // TODO : Implement GetOrBuildValue method for cache
-            throw new NotImplementedException();
+            if (!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key, builder.Invoke());
+            }
+
+            return dictionary[key];
         }
 
     }
