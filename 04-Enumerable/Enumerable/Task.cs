@@ -372,7 +372,14 @@ namespace EnumerableTask
         public int GetCountOfStringsWithLengthEqualsTo3(IEnumerable<string> data)
         {
             // TODO : Implement GetCountOfStringsWithLengthEqualsTo3
-            throw new NotImplementedException();
+            if (data.Count() == 0)
+            {
+                return 0;
+            }
+
+            var result = data.Where(x => x != null && x.Length == 3).Distinct();
+
+            return result.Count() == 0 ? 0 : result.Count();
         }
 
         /// <summary> Counts the number of each strings in sequence </summary>
