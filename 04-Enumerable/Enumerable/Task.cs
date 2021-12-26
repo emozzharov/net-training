@@ -353,7 +353,9 @@ namespace EnumerableTask
         public string GetFirstContainsFirst(IEnumerable<string> data)
         {
             // TODO : Implement GetFirstContainsFirst
-            throw new NotImplementedException();
+            var result = data.Where(x => x != null && x.ToLower().Contains("first")).Take(1);
+
+            return result.Count() == 0 ? null : result.ToList()[0].ToString();
         }
 
         /// <summary> Counts the number of unique strings with length=3 </summary>
