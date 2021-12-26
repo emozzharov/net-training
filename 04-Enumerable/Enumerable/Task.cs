@@ -522,8 +522,13 @@ namespace EnumerableTask
         public int[] GetQuarterSales(IEnumerable<Tuple<DateTime, int>> sales)
         {
             // TODO : Implement GetQuarterSales
-            throw new NotImplementedException();
+            var result = sales.GroupBy(x => (x.Item1.Month - 1) / 3);
+
+
+            return null;
         }
+
+
 
 
         /// <summary> Sorts string by length and alphabet </summary>
@@ -731,6 +736,12 @@ namespace EnumerableTask
         public IEnumerable<char> GetCommonChars(IEnumerable<string> data)
         {
             // TODO : Implement GetCommonChars
+            if (data.Count() == 0)
+            {
+                return string.Empty;
+            }
+
+            var arr = data.GroupBy(x => x.Split());
 
             return null;
         }
