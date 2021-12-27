@@ -17,6 +17,7 @@ namespace LinqToXml
         public static string CreateHierarchy(string xmlRepresentation)
         {
             XElement doc = XElement.Parse(xmlRepresentation);
+
             var newData =
                 new XElement("Root",
                     from data in doc.Elements("Data")
@@ -30,6 +31,7 @@ namespace LinqToXml
                         )
                     )
                 );
+
             return newData.ToString();
         }
 
@@ -43,7 +45,18 @@ namespace LinqToXml
         /// </example>
         public static string GetPurchaseOrders(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XNamespace ns = "http://www.adventure-works.com";
+
+            var doc = XDocument.Parse(xmlRepresentation);
+
+            //var number = from x in doc.Elements(ns.GetName("PurchaseOrders"))
+            //                .Elements(ns.GetName("PurchaseOrder"))
+            //                .Elements(ns.GetName("Name"))
+            //             select x.Value;
+
+            string number = doc.Element("PurchaseOrders").Elements("PurchaseOrder").Select(x => x.Value).ToString();
+
+            return number;
         }
 
         /// <summary>
@@ -63,7 +76,13 @@ namespace LinqToXml
         /// <returns>Concatenation of all this element values.</returns>
         public static string GetConcatenationString(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            var doc = XDocument.Parse(xmlRepresentation);
+
+            var result = doc.Descendants().Select(x => x.Value).ToList();
+
+            string strResult = result[0];
+
+            return strResult;
         }
 
         /// <summary>
