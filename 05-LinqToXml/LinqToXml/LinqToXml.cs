@@ -114,7 +114,12 @@ namespace LinqToXml
         /// <returns>Xml representation with contacts (refer to ReplaceCustomersWithContactsResult.xml in Resources)</returns>
         public static string ReplaceAllCustomersWithContacts(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+
+            var doc = XDocument.Parse(xmlRepresentation);
+
+            var result = doc.Element("Document").Elements("customer");
+
+            return null;
         }
 
         /// <summary>
@@ -124,7 +129,14 @@ namespace LinqToXml
         /// <returns>Sequence of channels ids</returns>
         public static IEnumerable<int> FindChannelsIds(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            var doc = XDocument.Parse(xmlRepresentation);
+
+            //doc.DescendantNodes().OfType<XComment>().Remove();
+
+            var res = doc.DescendantNodes().Where(x => x.GetType() == typeof(XComment));
+
+
+            return null;
         }
 
         /// <summary>
@@ -134,7 +146,14 @@ namespace LinqToXml
         /// <returns>Sorted customers representation (refer to GeneralCustomersResultFile.xml in Resources)</returns>
         public static string SortCustomers(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            var doc = XDocument.Parse(xmlRepresentation);
+
+            var sortedElements = doc.Root.Elements().OrderBy(x => (string)x.Attribute("Country"));
+
+            var res = new XDocument(new XElement("Root", sortedElements));
+
+
+            return null;
         }
 
         /// <summary>
@@ -157,7 +176,26 @@ namespace LinqToXml
         /// <returns>Total purchase value</returns>
         public static int GetOrdersValue(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            var doc = XDocument.Parse(xmlRepresentation);
+
+            var result = doc.Descendants("product").Select(x => x.Value).ToList();
+
+            int sum = 0;
+
+            foreach (var item in result)
+            {
+                if (item.Equals("1"))
+                {
+                    sum += 300;
+                }
+
+                if (item.Equals("2"))
+                {
+                    sum += 910;
+                }
+            }
+
+            return sum;
         }
     }
 }
