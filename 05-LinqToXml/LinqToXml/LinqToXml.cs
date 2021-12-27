@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace LinqToXml
 {
@@ -16,7 +17,39 @@ namespace LinqToXml
         /// <returns>Xml representation (refer to CreateHierarchyResultFile.xml in Resources)</returns>
         public static string CreateHierarchy(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            var xml = XDocument.Parse(xmlRepresentation).Descendants("Root");
+            var elements = xml.Elements("Data");
+
+            XDocument result = new XDocument();
+            result.Add(new XElement("Root", null));
+            var root = result.Element("Root");
+
+            var groupsValues = elements.Select(e => e.Element("Category").Value).Distinct(); // selects unique categories from source.
+
+            // Adds group to the root of a document in accordance with "Category".
+            foreach (var val in groupsValues)
+            {
+                var group = new XElement("Group");
+                group.Add(new XAttribute("ID", val));
+                root.Add(group);
+            }
+
+            foreach (var el in elements)
+            {
+                var category = el.Element("Category").Value; // gets category of the current element.
+
+                // Selects group of result file by the category in accordance with the current element's category.
+                var selectedGroup = root.Elements("Group").SingleOrDefault(e => e.Attributes().Any(a => a.Value == category));
+
+                var data = new XElement("Data");
+                var qty = new XElement("Quantity", el.Element("Quantity").Value);
+                var price = new XElement("Price", el.Element("Price").Value);
+
+                data.Add(new XElement[] { qty, price });
+                selectedGroup.Add(data);
+            }
+
+            return result.ToString();
         }
 
         /// <summary>
@@ -29,7 +62,24 @@ namespace LinqToXml
         /// </example>
         public static string GetPurchaseOrders(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XNamespace aw = "http://www.adventure-works.com";
+            var xml = XDocument.Parse(xmlRepresentation).Descendants(aw + "PurchaseOrders");
+
+            var numbers = xml.Elements(aw + "PurchaseOrder").Where(order =>
+            {
+                var shippingState = order.Elements(aw + "Address")
+                    .SingleOrDefault(typeOfDestination => typeOfDestination.Attribute(aw + "Type").Value == "Shipping")
+                    .Element(aw + "State").Value;
+
+                if (shippingState == "NY")
+                {
+                    return true;
+                }
+
+                return false;
+            }).Select(order => order.Attribute(aw + "PurchaseOrderNumber").Value);
+
+            return string.Join(",", numbers);
         }
 
         /// <summary>
