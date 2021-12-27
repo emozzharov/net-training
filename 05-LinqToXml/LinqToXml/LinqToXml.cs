@@ -49,12 +49,12 @@ namespace LinqToXml
 
             XNamespace ns = "http://www.adventure-works.com";
 
-            //var number = from x in doc.Elements(ns.GetName("PurchaseOrders"))
-            //                .Elements(ns.GetName("PurchaseOrder"))
-            //                .Elements(ns.GetName("Name"))
-            //             select x.Value;
+            var listNumber = doc.Descendants(ns + "PurchaseOrder")
+                .Elements(ns + "Address")
+                .Where(x => x.Element(ns + "State").Value == "NY")
+                .Where(x => x.Attribute(ns + "Type").Value == "Shipping");
 
-            var listNumber = doc.Descendants(ns + "PurchaseOrder").Select(x => x.Value).ToList();
+            var tempList = listNumber.Descendants().Select(x => x.Attribute(ns + "PurchaseOrderNumber").Value);
 
             return null;
         }
