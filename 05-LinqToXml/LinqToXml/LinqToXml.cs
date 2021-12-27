@@ -45,18 +45,18 @@ namespace LinqToXml
         /// </example>
         public static string GetPurchaseOrders(string xmlRepresentation)
         {
-            XNamespace ns = "http://www.adventure-works.com";
-
             var doc = XDocument.Parse(xmlRepresentation);
+
+            XNamespace ns = "http://www.adventure-works.com";
 
             //var number = from x in doc.Elements(ns.GetName("PurchaseOrders"))
             //                .Elements(ns.GetName("PurchaseOrder"))
             //                .Elements(ns.GetName("Name"))
             //             select x.Value;
 
-            string number = doc.Element("PurchaseOrders").Elements("PurchaseOrder").Select(x => x.Value).ToString();
+            var listNumber = doc.Descendants(ns + "PurchaseOrder").Select(x => x.Value).ToList();
 
-            return number;
+            return null;
         }
 
         /// <summary>
@@ -66,7 +66,29 @@ namespace LinqToXml
         /// <returns>Xml customers representation (refer to XmlFromCsvResultFile.xml in Resources)</returns>
         public static string ReadCustomersFromCsv(string customers)
         {
-            throw new NotImplementedException();
+            File.WriteAllText("cust.csv", customers);
+
+            string[] source = File.ReadAllLines("cust.csv");
+            XElement cust = new XElement("Root",
+                from str in source
+                let fields = str.Split(',')
+                select new XElement("Customer",
+                    new XAttribute("CustomerID", fields[0]),
+                    new XElement("CompanyName", fields[1]),
+                    new XElement("ContactName", fields[2]),
+                    new XElement("ContactTitle", fields[3]),
+                    new XElement("Phone", fields[4]),
+                    new XElement("FullAddress",
+                        new XElement("Address", fields[5]),
+                        new XElement("City", fields[6]),
+                        new XElement("Region", fields[7]),
+                        new XElement("PostalCode", fields[8]),
+                        new XElement("Country", fields[9])
+                    )
+                )
+            );
+
+            return cust.ToString();
         }
 
         /// <summary>
