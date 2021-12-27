@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Net;
 
 namespace Task.Generics {
 
@@ -23,8 +26,14 @@ namespace Task.Generics {
 		///   { new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 30) } => "01:00:00,00:00:30",
 		/// </example>
 		public static string ConvertToString<T>(this IEnumerable<T> list) {
-			// TODO : Implement ConvertToString<T>
-			throw new NotImplementedException();
+			String text = string.Empty;
+            foreach (var item in list)
+            {
+				text += item;
+				text += ListSeparator;
+			}
+			text = text.Remove(text.Length - 1,1);
+			return text;
 		}
 
 		/// <summary>
@@ -43,12 +52,30 @@ namespace Task.Generics {
 		///  "Black,Blue,Cyan" for ConsoleColor => { ConsoleColor.Black, ConsoleColor.Blue, ConsoleColor.Cyan }
 		///  "1:00:00,0:00:30" for TimeSpan =>  { new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 30) },
 		///  </example>
-		public static IEnumerable<T> ConvertToList<T>(this string list) {
+		public static IEnumerable<T> ConvertToList<T>(this string list)
+		{
 			// TODO : Implement ConvertToList<T>
-			// HINT : Use TypeConverter.ConvertFromString method to parse string value
-			throw new NotImplementedException();
-		}
+			// HINT : Use TypeConverter.ConvertFromString method to parse string value	
+			List<T> con = new List<T> { };
 
+			string s = list;
+			string[] sl;
+
+			sl = s.Split(ListSeparator);
+			for (int i = 0; i < sl.Length; i++)
+			{
+
+				TypeConverter conv = TypeDescriptor.GetConverter(typeof(T));
+				T obj = (T)conv.ConvertFromString(sl[i]);
+				con.Add(obj);
+			}
+
+
+			return (con);
+
+		
+
+		}
 	}
 
 	public static class ArrayExtentions {
@@ -61,8 +88,9 @@ namespace Task.Generics {
 		/// <param name="index1">first index</param>
 		/// <param name="index2">second index</param>
 		public static void SwapArrayElements<T>(this T[] array, int index1, int index2) {
-			// TODO : Implement SwapArrayElements<T>
-			throw new NotImplementedException();
+			T tempVarForSwap = array[index1];
+		    array[index1] = array[index2];	
+			array[index2]=tempVarForSwap;
 		}
 
 		/// <summary>
@@ -91,9 +119,23 @@ namespace Task.Generics {
 		///     { 1, "a", false },
 		///   }
 		/// </example>
-		public static void SortTupleArray<T1, T2, T3>(this Tuple<T1, T2, T3>[] array, int sortedColumn, bool ascending) {
+		public static void SortTupleArray<T1, T2, T3>(this Tuple<T1, T2, T3>[] array, int sortedColumn, bool ascending) where T1 : IComparable
+			where T2 : IComparable
+			where T3 : IComparable
+		{
 			// TODO :SortTupleArray<T1, T2, T3>
 			// HINT : Add required constraints to generic types
+			var props = new Func<Tuple<T1, T2, T3>, IComparable>[]
+			 {
+				 x => x.Item1,
+				 x => x.Item2,
+				 x => x.Item3
+			 };
+			var propGet = props[sortedColumn];
+
+			var VarForAscending = ascending ? 1 : -1;
+
+			Array.Sort(array, (x, y) => VarForAscending * propGet(x).CompareTo(propGet(y)));
 		}
 
 	}
@@ -105,17 +147,15 @@ namespace Task.Generics {
 	///   This code should return the same MyService object every time:
 	///   MyService singleton = Singleton<MyService>.Instance;
 	/// </example>
-	public static class Singleton<T> {
-		// TODO : Implement generic singleton class 
+	public static class Singleton<T> where T : class, new()
+	{
 
-		public static T Instance {
-			get { throw new NotImplementedException(); }
-		}
+		private static readonly Lazy<T> instance = new Lazy<T>(() => new T());
+
+		public static T Instance { get { return instance.Value; } }
 	}
-
-
-
-	public static class FunctionExtentions {
+	public static class FunctionExtentions
+	{
 		/// <summary>
 		///   Tries to invoke the specified function up to 3 times if the result is unavailable 
 		/// </summary>
@@ -134,11 +174,24 @@ namespace Task.Generics {
 		///   The second attemp has the same workflow.
 		///   If the third attemp fails then this exception should be rethrow to the application.
 		/// </example>
-		public static T TimeoutSafeInvoke<T>(this Func<T> function) {
+		public static T TimeoutSafeInvoke<T>(this Func<T> function)
+		{
 			// TODO : Implement TimeoutSafeInvoke<T>
-			throw new NotImplementedException();
+			int count = 3;
+			while (count > 1)
+			{
+				try
+				{
+					return function();
+				}
+				catch (WebException exception)
+				{
+					Trace.WriteLine(exception);
+					count--;
+				}
+			}
+			return function();
 		}
-
 
 		/// <summary>
 		///   Combines several predicates using logical AND operator 
@@ -163,12 +216,26 @@ namespace Task.Generics {
 		///            x=> x<10
 		///       })
 		/// </example>
-		public static Predicate<T> CombinePredicates<T>(Predicate<T>[] predicates) {
+		public static Predicate<T> CombinePredicates<T>(Predicate<T>[] predicates)
+		{
 			// TODO : Implement CombinePredicates<T>
-			throw new NotImplementedException();
+			return (e) =>
+			{
+				foreach (var pred in predicates)
+				{
+					if (!pred(e))
+					{
+						return false;
+					}
+				}
+				return true;
+			};
+
 		}
 
 	}
 
-
 }
+
+
+
