@@ -52,11 +52,17 @@ namespace LinqToXml
             var listNumber = doc.Descendants(ns + "PurchaseOrder")
                 .Elements(ns + "Address")
                 .Where(x => x.Element(ns + "State").Value == "NY")
-                .Where(x => x.Attribute(ns + "Type").Value == "Shipping");
+                .Where(x => x.Attribute(ns + "Type").Value == "Shipping")
+                .Select(x => x.Parent.FirstAttribute.Value).ToList();
 
-            var tempList = listNumber.Descendants().Select(x => x.Attribute(ns + "PurchaseOrderNumber").Value);
+            var result = string.Empty;
 
-            return null;
+            foreach (var item in listNumber)
+            {
+                result += item + ",";
+            }
+
+            return result.Trim(',');
         }
 
         /// <summary>
