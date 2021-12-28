@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Collections.Tasks {
 
@@ -30,7 +31,21 @@ namespace Collections.Tasks {
         /// </example>
         public static IEnumerable<int> GetFibonacciSequence(int count) {
             // TODO : Implement Fibonacci sequence generator
-            throw new NotImplementedException();
+            List<int> numbers = new List<int>();
+            if (count < 0) throw new ArgumentException();
+            if (count == 0) return numbers;
+            for(int i=1;i<=count;i++)
+            {
+                numbers.Add(GetFibNumber(i));
+            }
+            return numbers;
+        }
+
+        private static int GetFibNumber(int number)
+        {
+            if (number == 0) return 0;
+            if (number == 1) return number;
+            return GetFibNumber(number - 1) + GetFibNumber(number-2);
         }
 
         /// <summary>
