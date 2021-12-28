@@ -125,6 +125,8 @@ namespace LinqToXml
 
             var result = doc.Element("Document").Elements("customer");
 
+            var res = doc.Descendants().Select(x => (string)x.Attribute("customer"));
+
             return null;
         }
 
@@ -137,12 +139,13 @@ namespace LinqToXml
         {
             var doc = XDocument.Parse(xmlRepresentation);
 
-            //doc.DescendantNodes().OfType<XComment>().Remove();
+            var res = doc.DescendantNodes()
+                .Where(x => x.GetType() == typeof(XComment))
+                .TakeWhile(y => y.Parent.Elements("subscriber").Count() > 1);
 
-            var res = doc.DescendantNodes().Where(x => x.GetType() == typeof(XComment));
+            var result = res.Select(x => int.Parse(x.Parent.FirstAttribute.Value)).ToList();
 
-
-            return null;
+            return result;
         }
 
         /// <summary>
@@ -154,7 +157,7 @@ namespace LinqToXml
         {
             var doc = XDocument.Parse(xmlRepresentation);
 
-            var sortedElements = doc.Root.Elements().OrderBy(x => (string)x.Attribute("Country"));
+            var sortedElements = doc.Root.Elements().OrderBy(x => (string)x.Attribute("Phone"));
 
             var res = new XDocument(new XElement("Root", sortedElements));
 
