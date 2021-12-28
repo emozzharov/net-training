@@ -55,14 +55,7 @@ namespace LinqToXml
                 .Where(x => x.Attribute(ns + "Type").Value == "Shipping")
                 .Select(x => x.Parent.FirstAttribute.Value).ToList();
 
-            var result = string.Empty;
-
-            foreach (var item in listNumber)
-            {
-                result += item + ",";
-            }
-
-            return result.Trim(',');
+            return string.Join(",", listNumber);
         }
 
         /// <summary>
