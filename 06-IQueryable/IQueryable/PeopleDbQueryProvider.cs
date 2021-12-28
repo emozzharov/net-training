@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -9,26 +8,23 @@ namespace IQueryableTask
     {
         public IQueryable CreateQuery(Expression expression)
         {
-            // TODO: Implement CreateQuery
-            throw new NotImplementedException();
+            return new People(expression);
         }
 
         public IQueryable<TResult> CreateQuery<TResult>(Expression expression)
         {
-            // TODO: Implement CreateQuery
-            throw new NotImplementedException();
+            return (IQueryable<TResult>)new People(expression);
         }
 
         public object Execute(Expression expression)
         {
-            // TODO: Implement Execute
-            throw new NotImplementedException();
+            return Execute<People>(expression);
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
-            // TODO: Implement Execute
-            throw new NotImplementedException();
+            PersonService service = new PersonService();
+            return (TResult)service.Search(GetSqlQuery(expression)); //???????
 
             // HINT: Use GetSqlQuery to build query and pass the query to PersonService
         }
@@ -40,8 +36,13 @@ namespace IQueryableTask
         /// <returns></returns>
         public string GetSqlQuery(Expression expression)
         {
-            // TODO: Implement GetYqlQuery
-            throw new NotImplementedException();
+            var visitor = new SqlExpressionVisitor();
+
+            string sqlQuery = 
+                "select * from person where " + 
+                visitor.GetQuery(expression);
+
+            return sqlQuery;
 
             // HINT: This method is not part of IQueryProvider interface and is used here only for tests.
             // HINT: To transform expression to sql query create a class derived from ExpressionVisitor
