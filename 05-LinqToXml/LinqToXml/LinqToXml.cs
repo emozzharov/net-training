@@ -160,11 +160,18 @@ namespace LinqToXml
         {
             var doc = XDocument.Parse(xmlRepresentation);
 
-            //var sortedElements = doc.Descendants().OrderBy(x => x.Attribute("City"));
+            var sort = doc.Descendants("Customers")
+                .OrderBy(x => (string)x.Element("FullAddress").Element("Country"))
+                .ThenBy(x => (string)x.Element("FullAddress").Element("City"));
 
-            var sort = doc.Descendants("FullAddress").OrderBy(x => (string)x.Element("Country")).ThenBy(x => (string)x.Element("City"));
+            var xmlResult = new XElement("Root");
 
-            return null;
+            foreach (var item in sort)
+            {
+                xmlResult.Add(new XElement(item));
+            }
+
+            return xmlResult.ToString();
         }
 
         /// <summary>
