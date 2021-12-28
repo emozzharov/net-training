@@ -141,7 +141,7 @@ namespace LinqToXml
 
             var res = doc.DescendantNodes()
                 .Where(x => x.GetType() == typeof(XComment))
-                .TakeWhile(y => y.Parent.Elements("subscriber").Count() > 1);
+                .Where(y => y.Parent.Elements("subscriber").Count() > 1);
 
             var result = res.Select(x => int.Parse(x.Parent.FirstAttribute.Value)).ToList();
 
