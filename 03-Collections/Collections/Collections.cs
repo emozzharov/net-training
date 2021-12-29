@@ -176,7 +176,11 @@ namespace Collections.Tasks {
         /// </example>
         public static TValue GetOrBuildValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> builder) {
             // TODO : Implement GetOrBuildValue method for cache
-            throw new NotImplementedException();
+            if(!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key,builder());
+            }
+            return dictionary[key];
         }
 
     }
