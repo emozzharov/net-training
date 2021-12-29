@@ -236,7 +236,11 @@ namespace EnumerableTask
         public IEnumerable<char> GetUsedChars(IEnumerable<string> data)
         {
             // TODO : Implement GetUsedChars
-            throw new NotImplementedException();
+            var list = string.Join("", data.ToList());
+
+            var result = list.Distinct();
+
+            return result;
         }
 
 
