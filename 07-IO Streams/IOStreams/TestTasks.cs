@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.IO.Packaging;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace IOStreams
@@ -34,7 +36,47 @@ namespace IOStreams
 			//         /xl/sharedStrings.xml      - dictionary of all string values
 			//         /xl/worksheets/sheet1.xml  - main worksheet
 
-			throw new NotImplementedException();
+			Package package;
+			string sharedStringsAsString, sheet1AsString;
+			using (FileStream fs = File.Open(xlsxFileName, FileMode.Open))
+			{
+				package = Package.Open(fs);
+				PackagePart sharedString = package.GetPart(new Uri("/xl/sharedStrings.xml", UriKind.Relative));
+				PackagePart sheet = package.GetPart(new Uri("/xl/worksheets/sheet1.xml", UriKind.Relative));
+
+				byte[] arr;
+				using (var stream = sharedString.GetStream())
+				{
+					arr = new byte[stream.Length];
+					stream.Read(arr, 0, (int)stream.Length);
+				}
+
+				sharedStringsAsString = System.Text.Encoding.Default.GetString(arr);
+
+				using (var stream = sheet.GetStream())
+				{
+					arr = new byte[stream.Length];
+					stream.Read(arr, 0, (int)stream.Length);
+				}
+
+				sheet1AsString = System.Text.Encoding.Default.GetString(arr);
+			}
+
+			XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+
+			var sharedStringsXml = XDocument.Parse(sharedStringsAsString);
+			var sheetXml = XDocument.Parse(sheet1AsString);
+
+			var planets = sharedStringsXml.Root.Descendants().Where(e => e.Name == ns + "t").Select(el => el.Value);
+			var radiuses = sheetXml.Root.Descendants().Where(e => e.Name == ns + "row").Elements(ns + "c")
+				.Where(e => e.Descendants().Count() != 0 && e.Attributes().All(a => a.Name != "t")).Select(el => el.Element(ns + "v").Value);
+
+			NumberFormatInfo numberFormat = new NumberFormatInfo();
+			numberFormat.NumberDecimalSeparator = ".";
+
+			var zip = radiuses.Zip(planets, (rad, plan) => new PlanetInfo() { Name = plan, MeanRadius = Convert.ToDouble(rad, numberFormat) });
+
+			return zip;
 		}
 
 
@@ -46,8 +88,23 @@ namespace IOStreams
 		/// <returns></returns>
 		public static string CalculateHash(this Stream stream, string hashAlgorithmName)
 		{
-			// TODO : Implement CalculateHash method
-			throw new NotImplementedException();
+			HashAlgorithm hash = HashAlgorithm.Create(hashAlgorithmName);
+			if (hash is null)
+            {
+				throw new ArgumentException();
+            }
+
+			byte[] arr = new byte[stream.Length];
+			stream.Read(arr, 0, (int)stream.Length);
+
+			var hashArr = hash.ComputeHash(arr);
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < hashArr.Length; i++)
+            {
+				sb.Append(hashArr[i].ToString("X2"));
+            }
+
+			return sb.ToString();
 		}
 
 
@@ -59,8 +116,28 @@ namespace IOStreams
 		/// <returns>output stream</returns>
 		public static Stream DecompressStream(string fileName, DecompressionMethods method)
 		{
-			// TODO : Implement DecompressStream method
-			throw new NotImplementedException();
+            using (FileStream inputFs = File.OpenRead(fileName))
+            {
+                MemoryStream ms = new MemoryStream();
+
+                if (method == DecompressionMethods.GZip)
+                {
+                    GZipStream gz = new GZipStream(inputFs, CompressionMode.Decompress, true);
+                    gz.CopyTo(ms);
+                }
+                else if (method == DecompressionMethods.Deflate)
+                {
+                    var ds = new DeflateStream(inputFs, CompressionMode.Decompress, true);
+					ds.CopyTo(ms);
+                }
+                else
+                {
+                    inputFs.CopyTo(ms);
+                }
+
+				ms.Seek(0, SeekOrigin.Begin);
+				return ms;
+			}
 		}
 
 
@@ -72,8 +149,17 @@ namespace IOStreams
 		/// <returns>Unicoded file content</returns>
 		public static string ReadEncodedText(string fileName, string encoding)
 		{
-			// TODO : Implement ReadEncodedText method
-			throw new NotImplementedException();
+			using (FileStream fs = File.OpenRead(fileName))
+            {
+				Encoding incomingEncoding = Encoding.GetEncoding(encoding);
+				Encoding utf = Encoding.UTF8;
+
+				byte[] arr = new byte[fs.Length];
+				fs.Read(arr, 0, (int)fs.Length);
+				byte[] encoded = Encoding.Convert(incomingEncoding, utf, arr);
+
+				return utf.GetString(encoded);
+            }
 		}
 	}
 
