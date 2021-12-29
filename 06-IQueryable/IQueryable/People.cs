@@ -29,7 +29,7 @@ namespace IQueryableTask
         {
             Expression = Expression.Constant(this);
         }
-        
+
         public People(Expression expression)
         {
             Expression = expression;
@@ -61,12 +61,12 @@ namespace IQueryableTask
         public IQueryProvider Provider => new PeopleDbQueryProvider();
 
         /// <summary>
-		/// Builds SQL query by an expression. Needed for tests
-		/// </summary>
-		/// <returns>SQL query</returns>
+        /// Builds SQL query by an expression. Needed for tests
+        /// </summary>
+        /// <returns>SQL query</returns>
         public override string ToString()
         {
-            return ((PeopleDbQueryProvider) Provider).GetSqlQuery(Expression);
+            return ((PeopleDbQueryProvider)Provider).GetSqlQuery(Expression);
         }
     }
 }

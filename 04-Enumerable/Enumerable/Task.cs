@@ -152,15 +152,9 @@ namespace EnumerableTask
                 throw new ArgumentNullException("prefix is null");
             }
 
-            if (prefix.Length == 0)
-            {
-                var result1 = data.ToList();
-                return result1;
-            }
-
             var list = data.ToList();
 
-            var result = list.Where(x => x.StartsWith(prefix.ToLower()));
+            var result = list.Where(x => x != null && x.StartsWith(prefix.ToLower()));
 
             return result;
         }
