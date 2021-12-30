@@ -394,7 +394,11 @@ namespace EnumerableTask
         public IEnumerable<Tuple<string, int>> GetCountOfStrings(IEnumerable<string> data)
         {
             // TODO : Implement GetCountOfStrings
-            var result = data.GroupBy(x => x).Select(x => new { Key = x, Count = x.Count() });
+            //var result = data.GroupBy(x => x).Select(x => new { Key = x, Count = x.Count() });
+
+            var list = data.ToList();
+
+            var result = list.GroupBy(x => x).Select(x => new { x.Key, Count = x.Count() }).ToList();
 
             return (IEnumerable<Tuple<string, int>>)result;
         }
