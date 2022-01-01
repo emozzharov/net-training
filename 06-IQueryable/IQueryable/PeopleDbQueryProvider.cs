@@ -13,42 +13,31 @@ namespace IQueryableTask
         public IQueryable CreateQuery(Expression expression)
         {
             // TODO: Implement CreateQuery
-            //throw new NotImplementedException();
-            Type elementType = TypeSystem.GetElementType(expression.Type);
-            try
-            {
-                return (IQueryable)Activator.CreateInstance(typeof(PersonService)
-                    .MakeGenericType(elementType), new object[] { this, expression });
-            }
-            catch (System.Reflection.TargetInvocationException tie)
-            {
-                throw tie.InnerException;
-            }
+            throw new NotImplementedException();
+
         }
 
         public IQueryable<TResult> CreateQuery<TResult>(Expression expression)
         {
             // TODO: Implement CreateQuery
-            //throw new NotImplementedException();
-            return new People<TResult>(this, expression);
+            throw new NotImplementedException();
+
         }
 
         public object Execute(Expression expression)
         {
             // TODO: Implement Execute
-            //throw new NotImplementedException();
-            return TerraServerQueryContext.Execute(expression, false);
+            throw new NotImplementedException();
+
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
             // TODO: Implement Execute
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
 
             // HINT: Use GetSqlQuery to build query and pass the query to PersonService
-            bool IsEnumerable = (typeof(TResult).Name == "IEnumerable`1");
 
-            return (TResult)TerraServerQueryContext.Execute(expression, IsEnumerable);
 
         }
 
