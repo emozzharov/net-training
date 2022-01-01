@@ -56,11 +56,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Evaluator.cs" />
+    <Compile Include="InnermostWhereFinder.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="People.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PeopleDbQueryProvider.cs" />
     <Compile Include="PersonService.cs" />
+    <Compile Include="TerraServerQueryContext.cs" />
+    <Compile Include="TypeSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
