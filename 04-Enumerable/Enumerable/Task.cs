@@ -394,11 +394,12 @@ namespace EnumerableTask
         public IEnumerable<Tuple<string, int>> GetCountOfStrings(IEnumerable<string> data)
         {
             // TODO : Implement GetCountOfStrings
-            //var result = data.GroupBy(x => x).Select(x => new { Key = x, Count = x.Count() });
 
             var list = data.ToList();
 
             var result = list.GroupBy(x => x).Select(x => new { x.Key, Count = x.Count() }).ToList();
+
+            var result1 = result.Select(x => x.Key);
 
             return (IEnumerable<Tuple<string, int>>)result;
         }
@@ -436,6 +437,8 @@ namespace EnumerableTask
                 .Take(1);
 
             var result1 = resuit.ToList();
+
+            //var xxx = result1.Count() == 0 ? 0 : result1[0].ToList().Count();
 
             return result1.Count() == 0 ? 0 : result1[0].ToList().Count();
         }
@@ -526,7 +529,6 @@ namespace EnumerableTask
             // TODO : Implement GetQuarterSales
             var result = sales.GroupBy(x => (x.Item1.Month - 1) / 3);
 
-
             return null;
         }
 
@@ -573,7 +575,35 @@ namespace EnumerableTask
         public IEnumerable<char> GetMissingDigits(IEnumerable<string> data)
         {
             // TODO : Implement GetMissingDigits
-            throw new NotImplementedException();
+            var listData = data.ToList();
+
+            string result = string.Empty;
+
+            string equals1 = "0123456789";
+
+            foreach (var item in listData)
+            {
+                result += item;
+            }
+
+            var resultWithOutChar = string.Concat(result.Where(char.IsDigit)).Distinct().OrderBy(x => x).ToList();
+
+            char[] charArrayData = resultWithOutChar.ToArray();
+            char[] charArrayEquals = equals1.ToArray();
+
+
+            //foreach (var item in charArrayEquals)
+            //{
+            //    foreach (var itemSearch in charArrayData)
+            //    {
+            //        if (item.Equals(itemSearch))
+            //        {
+            //            equals1.Remove(item);
+            //        }
+            //    }
+            //}
+
+            return charArrayEquals.ToList();
         }
 
 
