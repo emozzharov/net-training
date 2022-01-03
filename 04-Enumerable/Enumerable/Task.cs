@@ -25,6 +25,7 @@ namespace EnumerableTask {
             List<string> list = new List<string>();
             foreach (var str in data) 
                 list.Add(str == null?null:str.ToUpper());
+            //check commit
             return list;
         }
 
