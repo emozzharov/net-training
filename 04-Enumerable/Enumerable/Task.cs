@@ -428,6 +428,13 @@ namespace EnumerableTask
                 return 0;
             }
 
+            var dataEmpty = data.Select(x => string.IsNullOrEmpty(x)).Where(x => x == true); ;
+
+            if (dataEmpty.Count() == data.Count())
+            {
+                return dataEmpty.Count();
+            }
+
             var resuit = data.OfType<string>()
                 .Where(x => !string.IsNullOrEmpty(x))
                 .OrderByDescending(x => x.Length)
