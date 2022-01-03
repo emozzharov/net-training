@@ -395,9 +395,10 @@ namespace EnumerableTask
         {
             // TODO : Implement GetCountOfStrings
 
-            var list = data.ToList();
+            //var list = data.ToList();
 
-            var result = list.GroupBy(x => x).Select(x => new { x.Key, Count = x.Count() }).ToList();
+            var result = data.GroupBy(x => x).Select(x => new { x.Key, Count = x.Count() }).ToList();
+
 
             var result1 = result.Select(x => x.Key);
 
@@ -531,9 +532,6 @@ namespace EnumerableTask
 
             return null;
         }
-
-
-
 
         /// <summary> Sorts string by length and alphabet </summary>
         /// <param name="data">the source data</param>

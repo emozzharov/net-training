@@ -29,17 +29,21 @@ namespace IQueryableTask
         {
             // TODO: Implement Execute
             throw new NotImplementedException();
-            //return Person.Execute(expression, false);
+            return new Person();
 
         }
 
-        //public object Execute(Expression expression) => _provider.Execute(expression);
 
         public TResult Execute<TResult>(Expression expression)
         {
             // TODO: Implement Execute
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
 
+            PersonService xxx = new PersonService();
+
+            var x = xxx.Search(GetSqlQuery(expression));
+
+            return (TResult)x;
             // HINT: Use GetSqlQuery to build query and pass the query to PersonService
         }
 
@@ -53,7 +57,12 @@ namespace IQueryableTask
         public string GetSqlQuery(Expression expression)
         {
             // TODO: Implement GetYqlQuery
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
+            var translator = new MyQueryTranslator();
+            string whereClause = translator.Translate(expression);
+
+            return whereClause;
 
             // HINT: This method is not part of IQueryProvider interface and is used here only for tests.
             // HINT: To transform expression to sql query create a class derived from ExpressionVisitor
@@ -130,6 +139,14 @@ namespace IQueryableTask
                 LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
                 this.Visit(lambda.Body);
                 return m;
+            }
+            else if (m.Method.Name == "Contains")
+            {
+                if (this.ParseContainsExpression(m))
+                {
+                    Expression nextExpression = m.Arguments[0];
+                    return this.Visit(nextExpression);
+                }
             }
             else if (m.Method.Name == "Take")
             {
@@ -343,6 +360,20 @@ namespace IQueryableTask
         }
 
         private bool ParseTakeExpression(MethodCallExpression expression)
+        {
+            ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
+
+            int size;
+            if (int.TryParse(sizeExpression.Value.ToString(), out size))
+            {
+                _take = size;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ParseContainsExpression(MethodCallExpression expression)
         {
             ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
 
