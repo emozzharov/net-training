@@ -28,9 +28,13 @@ namespace IQueryableTask
         public object Execute(Expression expression)
         {
             // TODO: Implement Execute
-            throw new NotImplementedException();
-            return new Person();
+            //throw new NotImplementedException();
+            //return new Person();
+            PersonService isEnumerable = new PersonService();
 
+            var result = isEnumerable.Search(GetSqlQuery(expression));
+
+            return result;
         }
 
 
@@ -39,11 +43,17 @@ namespace IQueryableTask
             // TODO: Implement Execute
             //throw new NotImplementedException();
 
-            PersonService xxx = new PersonService();
+            var isEnumerable = new PeopleDbQueryProvider();
 
-            var x = xxx.Search(GetSqlQuery(expression));
+            var result = isEnumerable.Execute(expression);
 
-            return (TResult)x;
+            return (TResult)result;
+
+            //PersonService isEnumerable = new PersonService();
+
+            //var result = isEnumerable.Search(GetSqlQuery(expression));
+
+            //return (TResult)result;
             // HINT: Use GetSqlQuery to build query and pass the query to PersonService
         }
 
@@ -74,6 +84,8 @@ namespace IQueryableTask
     {
         private StringBuilder sb;
         private string _orderBy = string.Empty;
+        private string _select = string.Empty;
+        private string _contains = string.Empty;
         private int? _skip = null;
         private int? _take = null;
         private string _whereClause = string.Empty;
@@ -91,6 +103,22 @@ namespace IQueryableTask
             get
             {
                 return _take;
+            }
+        }
+
+        public string Contains
+        {
+            get
+            {
+                return _contains;
+            }
+        }
+
+        public string Select
+        {
+            get
+            {
+                return _select;
             }
         }
 
@@ -142,44 +170,50 @@ namespace IQueryableTask
             }
             else if (m.Method.Name == "Contains")
             {
-                if (this.ParseContainsExpression(m))
-                {
-                    Expression nextExpression = m.Arguments[0];
-                    return this.Visit(nextExpression);
-                }
+                this.Visit(m.Arguments[0]);
+                LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
+                this.Visit(lambda.Body);
+                return m;
             }
-            else if (m.Method.Name == "Take")
+            else if (m.Method.Name == "Select")
             {
-                if (this.ParseTakeExpression(m))
-                {
-                    Expression nextExpression = m.Arguments[0];
-                    return this.Visit(nextExpression);
-                }
+                this.Visit(m.Arguments[0]);
+                LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
+                this.Visit(lambda.Body);
+                return m;
             }
-            else if (m.Method.Name == "Skip")
-            {
-                if (this.ParseSkipExpression(m))
-                {
-                    Expression nextExpression = m.Arguments[0];
-                    return this.Visit(nextExpression);
-                }
-            }
-            else if (m.Method.Name == "OrderBy")
-            {
-                if (this.ParseOrderByExpression(m, "ASC"))
-                {
-                    Expression nextExpression = m.Arguments[0];
-                    return this.Visit(nextExpression);
-                }
-            }
-            else if (m.Method.Name == "OrderByDescending")
-            {
-                if (this.ParseOrderByExpression(m, "DESC"))
-                {
-                    Expression nextExpression = m.Arguments[0];
-                    return this.Visit(nextExpression);
-                }
-            }
+            //else if (m.Method.Name == "Take")
+            //{
+            //    if (this.ParseTakeExpression(m))
+            //    {
+            //        Expression nextExpression = m.Arguments[0];
+            //        return this.Visit(nextExpression);
+            //    }
+            //}
+            //else if (m.Method.Name == "Skip")
+            //{
+            //    if (this.ParseSkipExpression(m))
+            //    {
+            //        Expression nextExpression = m.Arguments[0];
+            //        return this.Visit(nextExpression);
+            //    }
+            //}
+            //else if (m.Method.Name == "OrderBy")
+            //{
+            //    if (this.ParseOrderByExpression(m, "ASC"))
+            //    {
+            //        Expression nextExpression = m.Arguments[0];
+            //        return this.Visit(nextExpression);
+            //    }
+            //}
+            //else if (m.Method.Name == "OrderByDescending")
+            //{
+            //    if (this.ParseOrderByExpression(m, "DESC"))
+            //    {
+            //        Expression nextExpression = m.Arguments[0];
+            //        return this.Visit(nextExpression);
+            //    }
+            //}
 
             throw new NotSupportedException(string.Format("The method '{0}' is not supported", m.Method.Name));
         }
