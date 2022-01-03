@@ -40,7 +40,10 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<int> GetStringsLength(IEnumerable<string> data) {
             // TODO : Implement GetStringsLength
-            throw new NotImplementedException();
+            List<int> list = new List<int>();
+            foreach (var str in data)
+                list.Add(str == null ? 0 : str.Length);
+            return list;
         }
 
         /// <summary>Transforms int sequence to its square sequence, f(x) = x * x </summary>
