@@ -22,7 +22,10 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<string> GetUppercaseStrings(IEnumerable<string> data) {
             // TODO : Implement GetUppercaseStrings
-            throw new NotImplementedException();
+            List<string> list = new List<string>();
+            foreach (var str in data) 
+                list.Add(str == null?null:str.ToUpper());
+            return list;
         }
 
         /// <summary> Transforms an each string from sequence to its length</summary>
