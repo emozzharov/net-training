@@ -83,28 +83,28 @@ namespace IQueryableTask
     public class MyQueryTranslator : ExpressionVisitor
     {
         private StringBuilder sb;
-        private string _orderBy = string.Empty;
+        //private string _orderBy = string.Empty;
         private string _select = string.Empty;
         private string _contains = string.Empty;
-        private int? _skip = null;
-        private int? _take = null;
+        //private int? _skip = null;
+        //private int? _take = null;
         private string _whereClause = string.Empty;
 
-        public int? Skip
-        {
-            get
-            {
-                return _skip;
-            }
-        }
+        //public int? Skip
+        //{
+        //    get
+        //    {
+        //        return _skip;
+        //    }
+        //}
 
-        public int? Take
-        {
-            get
-            {
-                return _take;
-            }
-        }
+        //public int? Take
+        //{
+        //    get
+        //    {
+        //        return _take;
+        //    }
+        //}
 
         public string Contains
         {
@@ -122,13 +122,13 @@ namespace IQueryableTask
             }
         }
 
-        public string OrderBy
-        {
-            get
-            {
-                return _orderBy;
-            }
-        }
+        //public string OrderBy
+        //{
+        //    get
+        //    {
+        //        return _orderBy;
+        //    }
+        //}
 
         public string WhereClause
         {
@@ -144,9 +144,10 @@ namespace IQueryableTask
 
         public string Translate(Expression expression)
         {
-            this.sb = new StringBuilder();
-            this.Visit(expression);
-            _whereClause = this.sb.ToString();
+            sb = new StringBuilder();
+            Visit(expression);
+            _whereClause = sb.ToString();
+
             return _whereClause;
         }
 
@@ -163,23 +164,19 @@ namespace IQueryableTask
         {
             if (m.Method.DeclaringType == typeof(Queryable) && m.Method.Name == "Where")
             {
-                this.Visit(m.Arguments[0]);
+                Visit(m.Arguments[0]);
                 LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
-                this.Visit(lambda.Body);
+                Visit(lambda.Body);
                 return m;
             }
             else if (m.Method.Name == "Contains")
             {
-                this.Visit(m.Arguments[0]);
-                LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
-                this.Visit(lambda.Body);
+                Visit(m.Arguments[0]);
                 return m;
             }
             else if (m.Method.Name == "Select")
             {
-                this.Visit(m.Arguments[0]);
-                LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
-                this.Visit(lambda.Body);
+                Visit(m.Arguments[0]);
                 return m;
             }
             //else if (m.Method.Name == "Take")
@@ -243,7 +240,7 @@ namespace IQueryableTask
         /// <returns></returns>
         protected override Expression VisitBinary(BinaryExpression b)
         {
-            sb.Append("(");
+            //sb.Append("(");
             this.Visit(b.Left);
 
             switch (b.NodeType)
@@ -308,7 +305,7 @@ namespace IQueryableTask
             }
 
             this.Visit(b.Right);
-            sb.Append(")");
+            //sb.Append(")");
             return b;
         }
 
@@ -368,72 +365,72 @@ namespace IQueryableTask
             return (exp.NodeType == ExpressionType.Constant && ((ConstantExpression)exp).Value == null);
         }
 
-        private bool ParseOrderByExpression(MethodCallExpression expression, string order)
-        {
-            UnaryExpression unary = (UnaryExpression)expression.Arguments[1];
-            LambdaExpression lambdaExpression = (LambdaExpression)unary.Operand;
+        //private bool ParseOrderByExpression(MethodCallExpression expression, string order)
+        //{
+        //    UnaryExpression unary = (UnaryExpression)expression.Arguments[1];
+        //    LambdaExpression lambdaExpression = (LambdaExpression)unary.Operand;
 
-            lambdaExpression = (LambdaExpression)Evaluator.PartialEval(lambdaExpression);
+        //    lambdaExpression = (LambdaExpression)Evaluator.PartialEval(lambdaExpression);
 
-            MemberExpression body = lambdaExpression.Body as MemberExpression;
-            if (body != null)
-            {
-                if (string.IsNullOrEmpty(_orderBy))
-                {
-                    _orderBy = string.Format("{0} {1}", body.Member.Name, order);
-                }
-                else
-                {
-                    _orderBy = string.Format("{0}, {1} {2}", _orderBy, body.Member.Name, order);
-                }
+        //    MemberExpression body = lambdaExpression.Body as MemberExpression;
+        //    if (body != null)
+        //    {
+        //        if (string.IsNullOrEmpty(_orderBy))
+        //        {
+        //            _orderBy = string.Format("{0} {1}", body.Member.Name, order);
+        //        }
+        //        else
+        //        {
+        //            _orderBy = string.Format("{0}, {1} {2}", _orderBy, body.Member.Name, order);
+        //        }
 
-                return true;
-            }
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        private bool ParseTakeExpression(MethodCallExpression expression)
-        {
-            ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
+        //private bool ParseTakeExpression(MethodCallExpression expression)
+        //{
+        //    ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
 
-            int size;
-            if (int.TryParse(sizeExpression.Value.ToString(), out size))
-            {
-                _take = size;
-                return true;
-            }
+        //    int size;
+        //    if (int.TryParse(sizeExpression.Value.ToString(), out size))
+        //    {
+        //        _take = size;
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        private bool ParseContainsExpression(MethodCallExpression expression)
-        {
-            ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
+        //private bool ParseContainsExpression(MethodCallExpression expression)
+        //{
+        //    ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
 
-            int size;
-            if (int.TryParse(sizeExpression.Value.ToString(), out size))
-            {
-                _take = size;
-                return true;
-            }
+        //    int size;
+        //    if (int.TryParse(sizeExpression.Value.ToString(), out size))
+        //    {
+        //        _contains = size;
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        private bool ParseSkipExpression(MethodCallExpression expression)
-        {
-            ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
+        //private bool ParseSkipExpression(MethodCallExpression expression)
+        //{
+        //    ConstantExpression sizeExpression = (ConstantExpression)expression.Arguments[1];
 
-            int size;
-            if (int.TryParse(sizeExpression.Value.ToString(), out size))
-            {
-                _skip = size;
-                return true;
-            }
+        //    int size;
+        //    if (int.TryParse(sizeExpression.Value.ToString(), out size))
+        //    {
+        //        _skip = size;
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
     }
 
     public static class Evaluator
