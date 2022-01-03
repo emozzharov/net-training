@@ -52,7 +52,7 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<long> GetSquareSequence(IEnumerable<int> data) {
             // TODO : Implement GetSquareSequence
-            throw new NotImplementedException();
+            return data.Select(num => (long)num*num);
         }
 
         /// <summary>Transforms int sequence to its moving sum sequence, 
