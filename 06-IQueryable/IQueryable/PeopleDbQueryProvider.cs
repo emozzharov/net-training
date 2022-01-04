@@ -138,9 +138,9 @@ namespace IQueryableTask
             }
         }
 
-        public MyQueryTranslator()
-        {
-        }
+        //public MyQueryTranslator()
+        //{
+        //}
 
         public string Translate(Expression expression)
         {
@@ -165,12 +165,14 @@ namespace IQueryableTask
             if (m.Method.DeclaringType == typeof(Queryable) && m.Method.Name == "Where")
             {
                 Visit(m.Arguments[0]);
-                sb.Append(" where ");
+                sb.Append(" WHERE ");
                 Visit(m.Arguments[1]);
                 return m;
             }
             else if (m.Method.Name == "Contains")
             {
+                Visit(m.Object);
+                sb.Append(" WHERE ");
                 Visit(m.Arguments[0]);
                 return m;
             }
@@ -317,11 +319,11 @@ namespace IQueryableTask
         {
             IQueryable q = c.Value as IQueryable;
 
-            if (q == null && c.Value == null)
+            if (q != null)
             {
-                sb.Append("NULL");
+                sb.Append("select * from person");
             }
-            else if (q == null)
+            else
             {
                 switch (Type.GetTypeCode(c.Value.GetType()))
                 {
@@ -330,15 +332,15 @@ namespace IQueryableTask
                         break;
 
                     case TypeCode.String:
-                        sb.Append("'");
+                        sb.Append("'%");
                         sb.Append(c.Value);
-                        sb.Append("'");
+                        sb.Append("'%");
                         break;
 
                     case TypeCode.DateTime:
-                        sb.Append("'");
+                        sb.Append("'%");
                         sb.Append(c.Value);
-                        sb.Append("'");
+                        sb.Append("'%");
                         break;
 
                     case TypeCode.Object:
