@@ -18,7 +18,6 @@ namespace Collections.Tasks
 
     public class Task
     {
-
         /// <summary> Generate the Fibonacci sequence f(x) = f(x-1)+f(x-2) </summary>
         /// <param name="count">the size of a required sequence</param>
         /// <returns>
@@ -94,8 +93,13 @@ namespace Collections.Tasks
 
             char[] delimeters = new[] { ',', ' ', '.', '\t', '\n' };
             // TODO : Implement the tokenizer
-            var text = reader.ReadLine();
-            string[] tokenizer = text.Split(delimeters);
+            var text = string.Empty;
+
+            while (reader.Peek() != -1)
+                text += reader.ReadLine();
+
+            var tokenizer = text.Split(delimeters, StringSplitOptions.RemoveEmptyEntries);
+
             return tokenizer;
         }
 
@@ -214,7 +218,15 @@ namespace Collections.Tasks
         public static TValue GetOrBuildValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> builder)
         {
             // TODO : Implement GetOrBuildValue method for cache
-            throw new NotImplementedException();
+            if (dictionary.ContainsKey(key))
+            {
+                return dictionary[key];
+            }
+            else
+            {
+                dictionary.Add(key, builder.Invoke());
+                return dictionary[key];
+            }
         }
 
     }
