@@ -47,7 +47,23 @@ namespace IOStreams
         public static string CalculateHash(this Stream stream, string hashAlgorithmName)
         {
             // TODO : Implement CalculateHash method
-            throw new NotImplementedException();
+            var hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName);
+
+            if (hashAlgorithm is null)
+            {
+                throw new ArgumentException("Exception!");
+            }
+
+            var data = hashAlgorithm.ComputeHash(stream);
+
+            var sBuilder = new StringBuilder();
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2").ToUpper());
+            }
+
+            return sBuilder.ToString();
         }
 
 
