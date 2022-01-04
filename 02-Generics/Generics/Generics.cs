@@ -9,7 +9,7 @@ namespace Task.Generics
     public static class ListConverter
     {
 
-        private static char ListSeparator = ',';  // Separator used to separate values in string
+        private static readonly char ListSeparator = ',';  // Separator used to separate values in string
 
         /// <summary>
         ///   Converts a source list into a string representation
