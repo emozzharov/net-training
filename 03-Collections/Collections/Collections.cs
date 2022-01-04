@@ -188,7 +188,6 @@ namespace Collections.Tasks
 
             var result = new IEnumerable<T>[count][];
 
-
             return null;
         }
 
@@ -228,6 +227,5 @@ namespace Collections.Tasks
                 return dictionary[key];
             }
         }
-
     }
 }
