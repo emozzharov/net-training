@@ -5,13 +5,13 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Diagnostics;
+using System.Collections;
 
 namespace EnumerableTask
 {
 
     public class Task
     {
-
         /// <summary> Transforms all strings to uppercase</summary>
         /// <param name="data">source string sequence</param>
         /// <returns>
@@ -396,11 +396,13 @@ namespace EnumerableTask
             // TODO : Implement GetCountOfStrings
             //var result = data.GroupBy(x => x).Select(x => new { Key = x, Count = x.Count() });
 
-            var list = data.ToList();
+            //var list = data.ToList();
 
-            var result = list.GroupBy(x => x).Select(x => new { x.Key, Count = x.Count() }).ToList();
+            //var result = list.GroupBy(x => x).Select(x => new { x.Key, Count = x.Count() }).ToList();
 
-            return (IEnumerable<Tuple<string, int>>)result;
+            var result = data.GroupBy(x => x).Select(x => new Tuple<string, int>(x.Key, x.Count()));
+
+            return result;
         }
 
         /// <summary> Counts the number of strings with max length in sequence </summary>
@@ -496,7 +498,10 @@ namespace EnumerableTask
         {
             // TODO : Implement GetSpecificEventEntriesCount
             EventLogEntryCollection systemEvents = (new EventLog("System", ".")).Entries;
-            throw new NotImplementedException();
+
+            var result = systemEvents.Cast<EventLogEntry>().Count(x => x.EntryType.Equals(value));
+
+            return result;
         }
 
 
@@ -514,7 +519,14 @@ namespace EnumerableTask
         public IEnumerable<string> GetIEnumerableTypesNames(Assembly assembly)
         {
             // TODO : Implement GetIEnumerableTypesNames
-            throw new NotImplementedException();
+            if (assembly is null)
+            {
+                throw new ArgumentNullException("Exception!");
+            }
+
+            var result = assembly.ExportedTypes.Where(x => x.GetInterfaces().Contains(typeof(IEnumerable))).Select(x => x.Name).Distinct();
+
+            return result;
         }
 
         /// <summary>Calculates sales sum by quarter</summary>
@@ -580,7 +592,11 @@ namespace EnumerableTask
         public IEnumerable<char> GetMissingDigits(IEnumerable<string> data)
         {
             // TODO : Implement GetMissingDigits
-            throw new NotImplementedException();
+            var numbersArray = "0123456789".ToCharArray();
+
+            var result = numbersArray.Except(data.SelectMany(n => n.Where(char.IsDigit)));
+
+            return result;
         }
 
 
@@ -898,9 +914,8 @@ namespace EnumerableTask
         public IEnumerable<int> GetFirstNegativeSubsequence(IEnumerable<int> data)
         {
             // TODO : Implement GetFirstNegativeSubsequence
-            var listData = data.ToList();
 
-            var result = listData.TakeWhile(x => x < 0);
+            var result = data.SkipWhile(x => x >= 0).TakeWhile(x => x < 0);
 
             return result;
         }
@@ -952,6 +967,11 @@ namespace EnumerableTask
             // TODO : Implement GetNextVersionFromList
             var listVersions = versions.ToList();
 
+            if (currentVersion == listVersions[listVersions.Count() - 1])
+            {
+                return null;
+            }
+
             var result = listVersions.Select((x, y) =>
             {
                 if (x == currentVersion)
@@ -968,7 +988,7 @@ namespace EnumerableTask
             var result1 = result.Select(x => x).Where(x => x != null).ToList();
 
 
-            return result1.Count() > 0 ? result1.ToString() : null;
+            return result1.Count() > 0 ? result1[0].ToString() : null;
         }
 
         /// <summary>
