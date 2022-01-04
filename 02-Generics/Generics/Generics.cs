@@ -9,7 +9,7 @@ namespace Task.Generics
     public static class ListConverter
     {
 
-        private static char ListSeparator = ',';  // Separator used to separate values in string
+        private static readonly char ListSeparator = ',';  // Separator used to separate values in string
 
         /// <summary>
         ///   Converts a source list into a string representation
@@ -35,7 +35,9 @@ namespace Task.Generics
                 convert += (a.ToString() + ListSeparator);
             }
 
-            return convert.Remove((convert.Length - 1), 1);
+            //return convert.Remove((convert.Length - 1), 1);
+
+            return convert.Trim(',');
         }
 
         /// <summary>
@@ -58,7 +60,6 @@ namespace Task.Generics
         {
             // TODO : Implement ConvertToList<T>
             // HINT : Use TypeConverter.ConvertFromString method to parse string value
-            //var newType = 
 
             var resultList = new List<T>();
 
@@ -180,12 +181,15 @@ namespace Task.Generics
     ///   MyService singleton = Singleton<MyService>.Instance;
     /// </example>
     public static class Singleton<T>
+        where T : class, new()
     {
         // TODO : Implement generic singleton class 
 
+        private static readonly Lazy<T> instance = new Lazy<T>(() => new T());
+
         public static T Instance
         {
-            get { return Singleton<T>.Instance; }
+            get { return instance.Value; }
         }
     }
 
@@ -243,9 +247,7 @@ namespace Task.Generics
         public static Predicate<T> CombinePredicates<T>(Predicate<T>[] predicates)
         {
             // TODO : Implement CombinePredicates<T>
-            var result = predicates[0];
-
-            return result;
+            return result => predicates.All(predicate => predicate(result));
         }
 
     }
