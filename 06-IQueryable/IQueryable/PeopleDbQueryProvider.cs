@@ -165,8 +165,8 @@ namespace IQueryableTask
             if (m.Method.DeclaringType == typeof(Queryable) && m.Method.Name == "Where")
             {
                 Visit(m.Arguments[0]);
-                LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
-                Visit(lambda.Body);
+                sb.Append(" where ");
+                Visit(m.Arguments[1]);
                 return m;
             }
             else if (m.Method.Name == "Contains")
@@ -219,10 +219,14 @@ namespace IQueryableTask
         {
             switch (u.NodeType)
             {
-                case ExpressionType.Not:
-                    sb.Append(" NOT ");
+                case ExpressionType.Quote:
                     this.Visit(u.Operand);
                     break;
+
+                //case ExpressionType.Not:
+                //    sb.Append(" NOT ");
+                //    this.Visit(u.Operand);
+                //    break;
                 case ExpressionType.Convert:
                     this.Visit(u.Operand);
                     break;
