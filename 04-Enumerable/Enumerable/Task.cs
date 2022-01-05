@@ -230,7 +230,7 @@ namespace EnumerableTask {
         /// </example>
         public int GetCountOfGreaterThen10(IEnumerable<int> data) {
             // TODO : Implement GetCountOfGreaterThen10
-            throw new NotImplementedException();
+            return data.Count(num=>num>10);
         }
 
 
@@ -246,7 +246,7 @@ namespace EnumerableTask {
         /// </example>
         public string GetFirstContainsFirst(IEnumerable<string> data) {
             // TODO : Implement GetFirstContainsFirst
-            throw new NotImplementedException();
+            return data.FirstOrDefault(str =>str!=null? (str.IndexOf("first",StringComparison.OrdinalIgnoreCase)!=-1) : false);
         }
 
         /// <summary> Counts the number of unique strings with length=3 </summary>
@@ -262,7 +262,7 @@ namespace EnumerableTask {
         /// </example>
         public int GetCountOfStringsWithLengthEqualsTo3(IEnumerable<string> data) {
             // TODO : Implement GetCountOfStringsWithLengthEqualsTo3
-            throw new NotImplementedException();
+            return data.Where(str => str!=null? str.Length == 3 : false).Distinct().Count();
         }
 
         /// <summary> Counts the number of each strings in sequence </summary>
