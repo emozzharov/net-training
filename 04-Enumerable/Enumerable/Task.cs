@@ -168,7 +168,7 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<char> GetUsedChars(IEnumerable<string> data) {
             // TODO : Implement GetUsedChars
-            throw new NotImplementedException();
+            return String.Join("", data).ToCharArray().Distinct();
         }
 
 
