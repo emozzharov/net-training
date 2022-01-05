@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Task.Generics
 {
@@ -130,7 +132,11 @@ namespace Task.Generics
         ///   }
         /// </example>
         public static void SortTupleArray<T1, T2, T3>(this Tuple<T1, T2, T3>[] array, int sortedColumn, bool ascending)
+            where T1 : IComparable
+            where T2 : IComparable
+            where T3 : IComparable
         {
+
             // TODO :SortTupleArray<T1, T2, T3>
             // HINT : Add required constraints to generic types
             int a = 1;
@@ -170,7 +176,8 @@ namespace Task.Generics
                     }
                     break;
 
-                default: break;
+                default:
+                    throw new IndexOutOfRangeException("Exception!");
             }
 
             a = 2;
@@ -221,7 +228,23 @@ namespace Task.Generics
         public static T TimeoutSafeInvoke<T>(this Func<T> function)
         {
             // TODO : Implement TimeoutSafeInvoke<T>
-            throw new NotImplementedException();
+            for (int i = 0; i < 3; i++)
+            {
+                try
+                {
+                    return function();
+                }
+                catch (SocketException e)
+                {
+                    string exp = e.Message;
+                    if (i == 2)
+                    {
+                        throw new WebException(exp);
+                    }
+                }
+            }
+
+            return function();
         }
 
 
