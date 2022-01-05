@@ -37,9 +37,16 @@ namespace Serialization.Tasks
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAnyElementAttribute()]
+
         [System.Xml.Serialization.XmlElementAttribute("instrumentation", typeof(InstrumentationType))]
+        public InstrumentationType Instrumentation { get; set; }
+
         [System.Xml.Serialization.XmlElementAttribute("localization", typeof(LocalizationType))]
+        public LocalizationType Localization { get; set; }
+
         [System.Xml.Serialization.XmlElementAttribute("metadata", typeof(MetadataType))]
+        public MetadataType Metadata { get; set; }
+
         public object[] Items
         {
             get
