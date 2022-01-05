@@ -102,7 +102,14 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<string> GetPrefixItems(IEnumerable<string> data, string prefix) {
             // TODO : Implement GetPrefixItems
-            throw new NotImplementedException();
+            if (prefix == null) throw new ArgumentNullException();
+            return data.Where(str => {
+                if(!String.IsNullOrEmpty(str))
+                {
+                    return str.ToLower().StartsWith(prefix.ToLower());
+                }
+                return false;
+            });
         }
 
         /// <summary> Returns every second item from source sequence</summary>
