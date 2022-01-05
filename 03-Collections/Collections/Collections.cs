@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Collections.Tasks
 {
@@ -129,7 +130,30 @@ namespace Collections.Tasks
         public static IEnumerable<T> DepthTraversalTree<T>(ITreeNode<T> root)
         {
             // TODO : Implement the tree depth traversal algorithm
-            throw new NotImplementedException();
+            if (root is null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var treeNode = new Stack<ITreeNode<T>>();
+
+            treeNode.Push(root);
+
+            var resultList = new List<T>();
+
+            while (treeNode.Count > 0)
+            {
+                var current = treeNode.Pop();
+
+                resultList.Add(current.Data);
+
+                if (current.Children is null) continue;
+
+                for (var i = current.Children.Count() - 1; i >= 0; i--)
+
+                    treeNode.Push(current.Children.ElementAt(i));
+            }
+            return resultList;
         }
 
         /// <summary>
@@ -156,7 +180,27 @@ namespace Collections.Tasks
         public static IEnumerable<T> WidthTraversalTree<T>(ITreeNode<T> root)
         {
             // TODO : Implement the tree width traversal algorithm
-            throw new NotImplementedException();
+            if (root is null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var treeNode = new Queue<ITreeNode<T>>();
+
+
+            treeNode.Enqueue(root);
+
+            while (treeNode.Count > 0)
+            {
+                var current = treeNode.Dequeue();
+
+                yield return current.Data;
+
+                if (!(current.Children is null))
+
+                    foreach (var currentChild in current.Children)
+                        treeNode.Enqueue(currentChild);
+            }
         }
 
 
