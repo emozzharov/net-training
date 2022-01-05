@@ -539,9 +539,9 @@ namespace EnumerableTask
         public int[] GetQuarterSales(IEnumerable<Tuple<DateTime, int>> sales)
         {
             // TODO : Implement GetQuarterSales
-            var result = sales.GroupBy(x => (x.Item1.Month - 1) / 3);
+            var result = sales.Aggregate(new int[4], (x, y) => { x[((y.Item1.Month + 2) / 3) - 1] += y.Item2; return x; });
 
-            return null;
+            return result;
         }
 
         /// <summary> Sorts string by length and alphabet </summary>
@@ -759,9 +759,9 @@ namespace EnumerableTask
                 return string.Empty;
             }
 
-            var arr = data.GroupBy(x => x.Split());
+            var result = data.DefaultIfEmpty(Enumerable.Empty<char>()).Aggregate((x, y) => x.Intersect(y));
 
-            return null;
+            return result;
         }
 
         /// <summary> Calculates sum of all integers from object array </summary>
