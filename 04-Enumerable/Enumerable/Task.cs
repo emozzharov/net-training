@@ -107,7 +107,8 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<T> GetEvenItems<T>(IEnumerable<T> data) {
             // TODO : Implement GetEvenItems
-            throw new NotImplementedException();
+            if (data.Count() < 2) return new List<T>();
+            return data.Where((a, i) => (i + 1) % 2 == 0).ToList();
         }
 
         /// <summary> Propagate every item in sequence its position times</summary>
