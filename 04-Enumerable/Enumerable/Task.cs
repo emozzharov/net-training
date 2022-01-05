@@ -214,7 +214,20 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<int> Get3TopItems(IEnumerable<int> data) {
             // TODO : Implement Get3TopItems
-            throw new NotImplementedException();
+            if (data.Count() == 0) return new List<int>();
+
+            List<int> result = new List<int>();
+            List<int> source = data.Distinct().ToList();
+            if (source.Count() == 1) return source;
+            else if (source.Count() == 2) return source.OrderByDescending(x=>x);
+            else
+                for (int i = 0; i < 3; i++)
+                {
+                    int currentMax = source.Max();
+                    result.Add(currentMax);
+                    source.Remove(currentMax);
+                }
+            return result;
         }
 
         /// <summary> Calculates the count of numbers that are greater then 10</summary>
