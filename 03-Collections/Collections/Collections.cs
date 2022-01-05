@@ -164,11 +164,57 @@ namespace Collections.Tasks {
         ///   source = { 1,2,3,4 }, count=4 => {{1,2,3,4}}
         ///   source = { 1,2,3,4 }, count=5 => ArgumentOutOfRangeException
         /// </example>
-        public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count) {
+        public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count)
+        {
             // TODO : Implement GenerateAllPermutations method
-            throw new NotImplementedException();
+            if (count > source.Length || count < 0) throw new ArgumentOutOfRangeException();
+            List<List<T>> pers = new List<List<T>>();
+            if (count == 0) return pers.Select(el=>el.ToArray());
+            if (count == 1)
+            {
+                foreach (var item in source)
+                    pers.Add(new List<T> {item});
+                return pers.Select(el => el.ToArray());
+            }
+            else if(count == source.Length)
+            {
+                pers.Add(new List<T>(source));
+                return pers.Select(el => el.ToArray());
+            }
+            Сombinations(source, new List<int>(), 0, count, pers);
+            return pers.Select(el=>el.ToArray());
         }
+        public static void Сombinations<T>(T[] array, List<int> skip, int current, int max, List<List<T>> result)
+        {
+            if (result.Count == 0)
+            {
+                result.Add(new List<T>());
+            }
+            if (max == 0)
+            {
+                return;
+            }
+            var currentLevelResult = new List<T>(result.Last());
 
+            for (int i = current; i < array.Length; ++i)
+            {
+                if (skip.Contains(i))
+                {
+                    continue;
+                }
+
+                result.Last().Add(array[i]);
+                if (result.Last().Count() != max)
+                {
+                    Сombinations(array, skip, i + 1, max, result);
+                }
+                result.Add(new List<T>(currentLevelResult));
+            }
+            if (result.Last().Count() != max)
+            {
+                result.Remove(result.Last());
+            }
+        }
     }
 
     public static class DictionaryExtentions {
