@@ -291,7 +291,14 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<Tuple<string,int>> GetCountOfStrings(IEnumerable<string> data) {
             // TODO : Implement GetCountOfStrings
-            throw new NotImplementedException();
+            List<Tuple<string, int>> tuples = new List<Tuple<string, int>>();
+            if (data.Count() == 0) return tuples;
+            foreach(string str in data)
+            {
+                int amount = data.Count(s=>s ==str);
+                tuples.Add(new Tuple<string,int>(str,amount));
+            }
+            return tuples.Distinct();
         }
 
         /// <summary> Counts the number of strings with max length in sequence </summary>
@@ -308,7 +315,9 @@ namespace EnumerableTask {
         /// </example>
         public int GetCountOfStringsWithMaxLength(IEnumerable<string> data) {
             // TODO : Implement GetCountOfStringsWithMaxLength
-            throw new NotImplementedException();
+            if (data.Count() == 0) return 0;
+            int maxLen = data.Max(x => x==null ? 0 : x.Length);
+            return data.Count(x =>x==null?0 == maxLen : x.Length == maxLen);
         }
 
 
