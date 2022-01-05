@@ -394,12 +394,6 @@ namespace EnumerableTask
         public IEnumerable<Tuple<string, int>> GetCountOfStrings(IEnumerable<string> data)
         {
             // TODO : Implement GetCountOfStrings
-            //var result = data.GroupBy(x => x).Select(x => new { Key = x, Count = x.Count() });
-
-            //var list = data.ToList();
-
-            //var result = list.GroupBy(x => x).Select(x => new { x.Key, Count = x.Count() }).ToList();
-
             var result = data.GroupBy(x => x).Select(x => new Tuple<string, int>(x.Key, x.Count()));
 
             return result;
@@ -445,6 +439,8 @@ namespace EnumerableTask
                 .Take(1);
 
             var result1 = resuit.ToList();
+
+            //var xxx = result1.Count() == 0 ? 0 : result1[0].ToList().Count();
 
             return result1.Count() == 0 ? 0 : result1[0].ToList().Count();
         }
@@ -545,12 +541,8 @@ namespace EnumerableTask
             // TODO : Implement GetQuarterSales
             var result = sales.GroupBy(x => (x.Item1.Month - 1) / 3);
 
-
             return null;
         }
-
-
-
 
         /// <summary> Sorts string by length and alphabet </summary>
         /// <param name="data">the source data</param>
@@ -597,6 +589,7 @@ namespace EnumerableTask
             var result = numbersArray.Except(data.SelectMany(n => n.Where(char.IsDigit)));
 
             return result;
+
         }
 
 

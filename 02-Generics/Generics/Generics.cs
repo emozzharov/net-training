@@ -133,6 +133,8 @@ namespace Task.Generics
         {
             // TODO :SortTupleArray<T1, T2, T3>
             // HINT : Add required constraints to generic types
+            int a = 1;
+
             switch (sortedColumn)
             {
                 case 0:
@@ -170,6 +172,8 @@ namespace Task.Generics
 
                 default: break;
             }
+
+            a = 2;
         }
     }
 
