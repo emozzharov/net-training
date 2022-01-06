@@ -449,7 +449,6 @@ namespace EnumerableTask {
                 { '8',false},
                 { '9',false}
             };
-
             if (data.Count() == 0)
             {
                 var result = numbers.Keys.ToArray();
@@ -519,8 +518,10 @@ namespace EnumerableTask {
         ///  { }, {"apple", "bananas" } => { }
         /// </example>
         public IEnumerable<string> CombineNumbersAndFruits(IEnumerable<string> numbers, IEnumerable<string> fruits) {
-            // TODO : Implement CombinesNumbersAndFruits
-            throw new NotImplementedException();
+            // TODO : Implement CombinesNumbersAndFruits 
+            if (numbers.Count() == 0 || fruits.Count() == 0) return new List<string>();
+            var result = numbers.Zip(fruits, (s, f) => String.Join(" ", new string[] { s, f })).ToList();
+            return result;
         }
 
 
@@ -537,7 +538,24 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<char> GetCommonChars(IEnumerable<string> data) {
             // TODO : Implement GetCommonChars
-            throw new NotImplementedException();
+            List<char> resultChars = new List<char>();
+            foreach(var word in data)
+            {
+                char[] chars = word.ToCharArray();
+                foreach(var ch in chars)
+                {
+                    if (CheckChar(ch, data)) resultChars.Add(ch);
+                }
+            }
+            return resultChars.Distinct();
+        }
+        private bool CheckChar(char ch,IEnumerable<string> words)
+        {
+            foreach(var word in words)
+            {
+                if (!word.Contains(ch.ToString())) return false;
+            }
+            return true;
         }
 
         /// <summary> Calculates sum of all integers from object array </summary>
@@ -553,7 +571,8 @@ namespace EnumerableTask {
         /// </example>
         public int GetSumOfAllInts(object[] data) {
             // TODO : Implement GetSumOfAllInts
-            throw new NotImplementedException();
+            if (data.Length == 0) return 0;
+            return data.Where(ob => ob == null ? false : int.TryParse(ob.ToString(), out int number)).Select(n=>int.Parse(n.ToString())).Sum();
         }
 
 
