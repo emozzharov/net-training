@@ -7,15 +7,35 @@ namespace Serialization.Tasks
     // Employee.Manager should be serialized as reference
     // Company class has to be forward compatible with all derived versions
 
+    //class Person : IExtensibleDataObject
+    //{
+    //    // To implement the IExtensibleDataObject interface,
+    //    // you must implement the ExtensionData property. The property
+    //    // holds data from future versions of the class for backward
+    //    // compatibility.
+    //    private ExtensionDataObject extensionDataObject_value;
+    //    public ExtensionDataObject ExtensionData
+    //    {
+    //        get;
+
+    //        set;
+
+    //    }
+    //    [DataMember]
+    //    public string Name;
+    //}
+
     [DataContract(IsReference = true)]
     [KnownType(typeof(Worker))]
-    public class Company
+    public class Company : IExtensibleDataObject
     {
         [DataMember]
         public string Name { get; set; }
 
         [DataMember]
         public IList<Employee> Employee { get; set; }
+
+        public ExtensionDataObject ExtensionData { get; set; }
     }
 
     [DataContract]

@@ -26,7 +26,7 @@ namespace Serialization.Tasks
         public Context Context { get; set; }
 
         [DataMember(Name = "items")]
-        public IList<Item> Items { get; set; }
+        public IList<Items> Items { get; set; }
     }
 
     [DataContract]
@@ -113,7 +113,7 @@ namespace Serialization.Tasks
     }
 
     [DataContract]
-    public class Item
+    public class Items
     {
         [DataMember(Name = "kind")]
         public string Kind { get; set; }
@@ -136,8 +136,8 @@ namespace Serialization.Tasks
         [DataMember(Name = "htmlSnippet")]
         public string HtmlSnippet { get; set; }
 
-        [DataMember(Name = "pagemap")]
-        public Pagemap Pagemap { get; set; }
+        //[DataMember(Name = "pagemap")]
+        //public Pagemap Pagemap { get; set; }
     }
 
     [DataContract]
