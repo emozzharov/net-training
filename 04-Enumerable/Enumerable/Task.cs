@@ -437,7 +437,30 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<char> GetMissingDigits(IEnumerable<string> data) {
             // TODO : Implement GetMissingDigits
-            throw new NotImplementedException();
+            Dictionary<char, bool> numbers = new Dictionary<char, bool> {
+                { '0',false},
+                { '1',false},
+                { '2',false},
+                { '3',false},
+                { '4',false},
+                { '5',false},
+                { '6',false},
+                { '7',false},
+                { '8',false},
+                { '9',false}
+            };
+
+            if (data.Count() == 0)
+            {
+                var result = numbers.Keys.ToArray();
+                return numbers.Keys.ToArray();
+            }
+            char[] chars = String.Join("", data).ToCharArray();
+            foreach(var ch in chars)
+            {
+                numbers[ch] = true;
+            }
+            return numbers.Where(x => x.Value == false).Select(k=>k.Key);
         }
 
 
@@ -455,7 +478,31 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<string> SortDigitNamesByNumericOrder(IEnumerable<string> data) {
             // TODO : Implement SortDigitNamesByNumericOrder
-            throw new NotImplementedException();
+            if (data.Count() == 0) return new List<string>();
+            return SortDigitByName(data);
+        }
+
+        private IEnumerable<string> SortDigitByName(IEnumerable<string> data)
+        {
+            Dictionary<string, int> numbers = new Dictionary<string, int>()
+            {
+                {"zero",0 },
+                {"one",1 },
+                {"two",2 },
+                {"three",3 },
+                {"four",4 },
+                {"five",5 },
+                {"six",6 },
+                {"seven",7 },
+                {"eight",8 },
+                {"nine",9 },
+            };
+            List<Tuple<string, int>> sortNames = new List<Tuple<string, int>>();
+            foreach(var number in data)
+            {
+                sortNames.Add(new Tuple<string, int>(number,numbers[number]));
+            }
+            return sortNames.OrderBy(x => x.Item2).Select(x=>x.Item1);
         }
 
         /// <summary> Combines numbers and fruits </summary>
