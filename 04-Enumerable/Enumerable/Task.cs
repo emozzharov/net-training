@@ -780,7 +780,16 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<string> GetAllPairs(IEnumerable<string> boys, IEnumerable<string> girls) {
             // TODO : Implement GetAllPairs
-            throw new NotImplementedException();
+            List<string> pairs = new List<string>();
+            if (boys.Count() == 0 || girls.Count() == 0) return pairs;
+            foreach(var boy in boys)
+            {
+                foreach(var girl in girls)
+                {
+                    pairs.Add(boy+"+"+girl);
+                }
+            }
+            return pairs;
         }
 
 
