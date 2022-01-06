@@ -10,7 +10,7 @@ namespace Serialization.Tasks
     // The test json file is at Serialization.Tests\Resources\GoogleSearchJson.txt
 
 
-    [DataContract]
+    [DataContract(IsReference = false)]
     public class GoogleSearchResult
     {
         [DataMember(Name = "kind")]
@@ -43,14 +43,14 @@ namespace Serialization.Tasks
     public class Queries
     {
         [DataMember(Name = "nextPage")]
-        public Nextpage[] NextPage { get; set; }
+        public IList<NextPage> NextPage { get; set; }
 
         [DataMember(Name = "request")]
-        public Request[] Request { get; set; }
+        public IList<Request> Request { get; set; }
     }
 
     [DataContract]
-    public class Nextpage
+    public class NextPage
     {
         [DataMember(Name = "title")]
         public string Title { get; set; }

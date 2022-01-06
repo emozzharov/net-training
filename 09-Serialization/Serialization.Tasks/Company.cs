@@ -7,7 +7,8 @@ namespace Serialization.Tasks
     // Employee.Manager should be serialized as reference
     // Company class has to be forward compatible with all derived versions
 
-    [DataContract]
+    [DataContract(IsReference = true)]
+    [KnownType(typeof(Worker))]
     public class Company
     {
         [DataMember]
@@ -18,6 +19,7 @@ namespace Serialization.Tasks
     }
 
     [DataContract]
+    [KnownType(typeof(Manager))]
     public abstract class Employee
     {
         [DataMember]
