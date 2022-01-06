@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Diagnostics;
+using System.Collections;
 
 namespace EnumerableTask {
 
@@ -374,7 +375,8 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<string> GetIEnumerableTypesNames(Assembly assembly) {
             // TODO : Implement GetIEnumerableTypesNames
-            throw new NotImplementedException();
+            if (assembly == null) throw new ArgumentNullException();
+            return assembly.GetExportedTypes().Where(t => t.GetInterfaces().Contains(typeof(IEnumerable))).Select(t => t.Name).Distinct();
         }
 
         /// <summary>Calculates sales sum by quarter</summary>
@@ -390,7 +392,19 @@ namespace EnumerableTask {
         /// </example>
         public int[] GetQuarterSales(IEnumerable<Tuple<DateTime, int>> sales) {
             // TODO : Implement GetQuarterSales
-            throw new NotImplementedException();
+            Tuple<int, int, int,int>[] quarters = new Tuple<int, int, int,int>[] {
+                new Tuple<int, int, int,int>(1,2,3,0),
+                new Tuple<int, int, int,int>(4,5,6,1),
+                new Tuple<int, int, int,int>(7,8,9,2),
+                new Tuple<int, int, int,int>(10,11,12,3)
+            };
+            int[] salesValue = new int[4] { 0,0,0,0};
+            if (sales.Count() == 0) return salesValue;
+            for(int i=0;i<quarters.Length;i++)
+            {
+                salesValue[quarters[i].Item4] = sales.Where(x=>x.Item1.Month == quarters[i].Item1 || x.Item1.Month == quarters[i].Item2 || x.Item1.Month == quarters[i].Item3).Sum(x=>x.Item2);
+            }
+            return salesValue;
         }
 
 
@@ -406,7 +420,9 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<string> SortStringsByLengthAndAlphabet(IEnumerable<string> data) {
             // TODO : Implement SortStringsByLengthAndAlphabet
-            throw new NotImplementedException();
+            if (data.Count() == 0) return data;
+            var result = data.OrderBy(x => x.Length).ThenBy(x => x).ToList();
+            return result;
         }
 
         /// <summary> Finds all missing digits </summary>
