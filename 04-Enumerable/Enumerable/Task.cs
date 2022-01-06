@@ -337,11 +337,12 @@ namespace EnumerableTask {
         /// </example>
         public int GetDigitCharsCount(string data) {
             // TODO : Implement GetDigitCharsCount
-            throw new NotImplementedException();
+            if (data == null) throw new ArgumentNullException();
+            return data.ToCharArray().Where(ch => Char.IsDigit(ch)).Count();
         }
 
 
-       
+
         /// <summary>Counts the system log events of required type</summary>
         /// <param name="value">the type of log event (Error, Event, Information etc)</param>
         /// <returns>
@@ -350,7 +351,13 @@ namespace EnumerableTask {
         public int GetSpecificEventEntriesCount(EventLogEntryType value) {
             // TODO : Implement GetSpecificEventEntriesCount
             EventLogEntryCollection systemEvents = (new EventLog("System", ".")).Entries;
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            int amount = 0;
+            foreach (EventLogEntry log in systemEvents)
+            {
+                if (log.EntryType.Equals(value)) amount++;
+            }
+            return amount;
         }
 
 
