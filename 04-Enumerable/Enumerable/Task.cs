@@ -741,7 +741,7 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<int> GetSumOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2) {
             // TODO : Implement GetSumOfVectors
-            throw new NotImplementedException();
+            return vector1.Zip(vector2,(f,s)=>f+s);
         }
 
         /// <summary>
@@ -760,7 +760,7 @@ namespace EnumerableTask {
         /// </example>
         public int GetProductOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2) {
             // TODO : Implement GetProductOfVectors
-            throw new NotImplementedException();
+            return vector1.Zip(vector2, (f, s) => f * s).Sum();
         }
 
 
@@ -799,7 +799,10 @@ namespace EnumerableTask {
         /// </example>
         public double GetAverageOfDoubleValues(IEnumerable<object> data) {
             // TODO : Implement GetAverageOfDoubleValues
-            throw new NotImplementedException();
+            if (data.Count() == 0) return 0;
+            var doubleList = data.Where(n => n is double).ToList();
+            if (doubleList.Count == 0) return 0;
+            return doubleList.Select(n=>double.Parse(n.ToString())).Average();
         }
 
     }
