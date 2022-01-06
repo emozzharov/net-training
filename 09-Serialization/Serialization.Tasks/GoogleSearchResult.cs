@@ -47,6 +47,9 @@ namespace Serialization.Tasks
 
         [DataMember(Name = "request")]
         public IList<Request> Request { get; set; }
+
+        [DataMember(Name = "previousPage")]
+        public string PreviousPage { get; set; }
     }
 
     [DataContract]
@@ -56,7 +59,7 @@ namespace Serialization.Tasks
         public string Title { get; set; }
 
         [DataMember(Name = "totalResults")]
-        public int TotalResults { get; set; }
+        public long TotalResults { get; set; }
 
         [DataMember(Name = "searchTerms")]
         public string SearchTerms { get; set; }
@@ -84,7 +87,7 @@ namespace Serialization.Tasks
         public string Title { get; set; }
 
         [DataMember(Name = "totalResults")]
-        public int TotalResults { get; set; }
+        public long TotalResults { get; set; }
 
         [DataMember(Name = "searchTerms")]
         public string SearchTerms { get; set; }
@@ -136,8 +139,8 @@ namespace Serialization.Tasks
         [DataMember(Name = "htmlSnippet")]
         public string HtmlSnippet { get; set; }
 
-        //[DataMember(Name = "pagemap")]
-        //public Pagemap Pagemap { get; set; }
+        [DataMember(Name = "pagemap")]
+        public Pagemap Pagemap { get; set; }
     }
 
     [DataContract]
