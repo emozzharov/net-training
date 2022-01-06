@@ -670,7 +670,18 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<int> GetFirstNegativeSubsequence(IEnumerable<int> data) {
             // TODO : Implement GetFirstNegativeSubsequence
-            throw new NotImplementedException();
+            List<int> numbers = new List<int>();
+            if (data.Count() == 0) return numbers;
+            int[] array = data.ToArray();
+            for(int i=0;i<array.Count();i++)
+            {
+                if (array[i] < 0)
+                {
+                    numbers.Add(array[i]);
+                    if (i != array.Length - 1 && array[i+1] >= 0) break;
+                }
+            }
+            return numbers;
         }
 
 
@@ -690,7 +701,8 @@ namespace EnumerableTask {
         /// </example>
         public bool AreNumericListsEqual(IEnumerable<int> integers, IEnumerable<double> doubles) {
             // TODO : Implement AreNumericListsEqual
-            throw new NotImplementedException();
+            var result = doubles.Zip(integers, (f, s) => f == (double)s);
+            return result.Where(r=>r == false).Count() == 0;
         }
 
         /// <summary>
@@ -709,7 +721,9 @@ namespace EnumerableTask {
         /// </example>
         public string GetNextVersionFromList(IEnumerable<string> versions, string currentVersion) {
             // TODO : Implement GetNextVersionFromList
-            throw new NotImplementedException();
+            var result = versions.SkipWhile(x=>!x.Equals(currentVersion)).Take(2).ToList();
+            if (result.Count != 2) return null;
+            return result.ElementAt(1);
         }
 
         /// <summary>
