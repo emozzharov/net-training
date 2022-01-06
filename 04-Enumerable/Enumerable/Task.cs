@@ -589,7 +589,8 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<string> GetStringsOnly(object[] data) {
             // TODO : Implement GetStringsOnly
-            throw new NotImplementedException();
+            if (data.Length == 0) return new List<string>();
+            return data.Where(ob => ob is string).Select(ob=>ob.ToString());
         }
 
         /// <summary> Calculates the total length of strings</summary>
@@ -607,7 +608,8 @@ namespace EnumerableTask {
         /// </example>
         public int GetTotalStringsLength(IEnumerable<string> data) {
             // TODO : Implement GetTotalStringsLength
-            throw new NotImplementedException();
+            if (data.Count() == 0) return 0;
+            return data.Sum(str=>str==null? 0 : str.Length);
         }
 
         /// <summary> Determines whether sequence has null elements</summary>
@@ -624,7 +626,7 @@ namespace EnumerableTask {
         /// </example>
         public bool IsSequenceHasNulls(IEnumerable<string> data) {
             // TODO : Implement IsSequenceHasNulls
-            throw new NotImplementedException();
+            return (data.Where(str=>str==null).Count()!=0);
         }
 
         /// <summary> Determines whether all strings in sequence are uppercase</summary>
@@ -639,8 +641,18 @@ namespace EnumerableTask {
         ///   { } => false
         /// </example>
         public bool IsAllStringsAreUppercase(IEnumerable<string> data) {
-            // TODO : Implement IsAllStringsAreUppercase
-            throw new NotImplementedException();
+            // TODO : Implement IsAllStringsAreUppercase 
+            if (data.Count() == 0) return false;
+            var result =data.Where(str => CheckReg(str.ToCharArray()) && !String.IsNullOrEmpty(str)).ToList();
+            return result.Count() == data.Count();
+        }
+        public bool CheckReg(char[] chars)
+        {
+            foreach(var ch in chars)
+            {
+                if (Char.IsLower(ch)) return false;
+            }
+            return true;
         }
 
         /// <summary> Finds first subsequence of negative integers </summary>
