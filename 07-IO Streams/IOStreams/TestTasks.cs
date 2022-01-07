@@ -32,9 +32,39 @@ namespace IOStreams
             //        No complex and common use cases, just this specified file.
             //        Required data are stored in Planets.xlsx archive in 2 files:
             //         /xl/sharedStrings.xml      - dictionary of all string values
-            //         /xl/worksheets/sheet1.xml  - main worksheet
+            //         /xl/worksheets/sheet1.xml  - main worksheet    
 
-            throw new NotImplementedException();
+
+            var uriPlanet = new Uri(@"/xl/sharedStrings.xml", UriKind.Relative);
+            var uriRadius = new Uri(@"/xl/worksheets/sheet1.xml", UriKind.Relative);
+
+            using (Package xlPackage = Package.Open(xlsxFileName, FileMode.Open, FileAccess.Read))
+            {
+                var planetName = xlPackage.GetPart(uriPlanet).GetStream();
+                var planetRadius = xlPackage.GetPart(uriRadius).GetStream();
+
+                var planet = XDocument.Load(planetName);
+                var radius = XDocument.Load(planetRadius);
+
+                var resultName = planet.Descendants()
+                    .Where(x => x.Name.LocalName == "t")
+                    .Select(x => x.Value)
+                    .Distinct()
+                    .Take(8)
+                    .ToList();
+                var resultRadius = radius.Descendants()
+                    .Where(x => x.Name.LocalName == "v")
+                    .Select(x => x.Value)
+                    .Where(x => x.Length > 3)
+                    .Select(x => Math.Round(decimal.Parse(x), 2))
+                    .ToList();
+
+                var totalResult = resultName.Zip(resultRadius, (first, second) =>
+                new PlanetInfo() { Name = first, MeanRadius = ((double)second) });
+
+
+                return totalResult;
+            }
         }
 
 
