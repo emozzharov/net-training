@@ -225,16 +225,48 @@ namespace Collections.Tasks
         public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count)
         {
             // TODO : Implement GenerateAllPermutations method
-            if (count > source.Length)
+            if (count < 0 || count > source.Length)
             {
-                throw new ArgumentException($"{count} more then source length!");
+                throw new ArgumentOutOfRangeException($"{count} more then source length!");
             }
 
-            var result = new IEnumerable<T>[count][];
+            if (count == 0)
+            {
+                return Enumerable.Empty<T[]>();
+            }
+
+            //var items = source.Select(x => x.ToString());
+
+            //var result = from i1 in items
+            //             from i2 in items
+            //             from i3 in items
+            //             select i1 + i2 + i3;
+
+            //var temp = result.ToList();
+
+            string[] GetAllCombinations(T[] arr)
+            {
+                List<string> result = new List<string>();
+                GetAllCombinationsRecursive(result, arr, "");
+                return result.ToArray();
+            }
+
+            void GetAllCombinationsRecursive(List<string> result, T[] arr, string memory)
+            {
+                if (!string.IsNullOrEmpty(memory)) result.Add(memory);
+                if (arr.Length == 0) return;
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    GetAllCombinationsRecursive(result, arr.Where((x, y) => y != i).ToArray(), memory + arr[i]);
+                }
+            }
+
+            var result1 = GetAllCombinations(source.ToArray());
+
+            var result2 = result1.Where(x => x.Length == 2).ToArray();
 
             return null;
         }
-
     }
 
     public static class DictionaryExtentions
