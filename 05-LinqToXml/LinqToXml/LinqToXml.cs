@@ -40,7 +40,6 @@ namespace LinqToXml
         public static string GetPurchaseOrders(string xmlRepresentation)
         {
             XDocument document = XDocument.Parse(xmlRepresentation);
-            List<string> numbers = new List<string>();
             XNamespace namesp = "http://www.adventure-works.com";
             var result = document.Descendants(namesp+"PurchaseOrder")
                 .Where(order=>(string)order.Element(namesp + "Address").Attribute(namesp+"Type") == "Shipping" && (string)order.Element(namesp+ "Address").Element(namesp+ "State") == "NY")
@@ -75,7 +74,12 @@ namespace LinqToXml
         /// <returns>Xml representation with contacts (refer to ReplaceCustomersWithContactsResult.xml in Resources)</returns>
         public static string ReplaceAllCustomersWithContacts(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            foreach(XElement item in document.Descendants())
+            {
+                if (item.Name.LocalName.Equals("customer")) item.Name = "contact";
+            }
+            return document.ToString();
         }
 
         /// <summary>
@@ -85,7 +89,10 @@ namespace LinqToXml
         /// <returns>Sequence of channels ids</returns>
         public static IEnumerable<int> FindChannelsIds(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            var result = document.DescendantNodes().Where(x=>x.GetType() == typeof(XComment) && x.Parent.Elements("subscriber").Count()>=2)
+                .Select(x=>(int)x.Parent.Attribute("id")).ToList();
+            return result;
         }
 
         /// <summary>
@@ -95,7 +102,19 @@ namespace LinqToXml
         /// <returns>Sorted customers representation (refer to GeneralCustomersResultFile.xml in Resources)</returns>
         public static string SortCustomers(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            var sortedCustomers = document.Descendants("Customers")
+                .OrderBy(item => (string)item.Element("FullAddress").Element("Country"))
+                .ThenBy(item => (string)item.Element("FullAddress").Element("City")).ToList();
+
+            XDocument sortedDocument = new XDocument();
+            XElement root = new XElement("Root");
+            sortedDocument.Add(root);
+            foreach (var item in sortedCustomers)
+            {
+                root.Add(item);
+            }
+            return sortedDocument.ToString();
         }
 
         /// <summary>
