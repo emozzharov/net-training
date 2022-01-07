@@ -137,7 +137,14 @@ namespace LinqToXml
         /// <returns>Total purchase value</returns>
         public static int GetOrdersValue(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            int totalSumm = 0;
+            var productInfo = document.Descendants("products")
+                .Select(x=>x.Elements().Select(r=>new { id= (int)r.FirstAttribute , value= (int) r.FirstAttribute.NextAttribute}).ToDictionary(k=>k.id))
+                .FirstOrDefault();
+            var orders = document.Descendants("Order").Select(s=>int.Parse(s.Element("product").Value)).ToList();
+            foreach (var prodId in orders) totalSumm += productInfo[prodId].value;
+            return totalSumm;
         }
     }
 }
