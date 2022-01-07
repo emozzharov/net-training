@@ -39,7 +39,13 @@ namespace LinqToXml
         /// </example>
         public static string GetPurchaseOrders(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            List<string> numbers = new List<string>();
+            XNamespace namesp = "http://www.adventure-works.com";
+            var result = document.Descendants(namesp+"PurchaseOrder")
+                .Where(order=>(string)order.Element(namesp + "Address").Attribute(namesp+"Type") == "Shipping" && (string)order.Element(namesp+ "Address").Element(namesp+ "State") == "NY")
+                .Select(or=>(string)or.Attribute(namesp+ "PurchaseOrderNumber")).ToList();
+            return String.Join(",",result);
         }
 
         /// <summary>
