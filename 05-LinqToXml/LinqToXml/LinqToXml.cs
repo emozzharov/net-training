@@ -64,7 +64,9 @@ namespace LinqToXml
         /// <returns>Concatenation of all this element values.</returns>
         public static string GetConcatenationString(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            var result = document.Descendants().Select(x=>x.Value.ToString()).ToList().FirstOrDefault();
+            return result;
         }
 
         /// <summary>
