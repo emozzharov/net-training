@@ -25,9 +25,7 @@ namespace EnumerableTask
         public IEnumerable<string> GetUppercaseStrings(IEnumerable<string> data)
         {
             // TODO : Implement GetUppercaseStrings
-            var result = data.ToList();
-
-            foreach (var item in result)
+            foreach (var item in data)
             {
                 if (string.IsNullOrEmpty(item))
                 {
@@ -35,7 +33,7 @@ namespace EnumerableTask
                 }
             }
 
-            result = result.ConvertAll(x => x.ToUpper());
+            var result = data.Select(x => x.ToUpper());
 
             return result;
         }
@@ -54,9 +52,7 @@ namespace EnumerableTask
         {
             // TODO : Implement GetStringsLength
 
-            var list = data.ToList();
-
-            IEnumerable<int> result = list.Select(x =>
+            IEnumerable<int> result = data.Select(x =>
                                                  {
                                                      if (x == null)
                                                          return 0;
@@ -81,9 +77,7 @@ namespace EnumerableTask
         public IEnumerable<long> GetSquareSequence(IEnumerable<int> data)
         {
             // TODO : Implement GetSquareSequence
-            var list = data.ToList();
-
-            IEnumerable<long> result = list.Select(x => x * (long)x);
+            IEnumerable<long> result = data.Select(x => x * (long)x);
 
             return result;
         }
@@ -106,11 +100,10 @@ namespace EnumerableTask
         public IEnumerable<long> GetMovingSumSequence(IEnumerable<int> data)
         {
             // TODO : Implement GetMovingSumSequence
-            var list = data.ToList();
 
             long sum = 0;
 
-            IEnumerable<long> result = list.Select((x, y) =>
+            IEnumerable<long> result = data.Select((x, y) =>
             {
                 if (y == 0)
                 {
@@ -152,9 +145,7 @@ namespace EnumerableTask
                 throw new ArgumentNullException("prefix is null");
             }
 
-            var list = data.ToList();
-
-            var result = list.Where(x => x != null && x.StartsWith(prefix.ToLower()));
+            var result = data.Where(x => x != null && x.StartsWith(prefix.ToLower()));
 
             return result;
         }
@@ -172,10 +163,7 @@ namespace EnumerableTask
         {
             // TODO : Implement GetEvenItems
 
-
-            var list = data.ToList();
-
-            var result = list.Where((x, y) => y % 2 != 0);
+            var result = data.Where((x, y) => y % 2 != 0);
 
             return result;
         }
@@ -308,9 +296,9 @@ namespace EnumerableTask
                 return data.Reverse();
             }
 
-            var max1 = data.OrderByDescending(x => x).Take(3);
+            var max = data.OrderByDescending(x => x).Take(3);
 
-            return max1;
+            return max;
         }
 
         /// <summary> Calculates the count of numbers that are greater then 10</summary>
@@ -439,8 +427,6 @@ namespace EnumerableTask
                 .Take(1);
 
             var result1 = resuit.ToList();
-
-            //var xxx = result1.Count() == 0 ? 0 : result1[0].ToList().Count();
 
             return result1.Count() == 0 ? 0 : result1[0].ToList().Count();
         }
@@ -829,9 +815,7 @@ namespace EnumerableTask
         public int GetTotalStringsLength(IEnumerable<string> data)
         {
             // TODO : Implement GetTotalStringsLength
-            var listData = data.ToList();
-
-            var result = listData.Where(x => !string.IsNullOrEmpty(x));
+            var result = data.Where(x => !string.IsNullOrEmpty(x));
 
             string result1 = string.Empty;
 
@@ -858,9 +842,7 @@ namespace EnumerableTask
         public bool IsSequenceHasNulls(IEnumerable<string> data)
         {
             // TODO : Implement IsSequenceHasNulls
-            var listData = data.ToList();
-
-            var result = listData.Where(x => x is null);
+            var result = data.Where(x => x is null);
 
             return result.Count() > 0 ? true : false;
         }
@@ -884,11 +866,9 @@ namespace EnumerableTask
                 return false;
             }
 
-            var listData = data.ToList();
+            var result = data.Where(x => string.Equals(x, x.ToUpper()));
 
-            var result = listData.Where(x => string.Equals(x, x.ToUpper()));
-
-            return listData.SequenceEqual(result);
+            return data.SequenceEqual(result);
         }
 
         /// <summary> Finds first subsequence of negative integers </summary>
@@ -931,12 +911,9 @@ namespace EnumerableTask
         public bool AreNumericListsEqual(IEnumerable<int> integers, IEnumerable<double> doubles)
         {
             // TODO : Implement AreNumericListsEqual
-            var listIntegers = integers.ToList();
-            var listDouble = doubles.ToList();
+            var list = integers.Select(x => (double)x);
 
-            var list = listIntegers.Select(x => (double)x);
-
-            bool result = list.SequenceEqual(listDouble);
+            bool result = list.SequenceEqual(doubles);
 
             return result;
         }
@@ -1000,10 +977,7 @@ namespace EnumerableTask
         public IEnumerable<int> GetSumOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
         {
             // TODO : Implement GetSumOfVectors
-            var listVector1 = vector1.ToList();
-            var listVector2 = vector2.ToList();
-
-            var sumVector = listVector1.Zip(listVector2, (first, second) => first + second);
+            var sumVector = vector1.Zip(vector2, (first, second) => first + second);
 
             return sumVector;
         }
@@ -1025,10 +999,7 @@ namespace EnumerableTask
         public int GetProductOfVectors(IEnumerable<int> vector1, IEnumerable<int> vector2)
         {
             // TODO : Implement GetProductOfVectors
-            var listVector1 = vector1.ToList();
-            var listVector2 = vector2.ToList();
-
-            var multipleVector = listVector1.Zip(listVector2, (first, second) => first * second);
+            var multipleVector = vector1.Zip(vector2, (first, second) => first * second);
 
             return multipleVector.Sum();
         }
@@ -1051,18 +1022,13 @@ namespace EnumerableTask
         public IEnumerable<string> GetAllPairs(IEnumerable<string> boys, IEnumerable<string> girls)
         {
             // TODO : Implement GetAllPairs
-
-
-            var listBoys = boys.ToList();
-            var listGirls = girls.ToList();
-
-            if (listGirls.Count() == 0 || listBoys.Count() == 0)
+            if (girls.Count() == 0 || boys.Count() == 0)
             {
                 return Enumerable.Empty<string>();
             }
 
-            var pairs = from first in listBoys
-                        from second in listGirls
+            var pairs = from first in boys
+                        from second in girls
                         select new[] { first + "+" + second };
 
             return pairs.SelectMany(o => o);
@@ -1090,19 +1056,16 @@ namespace EnumerableTask
                 return 0.0;
             }
 
-            var list = data.ToList();
-
-            var temp = list.OfType<double>();
+            var temp = data.OfType<double>();
 
             if (temp.Count() == 0)
             {
                 return 0.0;
             }
 
-            double average = list.OfType<double>().Average();
+            double average = data.OfType<double>().Average();
 
             return average;
         }
-
     }
 }
