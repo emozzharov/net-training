@@ -18,7 +18,7 @@ namespace AsyncIO
         /// </summary>
         /// <param name="uris">Sequence of required uri</param>
         /// <returns>The sequence of downloaded url content</returns>
-        public static IEnumerable<string> GetUrlContent(this IEnumerable<Uri> uris) 
+        public static IEnumerable<string> GetUrlContent(this IEnumerable<Uri> uris)
         {
             // TODO : Implement GetUrlContent
             throw new NotImplementedException();
@@ -55,9 +55,5 @@ namespace AsyncIO
             // TODO : Implement GetMD5Async
             throw new NotImplementedException();
         }
-
     }
-
-
-
 }
