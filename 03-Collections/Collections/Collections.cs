@@ -235,37 +235,34 @@ namespace Collections.Tasks
                 return Enumerable.Empty<T[]>();
             }
 
-            //var items = source.Select(x => x.ToString());
+            var result = new List<T[]>();
 
-            //var result = from i1 in items
-            //             from i2 in items
-            //             from i3 in items
-            //             select i1 + i2 + i3;
+            PermutationsMethod(new Stack<T>(), 0);
 
-            //var temp = result.ToList();
-
-            string[] GetAllCombinations(T[] arr)
+            void PermutationsMethod(Stack<T> Permutation, int currentIndex)
             {
-                List<string> result = new List<string>();
-                GetAllCombinationsRecursive(result, arr, "");
-                return result.ToArray();
-            }
-
-            void GetAllCombinationsRecursive(List<string> result, T[] arr, string memory)
-            {
-                if (!string.IsNullOrEmpty(memory)) result.Add(memory);
-                if (arr.Length == 0) return;
-                for (int i = 0; i < arr.Length; i++)
+                if (count - Permutation.Count == 1)
                 {
-                    GetAllCombinationsRecursive(result, arr.Where((x, y) => y != i).ToArray(), memory + arr[i]);
+                    for (int i = currentIndex; i < source.Length; i++)
+                    {
+                        Permutation.Push(source[i]);
+                        result.Add(Permutation.Reverse().ToArray());
+                        Permutation.Pop();
+                    }
+                }
+                else
+                {
+                    for (int i = currentIndex; i <= source.Length - (count - Permutation.Count); i++)
+                    {
+                        Permutation.Push(source[i]);
+                        PermutationsMethod(Permutation, i + 1);
+                        Permutation.Pop();
+                    }
                 }
             }
 
-            var result1 = GetAllCombinations(source.ToArray());
+            return result;
 
-            var result2 = result1.Where(x => x.Length == 2).ToArray();
-
-            return null;
         }
     }
 
