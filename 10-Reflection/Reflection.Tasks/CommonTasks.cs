@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -72,9 +73,25 @@ namespace Reflection.Tasks
         public static void SetPropertyValue(this object obj, string propertyPath, object value)
         {
             // TODO : Implement SetPropertyValue method
-            throw new NotImplementedException();
+
+            var propertyParts = propertyPath.Split('.');
+
+            foreach (var item in propertyParts)
+            {
+                if (item != propertyParts.Last())
+                {
+                    obj = obj.GetType().GetProperty(item).GetValue(obj);
+                }
+                else
+                {
+                    var type = obj.GetType();
+                    while (!type.GetProperty(item).CanWrite)
+                    {
+                        type = type.BaseType;
+                    }
+                    type.GetProperty(item).SetValue(obj, value);
+                }
+            }
         }
-
-
     }
 }
