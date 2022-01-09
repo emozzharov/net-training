@@ -17,7 +17,9 @@ namespace Reflection.Tasks
         /// <returns>List of public but obsolete classes</returns>
         public static IEnumerable<string> GetPublicObsoleteClasses(string assemblyName) {
             // TODO : Implement GetPublicObsoleteClasses method
-            throw new NotImplementedException();
+            Assembly assembly = Assembly.Load(assemblyName);
+            var result = assembly.GetExportedTypes().Where(t=>t.IsClass).Where(t=>t.GetCustomAttribute(typeof(ObsoleteAttribute)) != null && t.IsPublic).Select(t=>t.Name).ToList();
+            return result;
         }
 
         /// <summary>
@@ -39,7 +41,13 @@ namespace Reflection.Tasks
         /// <returns>property value of obj for required propertyPath</returns>
         public static T GetPropertyValue<T>(this object obj, string propertyPath) {
             // TODO : Implement GetPropertyValue method
-            throw new NotImplementedException();
+
+            var pathItems = propertyPath.Split('.');
+            foreach (var item in pathItems)
+            {
+                obj = obj.GetType().GetProperty(item).GetValue(obj);
+            }
+            return (T)obj;
         }
 
 
@@ -61,9 +69,17 @@ namespace Reflection.Tasks
         /// <param name="value">assigned value</param>
         public static void SetPropertyValue(this object obj, string propertyPath, object value) {
             // TODO : Implement SetPropertyValue method
-            throw new NotImplementedException();
+            var pathItems = propertyPath.Split('.');
+            foreach(var item in pathItems)
+            {
+                if(item == pathItems.Last())
+                {
+                    var type = obj.GetType();
+                    if(!type.GetProperty(item).CanWrite) type = type.BaseType;
+                    type.GetProperty(item).SetValue(obj,value);
+                }
+                else obj = obj.GetType().GetProperty(item).GetValue(obj);
+            }
         }
-
-
     }
 }
