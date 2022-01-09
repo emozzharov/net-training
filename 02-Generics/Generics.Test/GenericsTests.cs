@@ -7,22 +7,26 @@ using System.Net;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Task.Generics.Test {
+namespace Task.Generics.Test
+{
 
     [TestClass]
-    public class GenericsTest {
+    public class GenericsTest
+    {
 
         #region ListConverter.ConvertToString tests
-        public void ListConverter_ConvertToString_Test<T>(IEnumerable<T> list, string expected, string assertMessage) {
+        public void ListConverter_ConvertToString_Test<T>(IEnumerable<T> list, string expected, string assertMessage)
+        {
             var actual = list.ConvertToString();
             Assert.AreEqual(expected, actual, assertMessage);
         }
 
         [TestMethod]
         [TestCategory("ListConverter.ConvertToString")]
-        public void ListConverter_ConvertToString_Should_Convert_List_To_String() {
+        public void ListConverter_ConvertToString_Should_Convert_List_To_String()
+        {
             ListConverter_ConvertToString_Test(
-                   new[] {1,2,3,4,5},
+                   new[] { 1, 2, 3, 4, 5 },
                    "1,2,3,4,5",
                    "ListConverter.ConvertToString should convert int list to string"
                 );
@@ -42,7 +46,7 @@ namespace Task.Generics.Test {
                    "ListConverter.ConvertToString should convert enum list to string"
                 );
             ListConverter_ConvertToString_Test(
-                   new[] { new TimeSpan(1,0,0), new TimeSpan(0,0,30) },
+                   new[] { new TimeSpan(1, 0, 0), new TimeSpan(0, 0, 30) },
                    "01:00:00,00:00:30",
                    "ListConverter.ConvertToString should convert TimeSpan to string"
             );
@@ -51,14 +55,16 @@ namespace Task.Generics.Test {
         #endregion ListConverter.ConvertToString tests
 
         #region ListConverter.ConvertToList tests
-        public void ListConverter_ConvertToList_Test<T>(string list, IEnumerable<T> expected, string assertMessage) {
+        public void ListConverter_ConvertToList_Test<T>(string list, IEnumerable<T> expected, string assertMessage)
+        {
             var actual = list.ConvertToList<T>();
             Assert.IsTrue(expected.SequenceEqual(actual), assertMessage);
         }
 
         [TestMethod]
         [TestCategory("ListConverter.ConvertToList")]
-        public void ListConverter_ConvertToList_Should_Convert_String_To_List() {
+        public void ListConverter_ConvertToList_Should_Convert_String_To_List()
+        {
             ListConverter_ConvertToList_Test(
                    "1,2,3,4,5",
                    new[] { 1, 2, 3, 4, 5 },
@@ -88,14 +94,16 @@ namespace Task.Generics.Test {
         #endregion ListConverter.ConvertToString tests
 
         #region ArrayExtentions.SwapArrayElements tests
-        public void ArrayExtentions_SwapArrayElements_Test<T>(T[] data, int index1, int index2, T[] expected, string assertMessage) {
+        public void ArrayExtentions_SwapArrayElements_Test<T>(T[] data, int index1, int index2, T[] expected, string assertMessage)
+        {
             data.SwapArrayElements(index1, index2);
             Assert.IsTrue(expected.SequenceEqual(data), assertMessage);
         }
 
         [TestMethod]
         [TestCategory("ArrayExtentions.SwapArrayElements")]
-        public void ArrayExtentions_SwapArrayElements_Should_Swap_Array_Elemets() {
+        public void ArrayExtentions_SwapArrayElements_Should_Swap_Array_Elemets()
+        {
             ArrayExtentions_SwapArrayElements_Test(
                    new[] { 1, 2, 3, 4, 5 }, 0, 1,
                    new[] { 2, 1, 3, 4, 5 },
@@ -115,9 +123,10 @@ namespace Task.Generics.Test {
 
         [TestMethod]
         [TestCategory("ArrayExtentions.SwapArrayElements")]
-        [ExpectedException(typeof(IndexOutOfRangeException), 
+        [ExpectedException(typeof(IndexOutOfRangeException),
             "ArrayExtentions.SwapArrayElements should throw the IndexOutOfRangeException if index1 or index2 is out of range")]
-        public void ArrayExtentions_SwapArrayElements_Should_Throw_IndexOutOfRangeException_If_Indexes_Are_Out_Of_Range() {
+        public void ArrayExtentions_SwapArrayElements_Should_Throw_IndexOutOfRangeException_If_Indexes_Are_Out_Of_Range()
+        {
             ArrayExtentions_SwapArrayElements_Test(
                    new[] { 1, 2, 3, 4, 5 }, 0, 10,
                    new[] { 2, 1, 3, 4, 5 },
@@ -128,17 +137,19 @@ namespace Task.Generics.Test {
         #endregion ArrayExtentions.SwapArrayElements tests
 
         #region ArrayExtentions.SortTupleArray tests
-        public void ArrayExtentions_SortTupleArray_Test(Tuple<int,int,int>[] data, int colIndex, bool desc, Tuple<int,int,int>[] expected, string assertMessage) {
+        public void ArrayExtentions_SortTupleArray_Test(Tuple<int, int, int>[] data, int colIndex, bool desc, Tuple<int, int, int>[] expected, string assertMessage)
+        {
             data.SortTupleArray(colIndex, desc);
             Assert.IsTrue(expected.SequenceEqual(data), assertMessage);
         }
 
         [TestMethod]
         [TestCategory("ArrayExtentions.SortTupleArray")]
-        public void ArrayExtentions_SortTupleArray_Should_Sort_Array() {
+        public void ArrayExtentions_SortTupleArray_Should_Sort_Array()
+        {
             ArrayExtentions_SortTupleArray_Test(
-                   new[] { Tuple.Create(3,8,8), Tuple.Create(2,9,9), Tuple.Create(1,10,10) }, 0, true,
-                   new[] { Tuple.Create(1,10,10), Tuple.Create(2,9,9), Tuple.Create(3,8,8) },
+                   new[] { Tuple.Create(3, 8, 8), Tuple.Create(2, 9, 9), Tuple.Create(1, 10, 10) }, 0, true,
+                   new[] { Tuple.Create(1, 10, 10), Tuple.Create(2, 9, 9), Tuple.Create(3, 8, 8) },
                    "ArrayExtentions.SortTupleArray should sort array by sortedColumn=0 and ascending=true"
                 );
             ArrayExtentions_SortTupleArray_Test(
@@ -173,7 +184,8 @@ namespace Task.Generics.Test {
         [TestCategory("ArrayExtentions.SortTupleArray")]
         [ExpectedException(typeof(IndexOutOfRangeException),
             "ArrayExtentions.SortTupleArray should throw the IndexOutOfRangeException sortedColumn is out of range")]
-        public void ArrayExtentions_SortTupleArray_Should_Throw_IndexOutOfRangeException_If_sortedColumn_Is_Out_Of_Range() {
+        public void ArrayExtentions_SortTupleArray_Should_Throw_IndexOutOfRangeException_If_sortedColumn_Is_Out_Of_Range()
+        {
             ArrayExtentions_SortTupleArray_Test(
                    new[] { Tuple.Create(1, 1, 1) }, 5, true,
                    new[] { Tuple.Create(1, 1, 1) },
@@ -188,10 +200,12 @@ namespace Task.Generics.Test {
         private const int SingletonIntValue = 100;
         private const string SingletonStringValue = "Test";
 
-        public class MockSingleton {
+        public class MockSingleton
+        {
             public int IntProperty { get; set; }
             public string StringProperty { get; set; }
-            public MockSingleton() {
+            public MockSingleton()
+            {
                 IntProperty = SingletonIntValue;
                 StringProperty = SingletonStringValue;
             }
@@ -199,7 +213,8 @@ namespace Task.Generics.Test {
 
         [TestMethod]
         [TestCategory("Singleton<T>")]
-        public void Singleton_Should_Create_Only_One_Instance() {
+        public void Singleton_Should_Create_Only_One_Instance()
+        {
             var instance1 = Singleton<MockSingleton>.Instance;
             var instance2 = Singleton<MockSingleton>.Instance;
             instance1.IntProperty++;
@@ -208,27 +223,32 @@ namespace Task.Generics.Test {
 
         [TestMethod]
         [TestCategory("Singleton<T>")]
-        public void Singleton_Should_Be_Thread_Safe() {
-			int threadsCount = 10;
-			EventWaitHandle threadsFinished = new EventWaitHandle(false, EventResetMode.AutoReset);
-			MockSingleton[] singletons = new MockSingleton[threadsCount];
-			Thread[] threads = new Thread[threadsCount];
-			Barrier startBarrier = new Barrier(threadsCount);
-			Barrier finishBarrier = new Barrier(threadsCount, (barrier) => threadsFinished.Set());
-			for (int i = 0; i < threadsCount; i++) {
-				threads[i] = new Thread((idx) => {
-					startBarrier.SignalAndWait(); // Wait for creating all other threads
-					try {
-						singletons[(int)idx] = Singleton<MockSingleton>.Instance;
-					} catch { }
-					finishBarrier.SignalAndWait(); // Wait for finishing all other threads
-				});
-				threads[i].Start(i);
-			}
-			threadsFinished.WaitOne();
-			var inst = Singleton<MockSingleton>.Instance;
-			inst.IntProperty++;
-			Assert.IsTrue(singletons.All(x => x.IntProperty == inst.IntProperty), "Singleton<T> shoud inplement thread safe initialization");
+        public void Singleton_Should_Be_Thread_Safe()
+        {
+            int threadsCount = 10;
+            EventWaitHandle threadsFinished = new EventWaitHandle(false, EventResetMode.AutoReset);
+            MockSingleton[] singletons = new MockSingleton[threadsCount];
+            Thread[] threads = new Thread[threadsCount];
+            Barrier startBarrier = new Barrier(threadsCount);
+            Barrier finishBarrier = new Barrier(threadsCount, (barrier) => threadsFinished.Set());
+            for (int i = 0; i < threadsCount; i++)
+            {
+                threads[i] = new Thread((idx) =>
+                {
+                    startBarrier.SignalAndWait(); // Wait for creating all other threads
+                    try
+                    {
+                        singletons[(int)idx] = Singleton<MockSingleton>.Instance;
+                    }
+                    catch { }
+                    finishBarrier.SignalAndWait(); // Wait for finishing all other threads
+                });
+                threads[i].Start(i);
+            }
+            threadsFinished.WaitOne();
+            var inst = Singleton<MockSingleton>.Instance;
+            inst.IntProperty++;
+            Assert.IsTrue(singletons.All(x => x.IntProperty == inst.IntProperty), "Singleton<T> shoud inplement thread safe initialization");
         }
 
         #endregion Singleton<T> tests
@@ -236,7 +256,8 @@ namespace Task.Generics.Test {
         #region FunctionExtention.TimeoutSafeInvoke tests
         [TestMethod]
         [TestCategory("FunctionExtention.TimeoutSafeInvoke")]
-        public void FunctionExtention_TimeoutSafeInvoke_Should_Invoke_Specified_Function() {
+        public void FunctionExtention_TimeoutSafeInvoke_Should_Invoke_Specified_Function()
+        {
             int magicInt = 1234;
             Func<int> f = () => magicInt;
             Assert.AreEqual(magicInt, f.TimeoutSafeInvoke(), "FunctionExtention.TimeoutSafeInvoke should invoke the specified function");
@@ -244,17 +265,19 @@ namespace Task.Generics.Test {
 
         [TestMethod]
         [TestCategory("FunctionExtention.TimeoutSafeInvoke")]
-        public void FunctionExtention_TimeoutSafeInvoke_Should_Catch_Up_To_2_Timeouts() {
+        public void FunctionExtention_TimeoutSafeInvoke_Should_Catch_Up_To_2_Timeouts()
+        {
             StringWriter sw = new StringWriter();
             TraceListener listener = new TextWriterTraceListener(sw);
             Trace.Listeners.Add(listener);
             int magicInt = 1234;
             int tries = 0;
-            Func<int> f = () => {
-				if (tries++ < 2)
-					throw new WebException("The operation has timed out", WebExceptionStatus.Timeout);
-				else
-					return magicInt;
+            Func<int> f = () =>
+            {
+                if (tries++ < 2)
+                    throw new WebException("The operation has timed out", WebExceptionStatus.Timeout);
+                else
+                    return magicInt;
             };
             Assert.AreEqual(magicInt, f.TimeoutSafeInvoke(), "FunctionExtention.TimeoutSafeInvoke should invoke the specified function");
             Trace.Listeners.Remove(listener);
@@ -267,14 +290,16 @@ namespace Task.Generics.Test {
         [TestMethod]
         [TestCategory("FunctionExtention.TimeoutSafeInvoke")]
         [ExpectedException(typeof(WebException))]
-        public void FunctionExtention_TimeoutSafeInvoke_Should_Raise_TimeoutException_If_Number_Of_Timeouts_More_Then_2() {
+        public void FunctionExtention_TimeoutSafeInvoke_Should_Raise_TimeoutException_If_Number_Of_Timeouts_More_Then_2()
+        {
             int magicInt = 1234;
             int tries = 0;
-            Func<int> f = () => {
-				if (tries++ < 3)
-					throw new WebException("The operation has timed out", WebExceptionStatus.Timeout);
-				else
-					return magicInt;
+            Func<int> f = () =>
+            {
+                if (tries++ < 3)
+                    throw new WebException("The operation has timed out", WebExceptionStatus.Timeout);
+                else
+                    return magicInt;
             };
             f.TimeoutSafeInvoke();
         }
@@ -284,7 +309,8 @@ namespace Task.Generics.Test {
         #region FunctionExtention.CombinePredicates tests
         [TestMethod]
         [TestCategory("FunctionExtention.CombinePredicates")]
-        public void FunctionExtention_CombinePredicates_Should_Combine_String_Predicates() {
+        public void FunctionExtention_CombinePredicates_Should_Combine_String_Predicates()
+        {
             var result = FunctionExtentions.CombinePredicates(new Predicate<string>[] {
                     x=> !string.IsNullOrEmpty(x),
                     x=> x.StartsWith("START"),
@@ -301,7 +327,8 @@ namespace Task.Generics.Test {
 
         [TestMethod]
         [TestCategory("FunctionExtention.CombinePredicates")]
-        public void FunctionExtention_CombinePredicates_Should_Combine_Int_Predicates() {
+        public void FunctionExtention_CombinePredicates_Should_Combine_Int_Predicates()
+        {
             var result = FunctionExtentions.CombinePredicates(new Predicate<int>[] {
                     x=> x>-10,
                     x=> x<10,
@@ -318,7 +345,8 @@ namespace Task.Generics.Test {
 
         [TestMethod]
         [TestCategory("FunctionExtention.CombinePredicates")]
-        public void FunctionExtention_CombinePredicates_Should_Combine_Single_Predicates() {
+        public void FunctionExtention_CombinePredicates_Should_Combine_Single_Predicates()
+        {
             var result = FunctionExtentions.CombinePredicates(new Predicate<int>[] {
                     x=> x>0,
                 });

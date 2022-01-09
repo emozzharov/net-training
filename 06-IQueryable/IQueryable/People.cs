@@ -29,7 +29,7 @@ namespace IQueryableTask
         {
             Expression = Expression.Constant(this);
         }
-        
+
         public People(Expression expression)
         {
             Expression = expression;
@@ -38,13 +38,13 @@ namespace IQueryableTask
         public IEnumerator<Person> GetEnumerator()
         {
             // TODO: Implement GetEnumerator
-            throw new NotImplementedException();
+            return (Provider.Execute<IEnumerable<Person>>(Expression)).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             // TODO: Implement GetEnumerator
-            throw new NotImplementedException();
+            return (Provider.Execute<System.Collections.IEnumerable>(Expression)).GetEnumerator();
         }
 
         public Expression Expression { get; private set; }
@@ -54,19 +54,19 @@ namespace IQueryableTask
             get
             {
                 // TODO: Implement GetEnumerator
-                throw new NotImplementedException();
+                return typeof(Person);
             }
         }
 
         public IQueryProvider Provider => new PeopleDbQueryProvider();
 
         /// <summary>
-		/// Builds SQL query by an expression. Needed for tests
-		/// </summary>
-		/// <returns>SQL query</returns>
+        /// Builds SQL query by an expression. Needed for tests
+        /// </summary>
+        /// <returns>SQL query</returns>
         public override string ToString()
         {
-            return ((PeopleDbQueryProvider) Provider).GetSqlQuery(Expression);
+            return ((PeopleDbQueryProvider)Provider).GetSqlQuery(Expression);
         }
     }
 }

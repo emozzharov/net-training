@@ -13,7 +13,7 @@ namespace IQueryable.Tests
 
         private static void QueryTest(IQueryable<Person> query, string expected, string assertMessage)
         {
-            QueryTest(query, new[] {expected}, assertMessage);
+            QueryTest(query, new[] { expected }, assertMessage);
         }
 
         private static void QueryTest(IQueryable<Person> query, IEnumerable<string> expected, string assertMessage)
@@ -28,22 +28,22 @@ namespace IQueryable.Tests
         public void Where_Should_Filter_Results()
         {
             var people = from p in new People()
-            			 where p.FirstName.Contains("Alex")
-            			 select p;
+                         where p.FirstName.Contains("Alex")
+                         select p;
 
             var males = from p in new People()
-            			   where p.FirstName.Contains("Alex") && p.Sex == Sex.Male
-            			   select p;
+                        where p.FirstName.Contains("Alex") && p.Sex == Sex.Male
+                        select p;
 
             var peopleOldenThan24 = from a in new People()
-            					  where a.FirstName.Contains("Alex") && a.Age > 24
-            					  select a;
+                                    where a.FirstName.Contains("Alex") && a.Age > 24
+                                    select a;
 
             QueryTest(people, "select * from person where firstname like \'%Alex%\'", "Where should filter by FirstName");
 
             QueryTest(males, new[] { "select * from person where firstname like \'%Alex%\' and sex = 0",
                                      "select * from person where sex = 0 and firstname like \'%Alex%\'" },
-            		  "Where should filter by firstname and sex");
+                      "Where should filter by firstname and sex");
 
             QueryTest(peopleOldenThan24, new[] { "select * from person where firstname like \'%Alex%\' and age > 24",
                                                  "select * from person where age > 24 and firstname like \'%Alex%\'" },
@@ -65,8 +65,8 @@ namespace IQueryable.Tests
         public void Where_Should_Raise_Exception_If_Querying_By_FullName()
         {
             var people = from p in new People()
-                          where p.FullName == "Poopy Butthole"
-                          select p;
+                         where p.FullName == "Poopy Butthole"
+                         select p;
 
             people.GetEnumerator();
         }
@@ -76,8 +76,8 @@ namespace IQueryable.Tests
         public void Where_Should_Raise_Exception_If_Querying_By_LastName()
         {
             var people = from p in new People()
-                where p.LastName == "Sanchez"
-                select p;
+                         where p.LastName == "Sanchez"
+                         select p;
 
             people.GetEnumerator();
         }
@@ -89,7 +89,7 @@ namespace IQueryable.Tests
 
             foreach (var person in people)
             {
-                Assert.IsTrue(person.FirstName.IndexOf("Alex", StringComparison.InvariantCultureIgnoreCase) >= 0, 
+                Assert.IsTrue(person.FirstName.IndexOf("Alex", StringComparison.InvariantCultureIgnoreCase) >= 0,
                             "Where should fetch proper data from database");
 
                 Assert.IsTrue(person.Age > 24,
