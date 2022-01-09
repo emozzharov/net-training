@@ -16,7 +16,17 @@ namespace LinqToXml
         /// <returns>Xml representation (refer to CreateHierarchyResultFile.xml in Resources)</returns>
         public static string CreateHierarchy(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XElement doc = XElement.Parse(xmlRepresentation);
+            var newData =
+                new XElement("Root", from data in doc.Elements("Data") group data by (string)data.Element("Category") into groupedData
+                    select new XElement("Group", new XAttribute("ID", groupedData.Key), from g in groupedData
+                        select new XElement("Data",
+                            g.Element("Quantity"),
+                            g.Element("Price")
+                        )
+                    )
+                );
+            return newData.ToString();
         }
 
         /// <summary>
@@ -29,7 +39,12 @@ namespace LinqToXml
         /// </example>
         public static string GetPurchaseOrders(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            XNamespace namesp = "http://www.adventure-works.com";
+            var result = document.Descendants(namesp+"PurchaseOrder")
+                .Where(order=>(string)order.Element(namesp + "Address").Attribute(namesp+"Type") == "Shipping" && (string)order.Element(namesp+ "Address").Element(namesp+ "State") == "NY")
+                .Select(or=>(string)or.Attribute(namesp+ "PurchaseOrderNumber")).ToList();
+            return String.Join(",",result);
         }
 
         /// <summary>
@@ -39,7 +54,33 @@ namespace LinqToXml
         /// <returns>Xml customers representation (refer to XmlFromCsvResultFile.xml in Resources)</returns>
         public static string ReadCustomersFromCsv(string customers)
         {
-            throw new NotImplementedException();
+            List<string[]> csvInformations = new List<string[]>();
+            foreach (var str in customers.Split('\n'))
+            {
+                csvInformations.Add(str.Split(','));
+            }
+            XDocument document = new XDocument();
+            XElement root = new XElement("Root");
+            document.Add(root);
+            foreach(var info in csvInformations)
+            {
+                XElement cust = new XElement("Customer",
+                    new XAttribute("CustomerID",info[0]),
+                    new XElement("CompanyName",info[1]),
+                    new XElement("ContactName", info[2]),
+                    new XElement("ContactTitle", info[3]),
+                    new XElement("Phone", info[4]),
+                    new XElement("FullAddress",
+                    new XElement("Address",info[5]),
+                    new XElement("City", info[6]),
+                    new XElement("Region", info[7]),
+                    new XElement("PostalCode", info[8]),
+                    new XElement("Country", info[9].Trim('\r'))
+                        )
+                    );
+                root.Add(cust);
+            }
+            return document.ToString();
         }
 
         /// <summary>
@@ -49,7 +90,9 @@ namespace LinqToXml
         /// <returns>Concatenation of all this element values.</returns>
         public static string GetConcatenationString(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            var result = document.Descendants().Select(x=>x.Value.ToString()).ToList().FirstOrDefault();
+            return result;
         }
 
         /// <summary>
@@ -59,7 +102,12 @@ namespace LinqToXml
         /// <returns>Xml representation with contacts (refer to ReplaceCustomersWithContactsResult.xml in Resources)</returns>
         public static string ReplaceAllCustomersWithContacts(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            foreach(XElement item in document.Descendants())
+            {
+                if (item.Name.LocalName.Equals("customer")) item.Name = "contact";
+            }
+            return document.ToString();
         }
 
         /// <summary>
@@ -69,7 +117,10 @@ namespace LinqToXml
         /// <returns>Sequence of channels ids</returns>
         public static IEnumerable<int> FindChannelsIds(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            var result = document.DescendantNodes().Where(x=>x.GetType() == typeof(XComment) && x.Parent.Elements("subscriber").Count()>=2)
+                .Select(x=>(int)x.Parent.Attribute("id")).ToList();
+            return result;
         }
 
         /// <summary>
@@ -79,7 +130,19 @@ namespace LinqToXml
         /// <returns>Sorted customers representation (refer to GeneralCustomersResultFile.xml in Resources)</returns>
         public static string SortCustomers(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            var sortedCustomers = document.Descendants("Customers")
+                .OrderBy(item => (string)item.Element("FullAddress").Element("Country"))
+                .ThenBy(item => (string)item.Element("FullAddress").Element("City")).ToList();
+
+            XDocument sortedDocument = new XDocument();
+            XElement root = new XElement("Root");
+            sortedDocument.Add(root);
+            foreach (var item in sortedCustomers)
+            {
+                root.Add(item);
+            }
+            return sortedDocument.ToString();
         }
 
         /// <summary>
@@ -102,7 +165,14 @@ namespace LinqToXml
         /// <returns>Total purchase value</returns>
         public static int GetOrdersValue(string xmlRepresentation)
         {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(xmlRepresentation);
+            int totalSumm = 0;
+            var productInfo = document.Descendants("products")
+                .Select(x=>x.Elements().Select(r=>new { id= (int)r.FirstAttribute , value= (int) r.FirstAttribute.NextAttribute}).ToDictionary(k=>k.id))
+                .FirstOrDefault();
+            var orders = document.Descendants("Order").Select(s=>int.Parse(s.Element("product").Value)).ToList();
+            foreach (var prodId in orders) totalSumm += productInfo[prodId].value;
+            return totalSumm;
         }
     }
 }
