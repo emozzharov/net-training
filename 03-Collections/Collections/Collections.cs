@@ -100,23 +100,22 @@ namespace Collections.Tasks {
         public static IEnumerable<T> DepthTraversalTree<T>(ITreeNode<T> root) {
             // TODO : Implement the tree depth traversal algorithm
             if (root == null) throw new ArgumentNullException();
-            List<T> values = new List<T>();
-            DepthTree(values,root);
-            return values;
-        }
-        private static void DepthTree<T>(List<T> nodesValue,ITreeNode<T> node)
-        {
-            if(node !=null)
+
+            Stack<ITreeNode<T>> nodeStack = new Stack<ITreeNode<T>>();
+            List<T> treeValues = new List<T>();
+            nodeStack.Push(root);
+            while (nodeStack.Any())
             {
-                nodesValue.Add(node.Data);
-                if(node.Children!=null)
+                var current = nodeStack.Pop();
+                treeValues.Add(current.Data);
+                if (current.Children == null) continue;
+
+                foreach(var nod in current.Children.Reverse())
                 {
-                    foreach(var nod in node.Children)
-                    {
-                        DepthTree(nodesValue,nod);
-                    }
+                    nodeStack.Push(nod);
                 }
             }
+            return treeValues;
         }
 
         /// <summary>
