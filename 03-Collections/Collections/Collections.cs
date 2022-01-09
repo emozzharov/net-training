@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Collections.Tasks {
 
@@ -30,7 +31,21 @@ namespace Collections.Tasks {
         /// </example>
         public static IEnumerable<int> GetFibonacciSequence(int count) {
             // TODO : Implement Fibonacci sequence generator
-            throw new NotImplementedException();
+            List<int> numbers = new List<int>();
+            if (count < 0) throw new ArgumentException();
+            if (count == 0) return numbers;
+            for(int i=1;i<=count;i++)
+            {
+                numbers.Add(GetFibNumber(i));
+            }
+            return numbers;
+        }
+
+        private static int GetFibNumber(int number)
+        {
+            if (number == 0) return 0;
+            if (number == 1) return number;
+            return GetFibNumber(number - 1) + GetFibNumber(number-2);
         }
 
         /// <summary>
@@ -47,8 +62,16 @@ namespace Collections.Tasks {
         /// </example>
         public static IEnumerable<string> Tokenize(TextReader reader) {
             char[] delimeters = new[] { ',', ' ', '.', '\t', '\n' };
-            // TODO : Implement the tokenizer
-            throw new NotImplementedException();
+            if (reader == null) throw new ArgumentNullException();
+            string text = "";
+            while (true)
+            {
+                string textPart = reader.ReadLine();
+                if (textPart == null) break;
+                text += textPart;
+            }
+            var result = text.Split(delimeters, StringSplitOptions.RemoveEmptyEntries);
+            return result;
         }
 
 
@@ -76,7 +99,23 @@ namespace Collections.Tasks {
         /// </example>
         public static IEnumerable<T> DepthTraversalTree<T>(ITreeNode<T> root) {
             // TODO : Implement the tree depth traversal algorithm
-            throw new NotImplementedException(); 
+            if (root == null) throw new ArgumentNullException();
+
+            Stack<ITreeNode<T>> nodeStack = new Stack<ITreeNode<T>>();
+            List<T> treeValues = new List<T>();
+            nodeStack.Push(root);
+            while (nodeStack.Any())
+            {
+                var current = nodeStack.Pop();
+                treeValues.Add(current.Data);
+                if (current.Children == null) continue;
+
+                foreach(var nod in current.Children.Reverse())
+                {
+                    nodeStack.Push(nod);
+                }
+            }
+            return treeValues;
         }
 
         /// <summary>
@@ -102,7 +141,23 @@ namespace Collections.Tasks {
         /// </example>
         public static IEnumerable<T> WidthTraversalTree<T>(ITreeNode<T> root) {
             // TODO : Implement the tree width traversal algorithm
-            throw new NotImplementedException();
+            if (root == null) throw new ArgumentNullException();
+
+            Queue<ITreeNode<T>> nodeQueue = new Queue<ITreeNode<T>>();
+            List<T> treeValues = new List<T>();
+            nodeQueue.Enqueue(root);
+            while (nodeQueue.Any())
+            {
+                var current = nodeQueue.Dequeue();
+                treeValues.Add(current.Data);
+                if (current.Children == null) continue;
+
+                foreach (var nod in current.Children)
+                {
+                    nodeQueue.Enqueue(nod);
+                }
+            }
+            return treeValues;
         }
 
 
@@ -124,11 +179,57 @@ namespace Collections.Tasks {
         ///   source = { 1,2,3,4 }, count=4 => {{1,2,3,4}}
         ///   source = { 1,2,3,4 }, count=5 => ArgumentOutOfRangeException
         /// </example>
-        public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count) {
+        public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count)
+        {
             // TODO : Implement GenerateAllPermutations method
-            throw new NotImplementedException();
+            if (count > source.Length || count < 0) throw new ArgumentOutOfRangeException();
+            List<List<T>> pers = new List<List<T>>();
+            if (count == 0) return pers.Select(el=>el.ToArray());
+            if (count == 1)
+            {
+                foreach (var item in source)
+                    pers.Add(new List<T> {item});
+                return pers.Select(el => el.ToArray());
+            }
+            else if(count == source.Length)
+            {
+                pers.Add(new List<T>(source));
+                return pers.Select(el => el.ToArray());
+            }
+            Сombinations(source, new List<int>(), 0, count, pers);
+            return pers.Select(el=>el.ToArray());
         }
+        public static void Сombinations<T>(T[] array, List<int> skip, int current, int max, List<List<T>> result)
+        {
+            if (result.Count == 0)
+            {
+                result.Add(new List<T>());
+            }
+            if (max == 0)
+            {
+                return;
+            }
+            var currentLevelResult = new List<T>(result.Last());
 
+            for (int i = current; i < array.Length; ++i)
+            {
+                if (skip.Contains(i))
+                {
+                    continue;
+                }
+
+                result.Last().Add(array[i]);
+                if (result.Last().Count() != max)
+                {
+                    Сombinations(array, skip, i + 1, max, result);
+                }
+                result.Add(new List<T>(currentLevelResult));
+            }
+            if (result.Last().Count() != max)
+            {
+                result.Remove(result.Last());
+            }
+        }
     }
 
     public static class DictionaryExtentions {
@@ -153,7 +254,11 @@ namespace Collections.Tasks {
         /// </example>
         public static TValue GetOrBuildValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> builder) {
             // TODO : Implement GetOrBuildValue method for cache
-            throw new NotImplementedException();
+            if(!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key,builder());
+            }
+            return dictionary[key];
         }
 
     }
