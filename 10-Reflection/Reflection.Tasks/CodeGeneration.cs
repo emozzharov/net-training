@@ -26,23 +26,21 @@ namespace Reflection.Tasks
         {
             // TODO : Implement GetVectorMultiplyFunction<T>.
             // Creating a parameter expression.  
-            ParameterExpression first = Expression.Parameter(typeof(T[]), "first");
-            ParameterExpression second = Expression.Parameter(typeof(T[]), "second");
+            ParameterExpression first = Expression.Parameter(typeof(T[]));
+            ParameterExpression second = Expression.Parameter(typeof(T[]));
 
-            ParameterExpression counter = Expression.Parameter(typeof(int), "counter");
+            ParameterExpression counter = Expression.Parameter(typeof(int));
 
             // Creating an expression to hold a local variable.
-            ParameterExpression result = Expression.Parameter(typeof(T), "result");
+            ParameterExpression result = Expression.Parameter(typeof(T));
 
             // Creating a label to jump to from a loop.  
-            LabelTarget label = Expression.Label(typeof(int));
+            LabelTarget label = Expression.Label(typeof(T));
 
             // Creating a method body.  
             BlockExpression block = Expression.Block(
                 // Adding a local variable.  
                 new[] { result, counter },
-                // Assigning a constant to a local variable: result = 0  
-                Expression.Assign(result, Expression.Constant(0)),
                     // Adding a loop.  
                     Expression.Loop(
                        // Adding a conditional block into the loop.  
@@ -64,9 +62,9 @@ namespace Reflection.Tasks
             );
 
             // Compile and execute an expression tree.  
-            var factorial = Expression.Lambda<Func<T[], T[], T>>(block, first, second).Compile();
+            var expressionTreeResult = Expression.Lambda<Func<T[], T[], T>>(block, first, second).Compile();
 
-            return factorial;
+            return expressionTreeResult;
         }
 
 
