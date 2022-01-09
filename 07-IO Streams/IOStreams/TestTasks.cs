@@ -83,7 +83,25 @@ namespace IOStreams
 		public static Stream DecompressStream(string fileName, DecompressionMethods method)
 		{
 			// TODO : Implement DecompressStream method
-			throw new NotImplementedException();
+			switch(method)
+            {
+				case DecompressionMethods.GZip:
+                    {
+						FileStream str = new FileStream(fileName,FileMode.Open);
+						GZipStream dec = new GZipStream(str,CompressionMode.Decompress);
+						return dec;
+                    }
+					break;
+					
+				case DecompressionMethods.Deflate:
+                    {
+						FileStream str = new FileStream(fileName, FileMode.Open);
+						DeflateStream dec = new DeflateStream(str, CompressionMode.Decompress);
+						return dec;
+                    }
+					break;
+			}
+			return new FileStream(fileName,FileMode.Open);
 		}
 
 
