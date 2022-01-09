@@ -33,8 +33,23 @@ namespace IOStreams
 			//        Required data are stored in Planets.xlsx archive in 2 files:
 			//         /xl/sharedStrings.xml      - dictionary of all string values
 			//         /xl/worksheets/sheet1.xml  - main worksheet
+			Uri planetNameUri = PackUriHelper.CreatePartUri(
+									  new Uri(@"/xl/sharedStrings.xml", UriKind.Relative));;
+			Uri planetRadiusUri = PackUriHelper.CreatePartUri(
+									  new Uri(@" /xl/worksheets/sheet1.xml", UriKind.Relative));
 
-			throw new NotImplementedException();
+			using (Package package = Package.Open(xlsxFileName, FileMode.Open))
+			{
+				var planetNameStream = package.GetPart(planetNameUri).GetStream();
+				var planetRadiusStream = package.GetPart(planetRadiusUri).GetStream();
+				XDocument planetDocument = XDocument.Load(planetNameStream);
+				XDocument radiusDocument = XDocument.Load(planetRadiusStream);
+				var names = planetDocument.Descendants().Where(t=>t.Name.LocalName.Equals("t")).Select(t=>t.Value).ToList();
+				var radius = radiusDocument.Descendants().Where(t=>t.Name.LocalName.Equals("v") && t.Value.Length > 1).Select(t=>t.Value).ToList();
+				names.RemoveAt(names.Count() - 1);
+				var planetsInfo = names.Zip(radius, (f, s) => new PlanetInfo() { Name = f, MeanRadius = (double)Math.Round(decimal.Parse(s), 2) });
+				return planetsInfo;
+			}
 		}
 
 
@@ -47,7 +62,15 @@ namespace IOStreams
 		public static string CalculateHash(this Stream stream, string hashAlgorithmName)
 		{
 			// TODO : Implement CalculateHash method
-			throw new NotImplementedException();
+			var algorithm = HashAlgorithm.Create(hashAlgorithmName);
+			if (algorithm == null) throw new ArgumentException();
+			var hash = algorithm.ComputeHash(stream);
+			StringBuilder sOutput = new StringBuilder();
+			for (int i = 0; i < hash.Length; i++)
+			{
+				sOutput.Append(hash[i].ToString("X2"));
+			}
+			return sOutput.ToString();
 		}
 
 
@@ -60,7 +83,25 @@ namespace IOStreams
 		public static Stream DecompressStream(string fileName, DecompressionMethods method)
 		{
 			// TODO : Implement DecompressStream method
-			throw new NotImplementedException();
+			switch(method)
+            {
+				case DecompressionMethods.GZip:
+                    {
+						FileStream str = new FileStream(fileName,FileMode.Open);
+						GZipStream dec = new GZipStream(str,CompressionMode.Decompress);
+						return dec;
+                    }
+					break;
+					
+				case DecompressionMethods.Deflate:
+                    {
+						FileStream str = new FileStream(fileName, FileMode.Open);
+						DeflateStream dec = new DeflateStream(str, CompressionMode.Decompress);
+						return dec;
+                    }
+					break;
+			}
+			return new FileStream(fileName,FileMode.Open);
 		}
 
 
@@ -73,7 +114,8 @@ namespace IOStreams
 		public static string ReadEncodedText(string fileName, string encoding)
 		{
 			// TODO : Implement ReadEncodedText method
-			throw new NotImplementedException();
+			var content = File.ReadAllText(fileName, Encoding.GetEncoding(encoding));
+			return content;
 		}
 	}
 
