@@ -69,9 +69,17 @@ namespace Reflection.Tasks
         /// <param name="value">assigned value</param>
         public static void SetPropertyValue(this object obj, string propertyPath, object value) {
             // TODO : Implement SetPropertyValue method
-            throw new NotImplementedException();
+            var pathItems = propertyPath.Split('.');
+            foreach(var item in pathItems)
+            {
+                if(item == pathItems.Last())
+                {
+                    var type = obj.GetType();
+                    if(!type.GetProperty(item).CanWrite) type = type.BaseType;
+                    type.GetProperty(item).SetValue(obj,value);
+                }
+                else obj = obj.GetType().GetProperty(item).GetValue(obj);
+            }
         }
-
-
     }
 }
