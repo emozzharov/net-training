@@ -114,7 +114,8 @@ namespace IOStreams
 		public static string ReadEncodedText(string fileName, string encoding)
 		{
 			// TODO : Implement ReadEncodedText method
-			throw new NotImplementedException();
+			var content = File.ReadAllText(fileName, Encoding.GetEncoding(encoding));
+			return content;
 		}
 	}
 
