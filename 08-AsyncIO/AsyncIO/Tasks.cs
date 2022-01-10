@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,10 +21,39 @@ namespace AsyncIO
         /// </summary>
         /// <param name="uris">Sequence of required uri</param>
         /// <returns>The sequence of downloaded url content</returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public static IEnumerable<string> GetUrlContent(this IEnumerable<Uri> uris) 
         {
-            // TODO : Implement GetUrlContent
-            throw new NotImplementedException();
+            List<string> res = new List<string>();
+            
+            foreach (var u in uris)
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(u);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        var str = reader.ReadToEnd();
+                    }
+                }
+
+                res.Add(u.ToString());
+            }
+
+            return res;
+            //object locker = new object();
+            //lock (locker)
+            //{
+            //    List<string> res = new List<string>();
+            //    foreach (var u in uris)
+            //    {
+            //        res.Add(u.ToString());
+            //    }
+
+            //    return res; 
+            //}
         }
 
 
@@ -37,8 +69,15 @@ namespace AsyncIO
         /// <returns>The sequence of downloaded url content</returns>
         public static IEnumerable<string> GetUrlContentAsync(this IEnumerable<Uri> uris, int maxConcurrentStreams)
         {
-            // TODO : Implement GetUrlContentAsync
-            throw new NotImplementedException();
+            ConcurrentBag<string> bag = new ConcurrentBag<string>();
+            Parallel.ForEach(uris, new ParallelOptions { MaxDegreeOfParallelism = maxConcurrentStreams }, uri => AddToList(uri));
+
+            return bag;
+
+            void AddToList(Uri uri)
+            {
+                bag.Add(uri.ToString());
+            }
         }
 
 
