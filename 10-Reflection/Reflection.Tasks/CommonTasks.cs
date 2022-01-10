@@ -16,8 +16,15 @@ namespace Reflection.Tasks
         /// <param name="assemblyName">name of assembly</param>
         /// <returns>List of public but obsolete classes</returns>
         public static IEnumerable<string> GetPublicObsoleteClasses(string assemblyName) {
-            // TODO : Implement GetPublicObsoleteClasses method
-            throw new NotImplementedException();
+            return Assembly.Load(assemblyName).GetTypes().Where(t => t.IsClass && t.IsPublic && System.Attribute.GetCustomAttributes(t).Any(a =>
+            {
+                if (a is ObsoleteAttribute)
+                {
+                    return true;
+                }
+
+                return false;
+            })).Select(t => t.Name);
         }
 
         /// <summary>
@@ -38,8 +45,38 @@ namespace Reflection.Tasks
         /// <param name="propertyPath">dot-separated property path</param>
         /// <returns>property value of obj for required propertyPath</returns>
         public static T GetPropertyValue<T>(this object obj, string propertyPath) {
-            // TODO : Implement GetPropertyValue method
-            throw new NotImplementedException();
+            Type type = obj.GetType();
+
+            var res = GetProperty(obj, propertyPath);
+
+            try
+            {
+                return (T)res;
+            }
+            catch
+            {
+                return default;
+            }
+
+            object GetProperty(object incomingObject, string propName)
+            {
+                var splittedPath = propName.Split(new char[] { '.' }, 2);
+                Type propType = incomingObject.GetType();
+
+                if (propType.GetProperties().Any(p => p.Name.Equals(splittedPath[0])) && splittedPath.Length > 1)
+                {
+                    return GetProperty(propType.GetProperties()
+                        .SingleOrDefault(p => p.Name.Equals(splittedPath[0])).GetValue(incomingObject), splittedPath[1]);
+                }
+
+                if (splittedPath.Length > 1 && propType.GetProperties().Any(p => p.Name.Equals(splittedPath[1])))
+                {
+                    return propType.GetProperties().SingleOrDefault(p => p.Name.Equals(splittedPath[1])).GetValue(incomingObject);
+                }
+
+                // returns property of the incoming object.
+                return propType.GetProperties().SingleOrDefault(p => p.Name == propName).GetValue(incomingObject);
+            }
         }
 
 
@@ -60,8 +97,31 @@ namespace Reflection.Tasks
         /// <param name="propertyPath">dot-separated property path</param>
         /// <param name="value">assigned value</param>
         public static void SetPropertyValue(this object obj, string propertyPath, object value) {
-            // TODO : Implement SetPropertyValue method
-            throw new NotImplementedException();
+            Type type = obj.GetType();
+
+            SetProperty(obj, propertyPath, value);
+
+            object SetProperty(object incomingObject, string propName, object val)
+            {
+                var props = incomingObject.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                if (!propName.Contains('.'))
+                {
+                    var parentClass = incomingObject.GetType().BaseType;
+
+                    parentClass.GetProperty(propName).GetSetMethod(true).Invoke(incomingObject, new object[] { val });
+                    return null;
+                }
+
+                var splittedPath = propName.Split(new char[] { '.' }, 2);
+                if (splittedPath.Length > 1 && props.Any(p => p.Name == splittedPath[0]))
+                {
+                    return SetProperty(props.FirstOrDefault(p => p.Name == splittedPath[0]).GetValue(incomingObject), splittedPath[1], val);
+                }
+
+                props.FirstOrDefault(p => p.Name == propName).SetValue(incomingObject, val);
+                return null;
+            }
         }
 
 
