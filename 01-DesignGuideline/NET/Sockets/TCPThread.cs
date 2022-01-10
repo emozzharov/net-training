@@ -28,7 +28,7 @@ namespace Codest.Net.Sockets
         /// <summary>
         /// Socket.
         /// </summary>
-        private Socket socket;
+        public Socket socket;
 
         /// <summary>
         /// 接收数据的缓冲区.
