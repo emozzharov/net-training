@@ -11,14 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace codest
+namespace Codest
 {
     /// <summary>
-    /// 常使用的公共常数
+    /// 常使用的公共常数.
     /// </summary>
     public static class Globalization
     {
-
-
     }
 }

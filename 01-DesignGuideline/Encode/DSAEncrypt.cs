@@ -9,103 +9,87 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Security.Cryptography;
 using System.IO;
-using codest.Encode;
-using codest.Net;
+using System.Security.Cryptography;
+using System.Text;
+using Codest.Encode;
+using Codest.Net;
 
-namespace codest.Encode
+namespace Codest.Encode
 {
     /// <summary>
-    /// 实现对数据进行DSA签名和验证
+    /// 实现对数据进行DSA签名和验证.
     /// </summary>
     public class DSAEncrypt : SerializableBaseClass<DSAEncrypt>
     {
-        #region 成员变量
         /// <summary>
-        /// 提供DSA算法
+        /// 提供DSA算法.
         /// </summary>
-        protected DSACryptoServiceProvider dsac;
-        #endregion
+        private DSACryptoServiceProvider dsac;
 
-        #region 接口封装
-
-        #endregion
-
-        #region 构造/析构函数
         /// <summary>
-        /// 构造函数
+        /// 构造函数.
         /// </summary>
         public DSAEncrypt()
         {
-            dsac = new DSACryptoServiceProvider();
+            this.dsac = new DSACryptoServiceProvider();
         }
+
         /// <summary>
         /// 析构函数
         /// </summary>
         ~DSAEncrypt()
         {
-            dsac.Clear();
+            this.dsac.Clear();
         }
-        #endregion
 
-        #region public byte[] GetSignature(string srcData)
         /// <summary>
-        /// 对字符串数据进行签名
+        /// 对字符串数据进行签名.
         /// </summary>
-        /// <param name="srcData">字符串数据</param>
-        /// <returns>DSA签名</returns>
+        /// <param name="srcData">字符串数据.</param>
+        /// <returns>DSA签名.</returns>
         public byte[] GetSignature(string srcData)
         {
             byte[] binaryData;
             binaryData = ASCIIEncoding.ASCII.GetBytes(srcData);
-            return GetSignature(binaryData);
+            return this.GetSignature(binaryData);
         }
-        #endregion
 
-        #region public byte[] GetSignature(byte[] srcData)
         /// <summary>
-        /// 对二进制数据进行签名
+        /// 对二进制数据进行签名.
         /// </summary>
-        /// <param name="srcData">二进制数据</param>
-        /// <returns>DSA签名</returns>
+        /// <param name="srcData">二进制数据.</param>
+        /// <returns>DSA签名.</returns>
         public byte[] GetSignature(byte[] srcData)
         {
-            byte[] sign = dsac.SignData(srcData);
+            byte[] sign = this.dsac.SignData(srcData);
             return sign;
         }
-        #endregion
 
-        #region public bool VerifySignature(byte[] srcData, byte[] signature)
         /// <summary>
-        /// 验证签名
+        /// 验证签名.
         /// </summary>
-        /// <param name="srcData">需要验证的数据</param>
-        /// <param name="signature">DSA签名</param>
-        /// <returns>签名是否正确</returns>
+        /// <param name="srcData">需要验证的数据.</param>
+        /// <param name="signature">DSA签名.</param>
+        /// <returns>签名是否正确.</returns>
         public bool VerifySignature(byte[] srcData, byte[] signature)
         {
-            bool ver = dsac.VerifyData(srcData, signature);
+            bool ver = this.dsac.VerifyData(srcData, signature);
             return ver;
         }
-        #endregion
 
-        #region public bool VerifySignature(string srcData, byte[] signature)
         /// <summary>
-        /// 验证签名
+        /// 验证签名.
         /// </summary>
-        /// <param name="srcData">需要验证的数据</param>
-        /// <param name="signature">DSA签名</param>
-        /// <returns>签名是否正确</returns>
+        /// <param name="srcData">需要验证的数据.</param>
+        /// <param name="signature">DSA签名.</param>
+        /// <returns>签名是否正确.</returns>
         public bool VerifySignature(string srcData, byte[] signature)
         {
             byte[] binaryData;
             binaryData = ASCIIEncoding.ASCII.GetBytes(srcData);
-            bool ver = dsac.VerifyData(binaryData, signature);
+            bool ver = this.dsac.VerifyData(binaryData, signature);
             return ver;
         }
-        #endregion
     }
-
 }

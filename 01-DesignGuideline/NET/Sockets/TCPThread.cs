@@ -9,238 +9,224 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
-namespace codest.Net.Sockets
+namespace Codest.Net.Sockets
 {
     /// <summary>
-    /// TCP连接控制类
+    /// TCP连接控制类.
     /// </summary>
     public class TCPThread : BaseClass
     {
-        #region 成员变量
         /// <summary>
-        /// Socket
+        /// 接收数据的缓冲区大小，为100K.
         /// </summary>
-        protected Socket socket;
+        private const int BufferSize = 1024 * 0xFF;
+
         /// <summary>
-        /// 接收数据的缓冲区大小，为100K
+        /// Socket.
         /// </summary>
-        protected int BUFFER_SIZE = 1024 * 0xFF;
+        public Socket socket;
+
         /// <summary>
-        /// 接收数据的缓冲区
+        /// 接收数据的缓冲区.
         /// </summary>
-        protected byte[] _buffer;
+        private byte[] buffer;
+
         /// <summary>
-        /// 指示Socket是否连接
+        /// 指示Socket是否连接.
         /// </summary>
         private bool connected;
-        #endregion
 
-        #region 接口封装
-        /// <summary>
-        /// 指示Socket是否连接
-        /// </summary>
-        public bool Connected
-        {
-            get { return connected; }
-        }
-        /// <summary>
-        /// Socket
-        /// </summary>
-        public Socket Socket
-        {
-            get { return socket; }
-        }
-        #endregion
-
-        #region 公共事件
-        /// <summary>
-        /// 数据到达的事件处理
-        /// </summary>
-        public event DataArriveEvent OnDataArrive;
-        /// <summary>
-        /// 当访问出错
-        /// </summary>
-        public event Action<int> OnError;
-        /// <summary>
-        /// 当连接被关闭
-        /// </summary>
-        public event NullParamEvent OnClose;
-        #endregion
-
-        #region 构造/析构函数
-        /// <summary>
-        /// TCPThread构造函数，传入默认socket连接
-        /// </summary>
-        /// <param name="sock">socket连接</param>
-        public TCPThread(Socket sock)
-            :base()
-        {
-            socket = sock;
-            connected = true;
-        }
         /// <summary>
         /// TCPThread构造函数
         /// </summary>
         public TCPThread()
         {
-            connected = false;
-            _buffer = new byte[BUFFER_SIZE]; 
+            this.connected = false;
+            this.buffer = new byte[BufferSize];
         }
-        /// <summary>
-        /// TCPThread析构函数
-        /// </summary>
-        ~TCPThread()
-        {
-            Dispose(false);
-        }
-        #endregion
 
-        #region protected override void Dispose(bool disposing)
         /// <summary>
-        /// 释放由当前对象控制的所有资源
+        /// TCPThread构造函数，传入默认socket连接.
         /// </summary>
-        /// <param name="disposing">显式调用</param>
+        /// <param name="sock">socket连接.</param>
+        public TCPThread(Socket sock)
+            : base()
+        {
+            this.socket = sock;
+            this.connected = true;
+        }
+
+        /// <summary>
+        /// 数据到达的事件处理
+        /// </summary>
+        public event DataArriveEvent OnDataArrive;
+
+        /// <summary>
+        /// 当访问出错
+        /// </summary>
+        public event Action<int> OnError;
+
+        /// <summary>
+        /// 当连接被关闭
+        /// </summary>
+        public event NullParamEvent OnClose;
+
+        /// <summary>
+        /// 指示Socket是否连接.
+        /// </summary>
+        public bool Connected
+        {
+            get { return this.connected; }
+        }
+
+        /// <summary>
+        /// Socket.
+        /// </summary>
+        public Socket Socket
+        {
+            get { return this.socket; }
+        }
+
+        /// <summary>
+        /// 指示Socket可以开始接收数据.
+        /// </summary>
+        public void BeginReceive()
+        {
+            this.socket.BeginReceive(this.buffer, 0, BufferSize, SocketFlags.None, new AsyncCallback(this.OnReceive), this.socket);
+        }
+
+        /// <summary>
+        /// 发送二进制数据.
+        /// </summary>
+        /// <param name="data">需要发送的数据.</param>
+        public virtual void Send(byte[] data)
+        {
+            this.socket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(this.OnEndSend), this.socket);
+        }
+
+        /// <summary>
+        /// 发送字符串数据.
+        /// </summary>
+        /// <param name="stringData">需要发送的数据.</param>
+        public virtual void Send(string stringData)
+        {
+            byte[] data = ASCIIEncoding.ASCII.GetBytes(stringData);
+            this.Send(data);
+        }
+
+        /// <summary>
+        /// 释放由当前对象控制的所有资源.
+        /// </summary>
+        /// <param name="disposing">显式调用.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposed) return;
+            if (this.disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
-                //释放托管资源
-                _buffer = null;
+                // 释放托管资源
+                this.buffer = null;
             }
-            //释放非托管资源
-            if (connected) OnCloseEvent();
-            socket = null;
+
+            // 释放非托管资源
+            if (this.connected)
+            {
+                this.OnCloseEvent();
+            }
+
+            this.socket = null;
             base.Dispose(disposing);
         }
-        #endregion
 
-        //--begin--触发公共事件--
-
-        #region protected void OnErrorEvent(int errNum)
         /// <summary>
-        /// 当socket出错
+        /// 当socket出错.
         /// </summary>
-        /// <param name="errNum">错误编号</param>
+        /// <param name="errNum">错误编号.</param>
         protected void OnErrorEvent(int errNum)
         {
-            connected = false;
-            socket.Close();
-            if (OnError != null) OnError(errNum);
+            this.connected = false;
+            this.socket.Close();
+            if (this.OnError != null)
+            {
+                this.OnError(errNum);
+            }
         }
-        #endregion
 
-        #region protected void OnCloseEvent()
         /// <summary>
-        /// socket已经关闭
+        /// socket已经关闭.
         /// </summary>
         protected void OnCloseEvent()
         {
-            connected = false;
-            socket.Close();
-            if (OnClose != null) OnClose();
+            this.connected = false;
+            this.socket.Close();
+            if (this.OnClose != null)
+            {
+                this.OnClose();
+            }
         }
-        #endregion
 
-        #region protected void OnDataArriveEvent(TCPThread tcpThread, byte[] buffer)
         /// <summary>
-        /// 数据到达事件
+        /// 数据到达事件.
         /// </summary>
-        /// <param name="tcpThread">当前tcp会话socket</param>
-        /// <param name="buffer">数据</param>
+        /// <param name="tcpThread">当前tcp会话socket.</param>
+        /// <param name="buffer">数据.</param>
         protected void OnDataArriveEvent(TCPThread tcpThread, byte[] buffer)
         {
-            if (OnDataArrive != null) OnDataArrive(tcpThread, buffer);
+            if (this.OnDataArrive != null)
+            {
+                this.OnDataArrive(tcpThread, buffer);
+            }
         }
-        #endregion
-        
-        //--end----触发公共事件--
 
-        //--begin--异步socket状态处理--
-
-        #region protected void OnReceive(IAsyncResult ar)
         /// <summary>
-        /// 数据到达的异步处理函数
+        /// 数据到达的异步处理函数.
         /// </summary>
-        /// <param name="ar"></param>
+        /// <param name="ar">some params.</param>
         protected void OnReceive(IAsyncResult ar)
         {
             int len;
             try
             {
-                len = socket.EndReceive(ar);
+                len = this.socket.EndReceive(ar);
             }
             catch (SocketException ex)
             {
-                OnErrorEvent(ex.ErrorCode);
+                this.OnErrorEvent(ex.ErrorCode);
                 return;
             }
+
             if (len == 0)
             {
-                OnCloseEvent();
+                this.OnCloseEvent();
             }
-            byte[] data = new byte[len];
-            Array.Copy(_buffer, 0, data, 0, len);
-            OnDataArriveEvent(this, data);
-            BeginReceive();
-        }
-        #endregion
 
-        #region protected void OnEndSend(IAsyncResult ar)
+            byte[] data = new byte[len];
+            Array.Copy(this.buffer, 0, data, 0, len);
+            this.OnDataArriveEvent(this, data);
+            this.BeginReceive();
+        }
+
         /// <summary>
-        /// 异步发送数据完成
+        /// 异步发送数据完成.
         /// </summary>
-        /// <param name="ar"></param>
+        /// <param name="ar">some param.</param>
         protected void OnEndSend(IAsyncResult ar)
         {
             try
             {
-                socket.EndSend(ar);
+                this.socket.EndSend(ar);
             }
             catch (SocketException ex)
             {
-                OnErrorEvent(ex.ErrorCode);
+                this.OnErrorEvent(ex.ErrorCode);
             }
         }
-        #endregion
-
-        //--end----异步socket状态处理--
-
-        #region public void BeginReceive()
-        /// <summary>
-        /// 指示Socket可以开始接收数据
-        /// </summary>
-        public void BeginReceive()
-        {
-            socket.BeginReceive(_buffer, 0, BUFFER_SIZE, SocketFlags.None, new AsyncCallback(OnReceive), socket);
-        }
-        #endregion
-
-        #region public virtual void Send(byte[] data)
-        /// <summary>
-        /// 发送二进制数据
-        /// </summary>
-        /// <param name="data">需要发送的数据</param>
-        public virtual void Send(byte[] data)
-        {
-            socket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(OnEndSend), socket);
-        }
-        #endregion
-
-        #region public virtual void Send(string StringData)
-        /// <summary>
-        /// 发送字符串数据
-        /// </summary>
-        /// <param name="StringData">需要发送的数据</param>
-        public virtual void Send(string StringData)
-        {
-            byte[] data = ASCIIEncoding.ASCII.GetBytes(StringData);
-            Send(data);
-        }
-        #endregion
     }
 }

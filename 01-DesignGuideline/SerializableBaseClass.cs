@@ -9,27 +9,26 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using System.Xml.Serialization;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using System.Xml.Serialization;
 
-namespace codest
+namespace Codest
 {
     /// <summary>
     /// 为对象提供XML序列化、二进制序列化及反序列化功能
-    /// 实现了ICloneable接口
+    /// 实现了ICloneable接口.
     /// </summary>
-    /// <typeparam name="T">继承类的类型</typeparam>
-    [Serializable()]
+    /// <typeparam name="T">继承类的类型.</typeparam>
+    [Serializable]
     public abstract class SerializableBaseClass<T> : ICloneable
     {
-        #region public virtual byte[] BinarySerialize()
         /// <summary>
-        /// 对类进行二进制序列化
+        /// 对类进行二进制序列化.
         /// </summary>
-        /// <returns>序列化代码</returns>
+        /// <returns>序列化代码.</returns>
         public virtual byte[] BinarySerialize()
         {
             BinaryFormatter ser = new BinaryFormatter();
@@ -39,16 +38,14 @@ namespace codest
             mStream.Close();
             return buf;
         }
-        #endregion
 
-        #region public virtual string XMLSerialize()
         /// <summary>
-        /// 对类进行XML序列化
+        /// 对类进行XML序列化.
         /// </summary>
-        /// <returns>XML序列化代码</returns>
+        /// <returns>XML序列化代码.</returns>
         public virtual string XMLSerialize()
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(GetType());
+            XmlSerializer xmlSerializer = new XmlSerializer(this.GetType());
             MemoryStream stream = new MemoryStream();
             xmlSerializer.Serialize(stream, this);
             byte[] buf = stream.ToArray();
@@ -56,15 +53,13 @@ namespace codest
             stream.Close();
             return xml;
         }
-        #endregion
 
-        #region  public static T DeSerialize(byte[] binary)
         /// <summary>
-        /// 对类进行二进制反序列化
+        /// 对类进行二进制反序列化.
         /// </summary>
-        /// <param name="binary">二进制序列化代码</param>
-        /// <returns>反序列化后的对象，若失败则返回null</returns>
-        public static T DeSerialize(byte[] binary)
+        /// <param name="binary">二进制序列化代码.</param>
+        /// <returns>反序列化后的对象，若失败则返回null.</returns>
+        public T DeSerialize(byte[] binary)
         {
             BinaryFormatter ser = new BinaryFormatter();
             MemoryStream mStream = new MemoryStream(binary);
@@ -72,15 +67,13 @@ namespace codest
             mStream.Close();
             return o;
         }
-        #endregion 
 
-        #region public static T DeSerialize(string xmlString)
         /// <summary>
-        /// 对类进行XML反序列化
+        /// 对类进行XML反序列化.
         /// </summary>
-        /// <param name="xmlString">XML序列化代码</param>
-        /// <returns>反序列化后的对象，若失败则返回null</returns>
-        public static T DeSerialize(string xmlString)
+        /// <param name="xmlString">XML序列化代码.</param>
+        /// <returns>反序列化后的对象，若失败则返回null.</returns>
+        public T DeSerialize(string xmlString)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
             byte[] buf = Encoding.ASCII.GetBytes(xmlString);
@@ -88,20 +81,18 @@ namespace codest
             T o = (T)xmlSerializer.Deserialize(stream);
             return o;
         }
-        #endregion
 
-        #region public static bool TryDeSerialize(byte[] binary, ref T obj)
         /// <summary>
-        /// 尝试使用二进制数据对类进行反序列化
+        /// 尝试使用二进制数据对类进行反序列化.
         /// </summary>
-        /// <param name="binary">序列化二进制数据</param>
-        /// <param name="obj">返回对象引用</param>
-        /// <returns>反序列化是否成功</returns>
-        public static bool TryDeSerialize(byte[] binary, ref T obj)
+        /// <param name="binary">序列化二进制数据.</param>
+        /// <param name="obj">返回对象引用.</param>
+        /// <returns>反序列化是否成功.</returns>
+        public bool TryDeSerialize(byte[] binary, T obj)
         {
             try
             {
-                obj = DeSerialize(binary);
+                obj = this.DeSerialize(binary);
                 return true;
             }
             catch
@@ -109,20 +100,18 @@ namespace codest
                 return false;
             }
         }
-        #endregion
 
-        #region public static bool TryDeSerialize(string  xmlString, ref T obj)
         /// <summary>
-        /// 尝试使用XML数据对类进行反序列化
+        /// 尝试使用XML数据对类进行反序列化.
         /// </summary>
-        /// <param name="xmlString">序列化XML数据</param>
-        /// <param name="obj">返回对象引用</param>
-        /// <returns>反序列化是否成功</returns>
-        public static bool TryDeSerialize(string  xmlString, ref T obj)
+        /// <param name="xmlString">序列化XML数据.</param>
+        /// <param name="obj">返回对象引用.</param>
+        /// <returns>反序列化是否成功.</returns>
+        public bool TryDeSerialize(string xmlString, T obj)
         {
             try
             {
-                obj = DeSerialize(xmlString);
+                obj = this.DeSerialize(xmlString);
                 return true;
             }
             catch
@@ -130,32 +119,23 @@ namespace codest
                 return false;
             }
         }
-        #endregion 
 
-        #region public virtual T Copy()
         /// <summary>
-        /// 完成对象的浅复制
+        /// 完成对象的浅复制.
         /// </summary>
-        /// <returns>对象的副本</returns>
+        /// <returns>对象的副本.</returns>
         public virtual T Copy()
         {
-            return (T)Clone();
+            return (T)this.Clone();
         }
-        #endregion
 
-        #region ICloneable 成员
         /// <summary>
-        /// 完成对象的浅复制
+        /// 完成对象的浅复制.
         /// </summary>
-        /// <returns>对象的副本</returns>
+        /// <returns>对象的副本.</returns>
         public virtual object Clone()
         {
-            return MemberwiseClone();
+            return this.MemberwiseClone();
         }
-
-        #endregion
-
-
     }
-
 }
